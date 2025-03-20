@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 10pt;
+    color: #333;
+    line-height: 1.4;
+}
+
+@media print {
+    .site-content-container * {
+        visibility: collapse;
+        display: none;
+    }
+
+    .printable,
+    .printable * {
+        visibility: visible !important;
+        display: revert !important;
+    }
+
+    .not-printable {
+        visibility: collapse;
+        display: none;
+    }
+}

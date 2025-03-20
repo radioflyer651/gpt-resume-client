@@ -1,0 +1,159 @@
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #2a5885;
+}
+
+h2 {
+    background-color: #e4e4e4;
+    padding: 8px;
+    font-size: 1.5rem;
+    text-align: center;
+    margin: 25px 0 15px 0;
+    color: #2a5885;
+}
+
+h3 {
+    color: #2a5885;
+    margin-bottom: 5px;
+}
+
+section {
+    margin-top: 20px;
+}
+
+.experience-title h3,
+.experience-title h5 {
+    margin: 0;
+}
+
+.experience-row {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #ddd;
+}
+
+.experience-summary ul {
+    margin: 0;
+    padding-left: 25px;
+}
+
+ul {
+    margin-top: 5px;
+    padding-left: 20px;
+}
+
+p {
+    margin: 0;
+    margin-top: 10px;
+}
+
+.video-link {
+    margin-top: 10px;
+}
+
+.technologies {
+    font-weight: bold;
+    font-style: italic;
+    display: inline;
+}
+
+.tech-used {
+    margin: 0px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border-left: 3px solid #2a5885;
+}
+
+.top-section-marker {
+    margin-bottom: 20px;
+}
+
+.testimonial {
+    background-color: #f5f5f5;
+    border-left: 4px solid #2a5885;
+    padding: 12px 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+    position: relative;
+    font-style: italic;
+}
+
+.testimonial-signature {
+    display: block;
+    text-align: right;
+    font-weight: bold;
+    font-style: normal;
+    margin-top: 8px;
+    color: #555;
+}
+
+.testimonial-p {
+    margin-bottom: 10px;
+}
+
+.testimonial-marker {
+    display: inline;
+    font-size: 24px;
+    color: #2a5885;
+}
+
+.project-title {
+    font-weight: bold;
+    color: #333;
+}
+
+.company-role-info {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.company-role-info h5 {
+    font-size: 1rem;
+    color: #555;
+}
+
+@media print {
+    body {
+        background-color: white;
+        font-size: 9pt;
+    }
+
+    .page-break-before {
+        break-before: page;
+        page-break-before: always;
+    }
+
+    .project-header-row,
+    .experience-title,
+    h2,
+    h3 {
+        page-break-after: avoid;
+        break-after: avoid;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .testimonial {
+        break-inside: avoid;
+    }
+
+    a {
+        color: #000;
+        text-decoration: none;
+    }
+}

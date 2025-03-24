@@ -31,6 +31,7 @@ export interface Chat extends ChatInfo {
 }
 
 
+/** Simplified ResponseInputItem object, where only a role and content is emitted. */
 export interface ChatMessage {
     /** Gets or sets the message that was sent. */
     content: string;

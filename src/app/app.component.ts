@@ -1,17 +1,17 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SiteHeaderComponent } from "./site-header/site-header.component";
-import { ChatPopupService } from './chat-popup.service';
+import { ChatPopupService } from './services/chat-popup.service';
 import { DrawerModule } from 'primeng/drawer';
 import { TextareaModule } from 'primeng/textarea';
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { MessagingService } from './messaging.service';
+import { MessagingService } from './services/messaging.service';
 import { ComponentBase } from './component-base/component-base.component';
 import { takeUntil } from 'rxjs';
 import { LoginComponent } from "./login/login.component";
-import { UserService } from './user.service';
+import { UserService } from './services/user.service';
 import { CommonModule } from '@angular/common';
 
 @Component({

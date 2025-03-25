@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TokenPayload } from '../model/shared-models/token-payload.model';
-import { LoginRequest } from '../model/shared-models/login-request.model';
-import { environment } from '../environments/environment';
+import { TokenPayload } from '../../model/shared-models/token-payload.model';
+import { LoginRequest } from '../../model/shared-models/login-request.model';
+import { environment } from '../../environments/environment';
 import { EMPTY, map, Observable, tap } from 'rxjs';
 
 // Extract the type of the `post` method from `HttpClient`

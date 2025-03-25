@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ClientApiService } from './client-api.service';
 import { BehaviorSubject, map, shareReplay, takeUntil } from 'rxjs';
-import { LoginRequest } from '../model/shared-models/login-request.model';
+import { LoginRequest } from '../../model/shared-models/login-request.model';
 import { MessagingService } from './messaging.service';
-import { ComponentBase } from './component-base/component-base.component';
-import { TokenPayload } from '../model/shared-models/token-payload.model';
-import { SiteUser } from '../model/site-user.model';
+import { ComponentBase } from '../component-base/component-base.component';
+import { TokenPayload } from '../../model/shared-models/token-payload.model';
+import { SiteUser } from '../../model/site-user.model';
 
 @Injectable({
   providedIn: 'root'

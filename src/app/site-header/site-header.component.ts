@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ChatPopupService } from '../chat-popup.service';
+import { ChatPopupService } from '../services/chat-popup.service';
 import { ButtonModule } from 'primeng/button';
 
 @Component({

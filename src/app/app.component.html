@@ -1,12 +1,19 @@
 <app-site-header></app-site-header>
 
 <div class="site-content-container">
-  <router-outlet></router-outlet>
+  <div class="left-side">
+    <app-login *ngIf="!(userService.isUserLoggedIn$ | async)"></app-login>
+  </div>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+  <div class="right-side"></div>
 </div>
-
 
 <p-drawer [(visible)]="chatPopupService.showChatWindow" position="right">
   <div>{{ chatPopupService.chatActor }}</div>
 
   <textarea rows="5" cols="30" pTextarea [(ngModel)]="chatPopupService.currentChatDialog.dialog"></textarea>
 </p-drawer>
+
+<p-toast />

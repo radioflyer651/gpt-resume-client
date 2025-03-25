@@ -1,5 +1,5 @@
 
 export interface LoginRequest {
-    companyName: string;
+    userName: string;
     website: string;
 }

@@ -5,7 +5,7 @@ import { ChatDialog } from '../model/chat-dialog.model';
 @Injectable({
   providedIn: 'root'
 })
-export class ChatPopupServiceService {
+export class ChatPopupService {
   constructor() {
     this.chatActor = 'David Spade';
   }

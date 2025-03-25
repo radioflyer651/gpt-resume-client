@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ChatPopupServiceService } from '../chat-popup-service.service';
+import { ChatPopupService } from '../chat-popup.service';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
@@ -11,7 +11,7 @@ import { ButtonModule } from 'primeng/button';
   styleUrls: ['./site-header.component.scss']
 })
 export class SiteHeaderComponent {
-  constructor(readonly chatPopupService: ChatPopupServiceService) {
+  constructor(readonly chatPopupService: ChatPopupService) {
 
   }
 

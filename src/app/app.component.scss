@@ -2,8 +2,21 @@
     font-family: "Segoe UI", Arial, sans-serif;
     font-size: 10pt;
     background-color: #f9f9f9;
-    max-width: 800px;
-    margin: 20px auto;
+    // max-width: 800px;
+    // margin: 20px auto;
     color: #333;
     line-height: 1.4;
+}
+
+.site-content-container {
+    display: flex;
+
+    .left-side,
+    .right-side {
+        flex: 1 1 auto;
+    }
+
+    .content {
+        width: 800px;
+    }
 }

@@ -9,7 +9,7 @@
 
     <hr>
 
-    <div class="chat-area">
+    <div class="chat-area"  #chatArea>
         <div class="chat-interior" *ngIf="!!(chatService.mainChat$ | async)">
             <div class="no-messages"
                 *ngIf="chatService.mainChat?.chatMessages && chatService.mainChat!.chatMessages.length < 1">
@@ -17,24 +17,12 @@
             </div>
             <app-chat-message *ngFor="let msg of chatService.mainChat?.chatMessages" [message]="msg.content"
                 [user]="msg.role"></app-chat-message>
-            <!-- <app-chat-message message="Is this your first time here?" user="assistant"></app-chat-message>
-            <app-chat-message message="No, I've been here a few times" user="user"></app-chat-message>
-            <app-chat-message message="Oh? How do you like it?" user="assistant"></app-chat-message>
-            <app-chat-message message="I love it!  Think this is a great site, and I think we should hire Richard."
-                user="user"></app-chat-message>
-            <app-chat-message message="Oh? How do you like it?" user="assistant"></app-chat-message>
-            <app-chat-message message="I love it!  Think this is a great site, and I think we should hire Richard."
-                user="user"></app-chat-message>
-            <app-chat-message message="Oh? How do you like it?" user="assistant"></app-chat-message>
-            <app-chat-message message="I love it!  Think this is a great site, and I think we should hire Richard."
-                user="user"></app-chat-message>
-            <app-chat-message message="Oh? How do you like it?" user="assistant"></app-chat-message>
-            <app-chat-message message="I love it!  Think this is a great site, and I think we should hire Richard."
-                user="user"></app-chat-message> -->
         </div>
     </div>
 
     <hr>
+
+    <button pButton (click)="scrollToBottom()"> Bottom </button>
 
     <div>
         <div class="chat-text-title">

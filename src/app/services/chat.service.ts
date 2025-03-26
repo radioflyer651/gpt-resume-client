@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of, switchMap } from 'rxjs';
 import { io } from "socket.io-client";
 import { TokenService } from './token.service';
 import { environment } from '../../environments/environment';
 import { ReadonlySubject } from '../../utils/readonly-subject';
 import { ObjectId } from 'mongodb';
-import { Chat, ChatMessage, ClientChat } from '../../model/shared-models/chat-models.model';
+import { ChatMessage, ClientChat } from '../../model/shared-models/chat-models.model';
 import { MessagingService } from './messaging.service';
 import { ClientApiService } from './client-api.service';
 
 type IoSocketType = ReturnType<typeof io>;
+export type SocketMessage = { message: string, args: any[]; };
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,7 @@ export class ChatService {
   private initializeService(): void {
     this.initializeSocketObservable();
     this.initializeMainChatLoadSubscription();
+    this.initializeMessageEvents();
 
     this.socket$.subscribe(s => {
       if (!s) {
@@ -108,13 +110,47 @@ export class ChatService {
         return;
       }
 
-      // Add the chat to the chat log.
-      this.mainChat.chatMessages.push(message);
+      // Ensure the chat Ids are the same.
+      if (this.mainChat._id === chatId) {
+        // Add the chat to the chat log.
+        this.mainChat.chatMessages.push(message);
+      } else {
+        console.warn(`Received main chat message, but chat ID didn't match.`);
+      }
     });
 
     socket.on('receiveServerStatusMessage', (type: 'info' | 'success' | 'warn' | 'error', message: string) => {
       this.messagingService.sendUserMessage({ level: type, content: message, title: 'AI Message' });
     });
+  }
+
+  private initializeMessageEvents(): void {
+    this.messageEvents$ = this.socket$.pipe(
+      switchMap(socket => {
+        if (!socket) {
+          return EMPTY;
+        } else {
+          return new Observable<SocketMessage>(subscriber => {
+            const handler = (allArgs: any[]) => {
+              // Get the message from the args.
+              const [message, ...args] = allArgs;
+
+              // Fire the event.
+              subscriber.next({ message, args });
+            };
+
+            // Register the handler.
+            socket.onAny(handler);
+
+            // Unsubscribe: Cleanup.
+            return () => {
+              socket.offAny(handler);
+            };
+          });
+        }
+
+      })
+    );
   }
 
   /** Hooks up loading of the main chat when we have tokens. */
@@ -129,6 +165,9 @@ export class ChatService {
       }
     });
   }
+
+  /** Observable that emits the messages received from socket.io. */
+  messageEvents$!: Observable<SocketMessage>;
 
   private _socket!: ReadonlySubject<IoSocketType | undefined>;
 
@@ -167,8 +206,6 @@ export class ChatService {
   /** Sends a chat message to the API.  Any responses will
    *   be received through socket.io connections. */
   sendChatMessage(message: string): void {
-    console.log(this.socket, this.socket?.disconnected);
-
     if (!this.socket || this.socket.disconnected) {
       this.messagingService.sendUserMessage(
         {

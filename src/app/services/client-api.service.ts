@@ -130,4 +130,9 @@ export class ClientApiService {
     const options = this.optionsBuilder.withAuthorization();
     return this.http.get<ClientChat>(this.constructUrl('chat/main'), options);
   }
+
+  startNewMainChat() {
+    const options = this.optionsBuilder.withAuthorization();
+    return this.http.get<ClientChat>(this.constructUrl('chat/main/start-new'), options);
+  }
 }

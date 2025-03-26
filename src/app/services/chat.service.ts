@@ -131,7 +131,7 @@ export class ChatService {
           return EMPTY;
         } else {
           return new Observable<SocketMessage>(subscriber => {
-            const handler = (allArgs: any[]) => {
+            const handler = (...allArgs: any[]) => {
               // Get the message from the args.
               const [message, ...args] = allArgs;
 
@@ -231,5 +231,22 @@ export class ChatService {
 
       }
     }
+  }
+
+  /** Tells the server to start a new main chat. */
+  startNewMainChat(): void {
+    this.apiClientService.startNewMainChat().subscribe({
+      next: result => {
+        this.mainChat = result;
+      },
+      error: err => {
+        this.messagingService.sendUserMessage({
+          level: 'error',
+          content: 'An error occurred when attempting to start a new chat.'
+        });
+
+        console.error(err);
+      }
+    });
   }
 }

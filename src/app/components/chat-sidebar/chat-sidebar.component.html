@@ -9,11 +9,11 @@
 
     <hr>
 
-    <div class="chat-area"  #chatArea>
+    <div class="chat-area" #chatArea>
         <div class="chat-interior" *ngIf="!!(chatService.mainChat$ | async)">
             <div class="no-messages"
                 *ngIf="chatService.mainChat?.chatMessages && chatService.mainChat!.chatMessages.length < 1">
-                No chat messages exist. Try talking to the AI chat bot!
+                <app-chat-message [message]="noMessagesMessage" [user]="'assistant'"></app-chat-message>
             </div>
             <app-chat-message *ngFor="let msg of chatService.mainChat?.chatMessages" [message]="msg.content"
                 [user]="msg.role"></app-chat-message>
@@ -22,17 +22,22 @@
 
     <hr>
 
-    <button pButton (click)="scrollToBottom()"> Bottom </button>
+    <button pButton [raised]="true" (click)="scrollToBottom()"> Bottom </button>
 
     <div>
         <div class="chat-text-title">
             <h6>Your Message:</h6>
         </div>
         <div class="text-message-area">
-            <textarea rows="5" cols="30" pTextarea [(ngModel)]="newMessage"></textarea>
+            <textarea #messageInput rows="5" cols="30" pTextarea [(ngModel)]="newMessage"></textarea>
         </div>
         <div class="clearfix button-area">
-            <button pButton (click)="sendMessage()" [disabled]="!canSend"> Send </button>
+            <button pButton tabindex="-1" [raised]="true" (click)="newChat()" severity="danger"> Start New Chat
+            </button>
+            <button pButton [raised]="true" label="Send" (click)="sendMessage()">
+            </button>
         </div>
     </div>
 </div>
+
+<p-confirmdialog />

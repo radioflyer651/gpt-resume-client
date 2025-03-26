@@ -13,4 +13,8 @@ input {
 .button-container {
     display: flex;
     justify-content: end;
+
+    button, p-button{
+        margin-left:15px;
+    }
 }

@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, of, switchMap } from 'rxjs';
 import { io } from "socket.io-client";
 import { TokenService } from './token.service';
 import { environment } from '../../environments/environment';
 import { ReadonlySubject } from '../../utils/readonly-subject';
+import { ObjectId } from 'mongodb';
+import { Chat, ChatMessage, ClientChat } from '../../model/shared-models/chat-models.model';
+import { MessagingService } from './messaging.service';
+import { ClientApiService } from './client-api.service';
 
 type IoSocketType = ReturnType<typeof io>;
 
@@ -13,9 +17,16 @@ type IoSocketType = ReturnType<typeof io>;
 export class ChatService {
   constructor(
     readonly tokenService: TokenService,
+    readonly messagingService: MessagingService,
+    readonly apiClientService: ClientApiService,
   ) {
+    this.initializeService();
+  }
 
+  /** Performs all initializations for this service. */
+  private initializeService(): void {
     this.initializeSocketObservable();
+    this.initializeMainChatLoadSubscription();
   }
 
   /** Initializes the chat service. */
@@ -32,6 +43,9 @@ export class ChatService {
         const socket = io(environment.chatSocketIoEndpoint, {
           auth: { token }
         });
+
+        // Add handlers and such to the socket.
+        this.initializeSocket(socket);
 
         // Create a new observable that carries our new socket.
         return new Observable<IoSocketType>(subscriber => {
@@ -56,8 +70,36 @@ export class ChatService {
   }
 
   /** Hooks up all of the functions to the socket, when we have one. */
-  private initializeSocket(): void {
+  private initializeSocket(socket: IoSocketType): void {
+    socket.on('receiveChatMessage', (chatId: ObjectId, message: ChatMessage) => {
+      if (!this.mainChat) {
+        this.messagingService.sendUserMessage({
+          level: 'error',
+          content: 'Chat messaged received from the server, but no chat has been loaded.'
+        });
+        return;
+      }
 
+      // Add the chat to the chat log.
+      this.mainChat.chatMessages.push(message);
+    });
+
+    socket.on('receiveServerStatusMessage', (type: 'info' | 'success' | 'warn' | 'error', message: string) => {
+      this.messagingService.sendUserMessage({ level: type, content: message, title: 'AI Message' });
+    });
+  }
+
+  /** Hooks up loading of the main chat when we have tokens. */
+  private initializeMainChatLoadSubscription(): void {
+    this.tokenService.token$.subscribe(token => {
+      if (!token) {
+        // Remove the main chat.
+        this.mainChat = undefined;
+      } else {
+        // Load the main chat again.
+        this.getMainChat();
+      }
+    });
   }
 
   private _socket!: ReadonlySubject<IoSocketType | undefined>;
@@ -70,6 +112,57 @@ export class ChatService {
     return this._socket.value;
   }
 
+  private readonly _mainChat = new BehaviorSubject<ClientChat | undefined>(undefined);
+  readonly mainChat$ = this._mainChat.asObservable();
 
+  /** Gets or sets the main chat log for AI interaction. */
+  get mainChat(): ClientChat | undefined {
+    return this._mainChat.getValue();
+  }
 
+  set mainChat(newVal: ClientChat | undefined) {
+    this._mainChat.next(newVal);
+  }
+
+  /** Gets the main chat for this user from the server. */
+  public getMainChat(): void {
+    this.apiClientService.getMainChat()
+      .subscribe(result => {
+        this.mainChat = result;
+        this.messagingService.sendUserMessage({
+          level: 'info',
+          content: 'Main chat loaded.'
+        });
+      });
+  }
+
+  /** Sends a chat message to the API.  Any responses will
+   *   be received through socket.io connections. */
+  sendChatMessage(message: string): void {
+    if (!this.socket || this.socket.disconnected) {
+      this.messagingService.sendUserMessage(
+        {
+          level: 'error',
+          content: 'Unable to send AI messages.  Sockets are disconnected.'
+        }
+      );
+    } else {
+      if (!this.mainChat) {
+        this.messagingService.sendUserMessage({
+          level: 'error',
+          content: 'Unable to send AI messages.  Chat is not loaded.'
+        });
+      } else {
+        // Send the message to the server.
+        this.socket.emit('sendMainChatMessage', message);
+
+        // Add the message to our chat log.
+        this.mainChat.chatMessages.push({
+          role: 'user',
+          content: message
+        });
+
+      }
+    }
+  }
 }

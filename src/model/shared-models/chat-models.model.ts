@@ -30,7 +30,6 @@ export interface Chat extends ChatInfo {
     chatMessages: ResponseInputItem[];
 }
 
-
 /** Simplified ResponseInputItem object, where only a role and content is emitted. */
 export interface ChatMessage {
     /** Gets or sets the message that was sent. */
@@ -39,3 +38,6 @@ export interface ChatMessage {
     /** Gets or sets the role that sent the message. */
     role: 'system' | 'user' | 'assistant';
 }
+
+/** The representation of a Chat on the client side. */
+export type ClientChat = Omit<Chat, 'chatMessages'> & { chatMessages: ChatMessage[]; };

@@ -5,6 +5,7 @@ import { LoginRequest } from '../../model/shared-models/login-request.model';
 import { environment } from '../../environments/environment';
 import { EMPTY, Observable, tap } from 'rxjs';
 import { TokenService } from './token.service';
+import { ClientChat } from '../../model/shared-models/chat-models.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -24,7 +25,8 @@ class HttpOptionsBuilder {
   constructor(
     readonly parent: ClientApiService,
     readonly tokenService: TokenService,
-  ) { }
+  ) {
+  }
 
   /** Shortcut to just return options with the authorization header. */
   withAuthorization(): HttpCallOptions {
@@ -42,7 +44,6 @@ class OptionsBuilderInternal {
   ) { }
 
   protected _optionsBuilder: Exclude<HttpCallOptions, undefined | null> = {};
-  protected _optionsHeaders!: HttpHeaders;
 
   /** Returns the TokenService from the parent. */
   get tokenService() {
@@ -55,19 +56,18 @@ class OptionsBuilderInternal {
   }
 
   /** Returns the headers property from the options. */
-  private getHeaders(): HttpHeaders {
-    if (!this._optionsHeaders) {
-      this._optionsHeaders = new HttpHeaders();
-      this._optionsBuilder.headers = this._optionsHeaders;
+  private getHeaders(): { [key: string]: string; } {
+    if (!this._optionsBuilder.headers) {
+      this._optionsBuilder.headers = {} as { [key: string]: string; };
     }
 
-    return this._optionsHeaders;
+    return this._optionsBuilder.headers as { [key: string]: string; };
   }
 
   /** Adds a token to the headers. */
   addAuthToken() {
     if (this.tokenService.token) {
-      this.getHeaders().set('authorization', this.tokenService.token);
+      this.getHeaders()['Authorization'] = this.tokenService.token;
     }
     return this;
   }
@@ -83,8 +83,8 @@ class OptionsBuilderInternal {
 })
 export class ClientApiService {
   constructor(
-    readonly http: HttpClient,
-    readonly tokenService: TokenService,
+    protected readonly http: HttpClient,
+    protected readonly tokenService: TokenService,
   ) {
 
     this.optionsBuilder = new HttpOptionsBuilder(this, this.tokenService);
@@ -127,6 +127,7 @@ export class ClientApiService {
 
   /** Returns the main chat for the current user. */
   getMainChat() {
-    return this.http.get(this.constructUrl('api/chat/main'), this.optionsBuilder.withAuthorization());
+    const options = this.optionsBuilder.withAuthorization();
+    return this.http.get<ClientChat>(this.constructUrl('chat/main'), options);
   }
 }

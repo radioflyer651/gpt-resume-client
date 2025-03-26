@@ -13,6 +13,7 @@ import { takeUntil } from 'rxjs';
 import { LoginComponent } from "./components/login/login.component";
 import { UserService } from './services/user.service';
 import { CommonModule } from '@angular/common';
+import { ChatService } from './services/chat.service';
 
 @Component({
   selector: 'app-root',
@@ -25,8 +26,11 @@ import { CommonModule } from '@angular/common';
     FormsModule,
     ToastModule,
     LoginComponent
-],
-  providers: [MessageService],
+  ],
+  providers: [
+    MessageService,
+    ChatService
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -36,6 +40,7 @@ export class AppComponent extends ComponentBase {
     readonly messagingService: MessagingService,
     readonly messageService: MessageService,
     readonly userService: UserService,
+    readonly chatService: ChatService,
   ) {
     super();
 

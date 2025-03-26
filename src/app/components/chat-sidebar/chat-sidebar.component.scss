@@ -2,32 +2,38 @@
 
 .chat-container {
     height: $free-content-height;
-    background-color: red;
-    overflow: hidden;
+    padding: 20px;
+    border-radius: 20px;
 
-    p-panel {
-        height: 100%;
-    }
-}
+    color: white;
+    background-color: rgb(26, 26, 26);
 
-.panel-container {
-    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
+    hr {
+        border-color: white;
+    }
 }
 
+.no-messages {
+    color: white;
+    margin: 30px;
+}
 
 .chat-area {
     // max-height: 400px;
     overflow: auto;
     flex: 1 1 auto;
 
+    color: #141414;
     background-color: rgb(56, 56, 56);
     border-radius: 20px;
 
+    // padding: 20px 5px;
+
     .chat-interior {
-        padding: 20px 5px;
     }
 }
 

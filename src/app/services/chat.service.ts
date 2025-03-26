@@ -27,6 +27,21 @@ export class ChatService {
   private initializeService(): void {
     this.initializeSocketObservable();
     this.initializeMainChatLoadSubscription();
+
+    this.socket$.subscribe(s => {
+      if (!s) {
+        return;
+      }
+
+      s.on('connected', () => {
+        this.messagingService.sendUserMessage(
+          {
+            level: 'info',
+            content: 'Socket connected.'
+          }
+        );
+      });
+    });
   }
 
   /** Initializes the chat service. */
@@ -40,8 +55,14 @@ export class ChatService {
         }
 
         // Create and initialize the new socket.
+        console.log(`Connecting to socket: ${environment.chatSocketIoEndpoint}`);
         const socket = io(environment.chatSocketIoEndpoint, {
-          auth: { token }
+          auth: { token },
+          reconnectionAttempts: 5,
+          reconnectionDelay: 3000,
+          extraHeaders: {
+            'Authorization': token
+          }
         });
 
         // Add handlers and such to the socket.
@@ -71,12 +92,19 @@ export class ChatService {
 
   /** Hooks up all of the functions to the socket, when we have one. */
   private initializeSocket(socket: IoSocketType): void {
+    if (!socket.connected) {
+      socket.connect();
+    }
+
     socket.on('receiveChatMessage', (chatId: ObjectId, message: ChatMessage) => {
       if (!this.mainChat) {
         this.messagingService.sendUserMessage({
           level: 'error',
-          content: 'Chat messaged received from the server, but no chat has been loaded.'
+          content: 'An internal error occurred when attempting to send your chat message.  Please try again later.'
         });
+
+        console.error('Chat messaged received from the server, but no chat has been loaded.');
+
         return;
       }
 
@@ -139,6 +167,8 @@ export class ChatService {
   /** Sends a chat message to the API.  Any responses will
    *   be received through socket.io connections. */
   sendChatMessage(message: string): void {
+    console.log(this.socket, this.socket?.disconnected);
+
     if (!this.socket || this.socket.disconnected) {
       this.messagingService.sendUserMessage(
         {

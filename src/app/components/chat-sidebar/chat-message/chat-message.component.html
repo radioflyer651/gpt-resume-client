@@ -3,7 +3,10 @@
         {{ ownerName }}
     </div>
 
-    <div class="message">
+    <div class="message" *ngIf="user === 'user'">
         {{ message }}
     </div>
+
+    <div class="message" *ngIf="user !== 'user'" [innerHTML]="safeMessage"></div>
+    <!-- <div class="message" *ngIf="user !== 'user'" [innerHTML]="message"></div> -->
 </div>

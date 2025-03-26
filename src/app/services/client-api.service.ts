@@ -4,6 +4,7 @@ import { TokenPayload } from '../../model/shared-models/token-payload.model';
 import { LoginRequest } from '../../model/shared-models/login-request.model';
 import { environment } from '../../environments/environment';
 import { EMPTY, map, Observable, tap } from 'rxjs';
+import { nullToUndefined } from '../../utils/empty-and-null.utils';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -18,6 +19,9 @@ type HttpClientGetMethod = HttpClient['get'];
 type HttpClientGetOptions = Parameters<HttpClientGetMethod>[1];
 
 type HttpCallOptions = HttpClientGetOptions | HttpClientPostOptions;
+
+/** The key to store/retrieve the auth token on the local machine. */
+const tokenStoreKey = 't1';
 
 class HttpOptionsBuilder {
   constructor(public readonly parent: ClientApiService) { }
@@ -88,6 +92,22 @@ export class ClientApiService {
     return this._token;
   }
 
+  /** Sets the token from an external source.  This is primarily
+   *   for initializing the application on startup, when the token has been stored. */
+  setToken(token: string) {
+    this._token = token;
+  }
+
+  /** Attempts to parse a token, and return the TokenPayload. */
+  parseToken(token: string): TokenPayload {
+    if (!token) {
+      throw new Error(`token was empty.`);
+    }
+
+    // Decode the Base64 token.
+    return JSON.parse(atob(token.split('.')[1])) as TokenPayload;
+  }
+
   /** Makes a call to attempt to login the user with their credentials. */
   login(loginInfo: LoginRequest) {
     return this.http.post<string>(
@@ -97,8 +117,7 @@ export class ClientApiService {
           this._token = response;
         }),
         map(response => {
-          // Decode the Base64 token.
-          const payload = JSON.parse(atob(response.split('.')[1])) as TokenPayload;
+          const payload = this.parseToken(response);
           return payload;
         })
       );

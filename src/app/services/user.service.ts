@@ -3,19 +3,48 @@ import { ClientApiService } from './client-api.service';
 import { BehaviorSubject, map, shareReplay, takeUntil } from 'rxjs';
 import { LoginRequest } from '../../model/shared-models/login-request.model';
 import { MessagingService } from './messaging.service';
-import { ComponentBase } from '../component-base/component-base.component';
 import { TokenPayload } from '../../model/shared-models/token-payload.model';
 import { SiteUser } from '../../model/site-user.model';
+import { nullToUndefined } from '../../utils/empty-and-null.utils';
+
+/** The key to store/retrieve the auth token on the local machine. */
+const tokenStoreKey = 't1';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService extends ComponentBase {
+export class UserService {
   constructor(
     private readonly clientApiService: ClientApiService,
     private readonly messagingService: MessagingService
   ) {
-    super();
+    this.initialize();
+  }
+
+  initialize(): void {
+    // TODO: We need to account for when the token is expired.
+
+    // Get the token from the local store, if we have one.
+    const token = this.getSavedToken();
+
+    if (token) {
+      // Update the token in the client API.
+      this.clientApiService.setToken(token);
+
+      // Update the user.
+      this.user = tokenToUser(this.clientApiService.parseToken(token));
+
+      // Welcome the user back.  Give it a moment, since the app may not be loaded yet.
+      setTimeout(() => {
+        this.messagingService.sendUserMessage(
+          {
+            level: 'info',
+            title: 'Welcome!',
+            content: `Welcome back ${this.user!.name}`
+          }
+        );
+      });
+    }
   }
 
   private readonly _user = new BehaviorSubject<SiteUser | undefined>(undefined);
@@ -42,11 +71,15 @@ export class UserService extends ComponentBase {
    *   sets the user upon successful login. */
   login(request: LoginRequest): Promise<void> {
     return new Promise((res, rej) => {
-      this.clientApiService.login(request).pipe(
-        takeUntil(this.ngDestroy$)
-      ).subscribe({
+      this.clientApiService.login(request).subscribe({
         next: (response) => {
+          // Store the token into the local store.
+          this.storeToken(this.clientApiService.token);
+
+          // Convert the response (TokenPayload) to a user.
           this.user = tokenToUser(response);
+
+          // Inform the user they've been logged in.
           this.messagingService.sendUserMessage(
             {
               title: 'Login Success',
@@ -71,7 +104,23 @@ export class UserService extends ComponentBase {
 
   logout(): void {
     this.clientApiService.logout();
+    this.clearSavedToken();
     this.user = undefined;
+  }
+
+  /** Stores the auth token into the local store. */
+  storeToken(token: string): void {
+    localStorage.setItem(tokenStoreKey, token);
+  }
+
+  /** Returns the auth token from the local store, if there is one. */
+  getSavedToken(): string | undefined {
+    return nullToUndefined(localStorage.getItem(tokenStoreKey));
+  }
+
+  /** Clears any stored token in the local store. */
+  clearSavedToken(): void {
+    localStorage.removeItem(tokenStoreKey);
   }
 }
 

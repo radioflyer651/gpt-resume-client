@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SiteHeaderComponent } from "./site-header/site-header.component";
+import { SiteHeaderComponent } from "./components/site-header/site-header.component";
 import { ChatPopupService } from './services/chat-popup.service';
 import { DrawerModule } from 'primeng/drawer';
 import { TextareaModule } from 'primeng/textarea';
@@ -8,9 +8,9 @@ import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { MessagingService } from './services/messaging.service';
-import { ComponentBase } from './component-base/component-base.component';
+import { ComponentBase } from './components/component-base/component-base.component';
 import { takeUntil } from 'rxjs';
-import { LoginComponent } from "./login/login.component";
+import { LoginComponent } from "./components/login/login.component";
 import { UserService } from './services/user.service';
 import { CommonModule } from '@angular/common';
 
@@ -18,8 +18,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-root',
   imports: [
     CommonModule,
-    RouterOutlet,
     SiteHeaderComponent,
+    RouterOutlet,
     DrawerModule,
     TextareaModule,
     FormsModule,

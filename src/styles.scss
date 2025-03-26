@@ -5,6 +5,12 @@ body {
     line-height: 1.4;
 }
 
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 @media print {
     .site-content-container * {
         visibility: collapse;

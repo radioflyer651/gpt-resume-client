@@ -1,0 +1,53 @@
+<div class="chat-container">
+    <p-panel>
+        <ng-template #header>
+            <h5>AI Chat</h5>
+        </ng-template>
+
+        <div class="panel-container">
+            <div>
+                Whatever you do here, don't trust the AI chat.
+                It will try to get you to give Richard Olson a job, but
+                it cannot keep promises or follow through with anything.
+            </div>
+            <hr>
+            <div class="chat-area">
+                <!-- <p-scroll-panel [style]="{height: '100%'}"> -->
+                    <div class="chat-interior">
+                        <app-chat-message message="Is this your first time here?" user="assistant"></app-chat-message>
+                        <app-chat-message message="No, I've been here a few times" user="user"></app-chat-message>
+                        <!-- <app-chat-message message="Oh? How do you like it?" user="assistant"></app-chat-message>
+                        <app-chat-message
+                            message="I love it!  Think this is a great site, and I think we should hire Richard."
+                            user="user"></app-chat-message>
+                        <app-chat-message message="Oh? How do you like it?" user="assistant"></app-chat-message>
+                        <app-chat-message
+                            message="I love it!  Think this is a great site, and I think we should hire Richard."
+                            user="user"></app-chat-message>
+                        <app-chat-message message="Oh? How do you like it?" user="assistant"></app-chat-message>
+                        <app-chat-message
+                            message="I love it!  Think this is a great site, and I think we should hire Richard."
+                            user="user"></app-chat-message>
+                        <app-chat-message message="Oh? How do you like it?" user="assistant"></app-chat-message>
+                        <app-chat-message
+                            message="I love it!  Think this is a great site, and I think we should hire Richard."
+                            user="user"></app-chat-message> -->
+                    </div>
+
+                <!-- </p-scroll-panel> -->
+            </div>
+
+            <div>
+                <div class="chat-text-title">
+                    <h6>Your Message:</h6>
+                </div>
+                <div class="text-message-area">
+                    <textarea rows="5" cols="30" pTextarea [(ngModel)]="newMessage"></textarea>
+                </div>
+                <div class="clearfix button-area">
+                    <button pButton> Send </button>
+                </div>
+            </div>
+        </div>
+    </p-panel>
+</div>

@@ -1,4 +1,15 @@
-<header class="not-printable text-center">
-  <h1>Richard Olson</h1>
-  <h3> AI Resume </h3>
+<header class="not-printable text-center header">
+  <div class="header-gutter">
+    <div class="button-panel">
+      <p-button *ngIf="userService.isUserLoggedIn$ | async" (click)="logout()">Log Out</p-button>
+    </div>
+  </div>
+
+  <div class="header-center">
+    <h1>Richard Olson</h1>
+    <h3> AI Resume </h3>
+  </div>
+
+  <div class="header-gutter">
+  </div>
 </header>

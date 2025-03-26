@@ -1,1 +1,11 @@
 $header-height: 114px;
+$header-bottom-margin: 40px;
+$header-padding: 20px;
+
+$content-width: 800px;
+$sidebar-width: calc((100vw - $content-width) / 2);
+$side-bar-padding: 10px;
+
+// The height left over on the page for content,
+//  after removing the header, and the header's margin.
+$free-content-height: calc(100vh - $header-height - $header-bottom-margin - $header-padding);

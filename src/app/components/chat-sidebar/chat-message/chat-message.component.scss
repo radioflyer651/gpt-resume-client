@@ -1,0 +1,31 @@
+.left {
+    float: left;
+    // text-align: left;
+}
+
+.right {
+    float: right;
+    // text-align: right;
+
+    .user-name {
+        text-align: right;
+    }
+}
+
+.left,
+.right {
+    max-width: 70%;
+    min-width: 51%;
+    width: auto;
+    margin: 0;
+    margin-top: 15px;
+    padding: 10px;
+
+    background-color: gray;
+    border-radius: 15px;
+    
+    .user-name {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+}

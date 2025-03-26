@@ -1,0 +1,52 @@
+@import "../../../style_variables";
+
+.chat-container {
+    height: $free-content-height;
+    background-color: red;
+    overflow: hidden;
+
+    p-panel {
+        height: 100%;
+    }
+}
+
+.panel-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+
+.chat-area {
+    // max-height: 400px;
+    overflow: auto;
+    flex: 1 1 auto;
+
+    background-color: rgb(56, 56, 56);
+    border-radius: 20px;
+
+    .chat-interior {
+        padding: 20px 5px;
+    }
+}
+
+.chat-text-title {
+    font-size: 1.25em;
+    margin-top: 20px;
+}
+
+.text-message-area {
+    textarea {
+        width: 100%;
+    }
+}
+
+.button-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+
+    margin: 20px 0 0 0;
+    padding: 0;
+}

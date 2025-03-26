@@ -14,6 +14,7 @@ import { LoginComponent } from "./components/login/login.component";
 import { UserService } from './services/user.service';
 import { CommonModule } from '@angular/common';
 import { ChatService } from './services/chat.service';
+import { ChatSidebarComponent } from "./components/chat-sidebar/chat-sidebar.component";
 
 @Component({
   selector: 'app-root',
@@ -25,8 +26,9 @@ import { ChatService } from './services/chat.service';
     TextareaModule,
     FormsModule,
     ToastModule,
-    LoginComponent
-  ],
+    LoginComponent,
+    ChatSidebarComponent
+],
   providers: [
     MessageService,
     ChatService

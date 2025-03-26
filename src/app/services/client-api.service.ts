@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { TokenPayload } from '../../model/shared-models/token-payload.model';
 import { LoginRequest } from '../../model/shared-models/login-request.model';
 import { environment } from '../../environments/environment';
-import { EMPTY, map, Observable, tap } from 'rxjs';
-import { nullToUndefined } from '../../utils/empty-and-null.utils';
+import { EMPTY, Observable, tap } from 'rxjs';
+import { TokenService } from './token.service';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -20,11 +20,11 @@ type HttpClientGetOptions = Parameters<HttpClientGetMethod>[1];
 
 type HttpCallOptions = HttpClientGetOptions | HttpClientPostOptions;
 
-/** The key to store/retrieve the auth token on the local machine. */
-const tokenStoreKey = 't1';
-
 class HttpOptionsBuilder {
-  constructor(public readonly parent: ClientApiService) { }
+  constructor(
+    readonly parent: ClientApiService,
+    readonly tokenService: TokenService,
+  ) { }
 
   /** Shortcut to just return options with the authorization header. */
   withAuthorization(): HttpCallOptions {
@@ -37,12 +37,19 @@ class HttpOptionsBuilder {
 }
 
 class OptionsBuilderInternal {
-  constructor(private readonly parent: HttpOptionsBuilder) { }
+  constructor(
+    readonly parent: HttpOptionsBuilder
+  ) { }
 
   protected _optionsBuilder: Exclude<HttpCallOptions, undefined | null> = {};
   protected _optionsHeaders!: HttpHeaders;
 
+  /** Returns the TokenService from the parent. */
+  get tokenService() {
+    return this.parent.tokenService;
+  }
 
+  /** Returns the API service from the parent. */
   get parentApiService() {
     return this.parent.parent;
   }
@@ -57,8 +64,11 @@ class OptionsBuilderInternal {
     return this._optionsHeaders;
   }
 
+  /** Adds a token to the headers. */
   addAuthToken() {
-    this.getHeaders().set('authorization', this.parentApiService.token);
+    if (this.tokenService.token) {
+      this.getHeaders().set('authorization', this.tokenService.token);
+    }
     return this;
   }
 
@@ -72,9 +82,15 @@ class OptionsBuilderInternal {
   providedIn: 'root',
 })
 export class ClientApiService {
-  constructor(private readonly http: HttpClient) { }
+  constructor(
+    readonly http: HttpClient,
+    readonly tokenService: TokenService,
+  ) {
 
-  protected readonly optionsBuilder = new HttpOptionsBuilder(this);
+    this.optionsBuilder = new HttpOptionsBuilder(this, this.tokenService);
+  }
+
+  protected readonly optionsBuilder: HttpOptionsBuilder;
 
   /** The base URL to the API. */
   protected readonly baseUrl = environment.apiBaseUrl;
@@ -82,20 +98,6 @@ export class ClientApiService {
   /** Combines a specified path with the base URL. */
   private constructUrl(path: string) {
     return this.baseUrl + path;
-  }
-
-  /** Gets or sets the auth token to add to the headers of API calls. */
-  private _token: string = '';
-
-  /** Returns the auth token to add to the headers of API calls. */
-  get token() {
-    return this._token;
-  }
-
-  /** Sets the token from an external source.  This is primarily
-   *   for initializing the application on startup, when the token has been stored. */
-  setToken(token: string) {
-    this._token = token;
   }
 
   /** Attempts to parse a token, and return the TokenPayload. */
@@ -110,21 +112,16 @@ export class ClientApiService {
 
   /** Makes a call to attempt to login the user with their credentials. */
   login(loginInfo: LoginRequest) {
-    return this.http.post<string>(
-      this.constructUrl('login'),
-      loginInfo).pipe(
+    return this.http.post<string>(this.constructUrl('login'), loginInfo)
+      .pipe(
         tap(response => {
-          this._token = response;
-        }),
-        map(response => {
-          const payload = this.parseToken(response);
-          return payload;
+          this.tokenService.token = response;
         })
       );
   }
 
   logout(): Observable<void> {
-    this._token = '';
+    this.tokenService.token = undefined;
     return EMPTY;
   }
 

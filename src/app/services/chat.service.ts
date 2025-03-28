@@ -39,6 +39,12 @@ export class ChatService {
         console.warn(`Socket Disconnected.`);
       });
 
+      s.on('connect_error', () => {
+        console.warn(`Socket Connection Error.`, (err: any) => {
+          console.error(err);
+        });
+      });
+
       // s.on('connected', () => {
       //   console.info(`socks connected.`)
       //   this.messagingService.sendUserMessage(

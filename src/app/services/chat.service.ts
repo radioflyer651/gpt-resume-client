@@ -59,6 +59,7 @@ export class ChatService {
         // Create and initialize the new socket.
         console.log(`Connecting to socket: ${environment.chatSocketIoEndpoint}`);
         const socket = io(environment.chatSocketIoEndpoint, {
+          path: environment.chatSocketPath,
           auth: { token },
           reconnectionAttempts: 5,
           reconnectionDelay: 3000,

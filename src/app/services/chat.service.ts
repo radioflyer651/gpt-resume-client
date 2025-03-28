@@ -35,14 +35,19 @@ export class ChatService {
         return;
       }
 
-      s.on('connected', () => {
-        this.messagingService.sendUserMessage(
-          {
-            level: 'info',
-            content: 'Socket connected.'
-          }
-        );
+      s.on('disconnected', () => {
+        console.warn(`Socket Disconnected.`);
       });
+
+      // s.on('connected', () => {
+      //   console.info(`socks connected.`)
+      //   this.messagingService.sendUserMessage(
+      //     {
+      //       level: 'info',
+      //       content: 'Socket connected.'
+      //     }
+      //   );
+      // });
     });
   }
 
@@ -61,7 +66,6 @@ export class ChatService {
         const socket = io(environment.chatSocketIoEndpoint, {
           path: environment.chatSocketPath,
           upgrade: true,
-
           auth: { token },
           // reconnectionAttempts: 5,
           reconnectionDelay: 5000,

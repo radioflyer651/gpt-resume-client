@@ -3,6 +3,6 @@ import { AppConfig } from "../model/app-config.models";
 export const environment: AppConfig = {
     production: true,
     apiBaseUrl: 'https://www.richardolson.org/api/',
-    chatSocketIoEndpoint: 'https://richardolson.org/api/chat-io',
+    chatSocketIoEndpoint: 'ws://www.richardolson.org/api/chat-io',
     chatSocketPath: '/chat-io/'
 };

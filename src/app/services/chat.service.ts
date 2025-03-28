@@ -60,9 +60,11 @@ export class ChatService {
         console.log(`Connecting to socket: ${environment.chatSocketIoEndpoint}`);
         const socket = io(environment.chatSocketIoEndpoint, {
           path: environment.chatSocketPath,
+          upgrade: true,
+
           auth: { token },
-          reconnectionAttempts: 5,
-          reconnectionDelay: 3000,
+          // reconnectionAttempts: 5,
+          reconnectionDelay: 5000,
           extraHeaders: {
             'Authorization': token
           }

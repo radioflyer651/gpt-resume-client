@@ -15,6 +15,7 @@ import { UserService } from './services/user.service';
 import { CommonModule } from '@angular/common';
 import { ChatService } from './services/chat.service';
 import { ChatSidebarComponent } from "./components/chat-sidebar/chat-sidebar.component";
+import { LlmFunctionsService } from './services/llm-functions.service';
 
 @Component({
   selector: 'app-root',
@@ -28,10 +29,11 @@ import { ChatSidebarComponent } from "./components/chat-sidebar/chat-sidebar.com
     ToastModule,
     LoginComponent,
     ChatSidebarComponent
-],
+  ],
   providers: [
     MessageService,
-    ChatService
+    ChatService,
+    LlmFunctionsService,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -43,6 +45,7 @@ export class AppComponent extends ComponentBase {
     readonly messageService: MessageService,
     readonly userService: UserService,
     readonly chatService: ChatService,
+    readonly llmFunctionService: LlmFunctionsService,
   ) {
     super();
 

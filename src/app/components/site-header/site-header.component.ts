@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { ChatPopupService } from '../../services/chat-popup.service';
 import { ButtonModule } from 'primeng/button';
 import { UserService } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
+import { PageSizeService } from '../../services/page-size.service';
+import { MenuService } from '../../services/menu.service';
 
 @Component({
   selector: 'app-site-header',
@@ -15,18 +16,18 @@ import { CommonModule } from '@angular/common';
 })
 export class SiteHeaderComponent {
   constructor(
-    readonly chatPopupService: ChatPopupService,
     readonly userService: UserService,
+    readonly pageSizeService: PageSizeService,
+    readonly menuService: MenuService
   ) {
 
   }
 
-  showActorPopup(actor: string): void {
-    this.chatPopupService.showChatWindow = true;
-    this.chatPopupService.chatActor = actor;
-  }
-
   logout(): void {
     this.userService.logout();
+  }
+
+  toggleMenu(): void {
+    this.menuService.showMenu = !this.menuService.showMenu;
   }
 }

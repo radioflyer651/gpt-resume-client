@@ -14,6 +14,7 @@ import { ConfirmDialog, ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { MessagingService } from '../../services/messaging.service';
+import { MenuService } from '../../services/menu.service';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -39,6 +40,7 @@ export class ChatSidebarComponent extends ComponentBase {
     readonly chatService: ChatService,
     readonly confirmationService: ConfirmationService,
     readonly messagingService: MessagingService,
+    readonly menuService: MenuService,
   ) {
     super();
 
@@ -55,6 +57,15 @@ export class ChatSidebarComponent extends ComponentBase {
         this.scrollToBottom(20);
       }
     });
+
+    // When the menu opens, we want to scroll down.
+    this.menuService.showMenu$
+      .pipe(takeUntil(this.ngDestroy$))
+      .subscribe(visible => {
+        if (visible) {
+          this.scrollToBottom(500);
+        }
+      });
   }
 
   @ViewChild('chatArea')

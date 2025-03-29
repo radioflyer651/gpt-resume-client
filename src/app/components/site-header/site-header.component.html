@@ -1,7 +1,12 @@
 <header class="not-printable text-center header">
   <div class="header-gutter">
     <div class="button-panel">
-      <p-button *ngIf="userService.isUserLoggedIn$ | async" (click)="logout()">Log Out</p-button>
+
+      <p-button *ngIf="(pageSizeService.skinnyPage$ | async)" (click)="toggleMenu()" icon="pi pi-bars"
+        severity="contrast"></p-button>
+
+      <p-button *ngIf="(userService.isUserLoggedIn$ | async) && !(pageSizeService.skinnyPage$ | async)"
+        (click)="logout()">Log Out</p-button>
     </div>
   </div>
 

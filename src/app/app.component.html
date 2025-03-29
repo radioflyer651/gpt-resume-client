@@ -2,20 +2,30 @@
 
 <div class="site-content-container">
   <div class="left-side">
-    <app-login *ngIf="!(userService.isUserLoggedIn$ | async)"></app-login>
+    <app-login *ngIf="!(isLoginVisible$ | async) && !(pageSizeService.skinnyPage$ | async)"></app-login>
   </div>
   <div class="content">
     <router-outlet></router-outlet>
   </div>
   <div class="right-side">
-    <app-chat-sidebar *ngIf="userService.isUserLoggedIn$ | async"></app-chat-sidebar>
+    <app-chat-sidebar *ngIf="(isLoginVisible$ | async) && !(pageSizeService.skinnyPage$ | async)"></app-chat-sidebar>
   </div>
 </div>
 
-<p-drawer [(visible)]="chatPopupService.showChatWindow" position="right">
-  <div>{{ chatPopupService.chatActor }}</div>
+<p-drawer [(visible)]="menuService.showMenu" position="right" position="full">
+  <div>Menu</div>
 
-  <textarea rows="5" cols="30" pTextarea [(ngModel)]="chatPopupService.currentChatDialog.dialog"></textarea>
+  <div *ngIf="!(userService.isUserLoggedIn$ | async)">
+    <app-login></app-login>
+  </div>
+
+  <div *ngIf="(userService.isUserLoggedIn$ | async)">
+    <app-chat-sidebar></app-chat-sidebar>
+  </div>
+
+  <div>
+    <p-button *ngIf="(userService.isUserLoggedIn$ | async)" (click)="logout()">Logout</p-button>
+  </div>
 </p-drawer>
 
 <p-toast />

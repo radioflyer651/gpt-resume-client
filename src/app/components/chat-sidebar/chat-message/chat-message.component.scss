@@ -16,6 +16,10 @@
 .right {
     max-width: 70%;
     min-width: 51%;
+
+    @media (max-width: 600px) {
+        min-width: 90%;
+    }
     width: auto;
     margin: 0;
     padding: 10px;

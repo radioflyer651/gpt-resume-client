@@ -53,7 +53,7 @@ export class ChatSidebarComponent extends ComponentBase {
       takeUntil(this.ngDestroy$)
     ).subscribe((message) => {
       console.log(`Received message: ${message.message}`);
-      if (message.message === 'receiveChatMessage') {
+      if (message.message === 'receiveMainChatMessage') {
         this.scrollToBottom(20);
       }
     });

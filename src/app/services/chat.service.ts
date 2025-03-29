@@ -99,7 +99,7 @@ export class ChatService {
       socket.connect();
     }
 
-    socket.on('receiveChatMessage', (chatId: ObjectId, message: ChatMessage) => {
+    socket.on('receiveMainChatMessage', (chatId: ObjectId, message: ChatMessage) => {
       if (!this.mainChat) {
         this.messagingService.sendUserMessage({
           level: 'error',

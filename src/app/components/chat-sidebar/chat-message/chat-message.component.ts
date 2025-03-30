@@ -49,12 +49,3 @@ export class ChatMessageComponent {
     return this.sanitizer.bypassSecurityTrustHtml(this.message);
   }
 }
-
-// export class ChatMessageComponent {
-//   sanitizedMessage: SafeHtml;
-
-//   constructor(private sanitizer: DomSanitizer) { }
-
-//   ngOnChanges() {
-//     this.sanitizedMessage = this.sanitizer.bypassSecurityTrustHtml(this.message);
-//   }

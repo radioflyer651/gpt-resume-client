@@ -35,6 +35,10 @@ export class ChatService {
         return;
       }
 
+      s.on('connected', () => {
+        console.log('Connected.');
+      });
+
       s.on('disconnected', () => {
         console.warn(`Socket Disconnected.`);
       });
@@ -63,6 +67,7 @@ export class ChatService {
           auth: { token },
           // reconnectionAttempts: 5,
           reconnectionDelay: 5000,
+          reconnection: true,
           extraHeaders: {
             'Authorization': token
           }

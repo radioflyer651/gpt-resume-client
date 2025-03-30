@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { ResponseInputItem } from '../../forwarded-types.model';
+import { ChatTypes } from './chat-types.model';
 
 /** A shortened data set for a Chat so it can be returned for lists.*/
 export interface ChatInfo {
@@ -14,10 +15,13 @@ export interface ChatInfo {
 
     /** Gets or sets the type of chat this is.  Different types of chats
      *   have different types of interactions on the site. */
-    chatType: string;
+    chatType: ChatTypes;
 
     /** Gets or sets the date this chat was last updated. */
     lastAccessDate: Date;
+
+    /** The date/time this chat was created. */
+    creationDate: Date;
 }
 
 export interface Chat extends ChatInfo {
@@ -30,14 +34,17 @@ export interface Chat extends ChatInfo {
     chatMessages: ResponseInputItem[];
 }
 
+/** The representation of a Chat on the client side. */
+export type ClientChat = Omit<Chat, 'chatMessages' | 'systemMessages'> & { chatMessages: ChatMessage[]; };
+
+/** The possible values for roles in a ChatMessage. */
+export type ChatMessageRoleTypes = 'system' | 'user' | 'assistant';
+
 /** Simplified ResponseInputItem object, where only a role and content is emitted. */
 export interface ChatMessage {
     /** Gets or sets the message that was sent. */
     content: string;
 
     /** Gets or sets the role that sent the message. */
-    role: 'system' | 'user' | 'assistant';
+    role: ChatMessageRoleTypes;
 }
-
-/** The representation of a Chat on the client side. */
-export type ClientChat = Omit<Chat, 'chatMessages'> & { chatMessages: ChatMessage[]; };

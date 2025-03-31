@@ -1,17 +1,16 @@
 import { Component } from '@angular/core';
-import { TarotGameService } from '../../services/tarot-game.service';
-import { ChatService } from '../../services/chat.service';
-import { ObjectId } from 'mongodb';
-import { TabsModule } from 'primeng/tabs';
+import { TarotGameService } from '../../../services/tarot-game.service';
+import { ChatService } from '../../../services/chat.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-tarot-game-main',
   imports: [
-    TabsModule,
+    RouterModule,
     CommonModule,
-    FormsModule,
+    ButtonModule,
   ],
   templateUrl: './tarot-game-main.component.html',
   styleUrl: './tarot-game-main.component.scss',
@@ -22,7 +21,5 @@ export class TarotGameMainComponent {
     readonly chatService: ChatService,
   ) { }
 
-  /** Gets or sets the ID of the game tab to show. */
-  tabId: number = 0;
-
+  
 }

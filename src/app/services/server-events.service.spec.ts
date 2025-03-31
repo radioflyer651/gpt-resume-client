@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ChatService } from './chat.service.ts.obsolete';
+import { ServerEventsService } from './server-events.service';
 
-describe('ChatService', () => {
-  let service: ChatService;
+describe('LlmFunctionsService', () => {
+  let service: ServerEventsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ChatService);
+    service = TestBed.inject(ServerEventsService);
   });
 
   it('should be created', () => {

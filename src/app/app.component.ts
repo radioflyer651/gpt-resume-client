@@ -12,12 +12,13 @@ import { map, Observable, takeUntil } from 'rxjs';
 import { LoginComponent } from "./components/login/login.component";
 import { UserService } from './services/user.service';
 import { CommonModule } from '@angular/common';
-import { ChatService } from './services/chat.service';
 import { ChatSidebarComponent } from "./components/chat-sidebar/chat-sidebar.component";
-import { LlmFunctionsService } from './services/llm-functions.service';
+import { ServerEventsService } from './services/server-events.service';
 import { PageSizeService } from './services/page-size.service';
 import { MenuService } from './services/menu.service';
 import { ButtonModule } from 'primeng/button';
+import { Chat2Service } from './services/chat2.service';
+import { ObjectId } from 'mongodb';
 
 @Component({
   selector: 'app-root',
@@ -31,13 +32,13 @@ import { ButtonModule } from 'primeng/button';
     ToastModule,
     LoginComponent,
     ChatSidebarComponent,
-    ButtonModule
+    ButtonModule,
   ],
   providers: [
     MessageService,
-    ChatService,
-    LlmFunctionsService,
+    ServerEventsService,
     PageSizeService,
+    Chat2Service,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -47,10 +48,10 @@ export class AppComponent extends ComponentBase {
     readonly messagingService: MessagingService,
     readonly messageService: MessageService,
     readonly userService: UserService,
-    readonly chatService: ChatService,
-    readonly llmFunctionService: LlmFunctionsService,
+    readonly llmFunctionService: ServerEventsService,
     readonly pageSizeService: PageSizeService,
-    readonly menuService: MenuService
+    readonly menuService: MenuService,
+    readonly chatService: Chat2Service,
   ) {
     super();
 
@@ -76,7 +77,13 @@ export class AppComponent extends ComponentBase {
 
     // Hook up the visibility of the login control.
     this.isLoginVisible$ = this.userService.isUserLoggedIn$;
+
+    this.mainChatId$ = this.chatService.mainChat$.pipe(
+      map(c => c?._id)
+    );
   }
+
+  mainChatId$!: Observable<ObjectId | undefined>;
 
   /** Observable emitting a boolean value, indicating whether or not the login
    *   control should be visible. */

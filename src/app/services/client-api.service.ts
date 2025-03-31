@@ -5,7 +5,8 @@ import { LoginRequest } from '../../model/shared-models/login-request.model';
 import { environment } from '../../environments/environment';
 import { EMPTY, Observable, tap } from 'rxjs';
 import { TokenService } from './token.service';
-import { ClientChat } from '../../model/shared-models/chat-models.model';
+import { ChatInfo, ClientChat } from '../../model/shared-models/chat-models.model';
+import { ObjectId } from 'mongodb';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -86,7 +87,6 @@ export class ClientApiService {
     protected readonly http: HttpClient,
     protected readonly tokenService: TokenService,
   ) {
-
     this.optionsBuilder = new HttpOptionsBuilder(this, this.tokenService);
   }
 
@@ -134,5 +134,16 @@ export class ClientApiService {
   startNewMainChat() {
     const options = this.optionsBuilder.withAuthorization();
     return this.http.get<ClientChat>(this.constructUrl('chat/main/start-new'), options);
+  }
+
+  /** Returns a chat specified by its ID. */
+  getChatById(chatId: ObjectId): Observable<ClientChat> {
+    return this.http.get<ClientChat>(this.constructUrl(`chat/${chatId}`),
+      this.optionsBuilder.withAuthorization());
+  }
+
+  /** Gets all chats for the current user. */
+  getChatList(): Observable<ChatInfo[]> {
+    return this.http.get<ChatInfo[]>(this.constructUrl(`chat/for-user`), this.optionsBuilder.withAuthorization());
   }
 }

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LlmFunctionsService } from './llm-functions.service';
+import { Chat2Service } from './chat2.service';
 
-describe('LlmFunctionsService', () => {
-  let service: LlmFunctionsService;
+describe('Chat2Service', () => {
+  let service: Chat2Service;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(LlmFunctionsService);
+    service = TestBed.inject(Chat2Service);
   });
 
   it('should be created', () => {

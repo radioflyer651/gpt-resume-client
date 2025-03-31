@@ -10,12 +10,12 @@
     <hr>
 
     <div class="chat-area" #chatArea>
-        <div class="chat-interior" *ngIf="!!(chatService.mainChat$ | async)">
+        <div class="chat-interior" *ngIf="!!chat">
             <div class="no-messages"
-                *ngIf="chatService.mainChat?.chatMessages && chatService.mainChat!.chatMessages.length < 1">
+                *ngIf="chat?.chatMessages && chat!.chatMessages.length < 1">
                 <app-chat-message [message]="noMessagesMessage" [user]="'assistant'"></app-chat-message>
             </div>
-            <app-chat-message *ngFor="let msg of chatService.mainChat?.chatMessages" [message]="msg.content"
+            <app-chat-message *ngFor="let msg of chat?.chatMessages" [message]="msg.content"
                 [user]="msg.role"></app-chat-message>
         </div>
     </div>

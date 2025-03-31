@@ -1,4 +1,4 @@
-import { Component, ElementRef, viewChild, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, viewChild, ViewChild } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { ChatMessageComponent } from "./chat-message/chat-message.component";
 import { CommonModule } from '@angular/common';
@@ -7,7 +7,6 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ComponentBase } from '../component-base/component-base.component';
-import { ChatService } from '../../services/chat.service';
 import { ScrollTopModule } from 'primeng/scrolltop';
 import { takeUntil } from 'rxjs';
 import { ConfirmDialog, ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -15,6 +14,11 @@ import { ConfirmationService } from 'primeng/api';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { MessagingService } from '../../services/messaging.service';
 import { MenuService } from '../../services/menu.service';
+import { SocketService } from '../../services/socket.service';
+import { Chat2Service } from '../../services/chat2.service';
+import { ObjectId } from 'mongodb';
+import { ClientChat } from '../../../model/shared-models/chat-models.model';
+import { SocketMessage } from '../../../model/io-sockets.model';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -37,7 +41,8 @@ import { MenuService } from '../../services/menu.service';
 })
 export class ChatSidebarComponent extends ComponentBase {
   constructor(
-    readonly chatService: ChatService,
+    readonly socketService: SocketService,
+    readonly chatService: Chat2Service,
     readonly confirmationService: ConfirmationService,
     readonly messagingService: MessagingService,
     readonly menuService: MenuService,
@@ -49,14 +54,11 @@ export class ChatSidebarComponent extends ComponentBase {
   ngOnInit() {
     this.scrollToBottom(1000);
 
-    this.chatService.messageEvents$.pipe(
-      takeUntil(this.ngDestroy$)
-    ).subscribe((message) => {
-      console.log(`Received message: ${message.message}`);
-      if (message.message === 'receiveMainChatMessage') {
+    this.socketService.subscribeToSocketEvent('receiveChatMessage')
+      .pipe(takeUntil(this.ngDestroy$))
+      .subscribe((message: SocketMessage) => {
         this.scrollToBottom(20);
-      }
-    });
+      });
 
     // When the menu opens, we want to scroll down.
     this.menuService.showMenu$
@@ -67,6 +69,11 @@ export class ChatSidebarComponent extends ComponentBase {
         }
       });
   }
+
+
+  /** Contains the ID of the chat that this component is interacting with. */
+  @Input({ required: true })
+  chatId!: ObjectId;
 
   @ViewChild('chatArea')
   messageContainer!: ElementRef<HTMLDivElement>;
@@ -85,7 +92,7 @@ export class ChatSidebarComponent extends ComponentBase {
   newMessage = '';
 
   get canSend() {
-    return this.newMessage.trim() !== '' && !!this.chatService.mainChat;
+    return this.newMessage.trim() !== '' && !!this.chatService.hasChat(this.chatId);
   }
 
   noMessagesMessage = `Begin your chat here!  Ashlie is the site's AI.  Type her a message to get started.`;
@@ -106,17 +113,22 @@ export class ChatSidebarComponent extends ComponentBase {
       return;
     }
 
-    this.chatService.sendChatMessage(this.newMessage);
+    this.chatService.sendChatMessage(this.chatId, this.newMessage);
     this.newMessage = '';
     this.messageInput.nativeElement.focus();
     this.scrollToBottom(500);
   }
 
+  /** Returns the chat we're currently working with, if we have one. */
+  get chat(): ClientChat | undefined {
+    return this.chatService.chats.find(c => c._id === this.chatId);
+  }
+
   newChat(): void {
     this.confirmationService.confirm({
       message: 'Are you sure you want to start a new chat, and lose your old one?',
-      accept: () => {
-        this.chatService.startNewMainChat();
+      accept: async () => {
+        this.chatId = await this.chatService.startNewMainChat();
       }
     });
   }

@@ -8,7 +8,8 @@
     <router-outlet></router-outlet>
   </div>
   <div class="right-side">
-    <app-chat-sidebar *ngIf="(isLoginVisible$ | async) && !(pageSizeService.skinnyPage$ | async)"></app-chat-sidebar>
+    <app-chat-sidebar [chatId]="(mainChatId$ | async)!"
+      *ngIf="!!(mainChatId$ | async) && (isLoginVisible$ | async) && !(pageSizeService.skinnyPage$ | async)"></app-chat-sidebar>
   </div>
 </div>
 
@@ -19,8 +20,8 @@
     <app-login></app-login>
   </div>
 
-  <div *ngIf="(userService.isUserLoggedIn$ | async)">
-    <app-chat-sidebar></app-chat-sidebar>
+  <div *ngIf="!!(mainChatId$ | async) && (userService.isUserLoggedIn$ | async)">
+    <app-chat-sidebar [chatId]="(mainChatId$ | async)!"></app-chat-sidebar>
   </div>
 
   <div>

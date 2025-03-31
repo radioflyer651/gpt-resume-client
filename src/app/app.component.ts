@@ -17,7 +17,7 @@ import { ServerEventsService } from './services/server-events.service';
 import { PageSizeService } from './services/page-size.service';
 import { MenuService } from './services/menu.service';
 import { ButtonModule } from 'primeng/button';
-import { Chat2Service } from './services/chat2.service';
+import { ChatService } from './services/chat.service';
 import { ObjectId } from 'mongodb';
 
 @Component({
@@ -38,7 +38,7 @@ import { ObjectId } from 'mongodb';
     MessageService,
     ServerEventsService,
     PageSizeService,
-    Chat2Service,
+    ChatService,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -51,7 +51,7 @@ export class AppComponent extends ComponentBase {
     readonly llmFunctionService: ServerEventsService,
     readonly pageSizeService: PageSizeService,
     readonly menuService: MenuService,
-    readonly chatService: Chat2Service,
+    readonly chatService: ChatService,
   ) {
     super();
 

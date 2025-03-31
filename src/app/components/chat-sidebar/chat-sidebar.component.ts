@@ -15,7 +15,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { MessagingService } from '../../services/messaging.service';
 import { MenuService } from '../../services/menu.service';
 import { SocketService } from '../../services/socket.service';
-import { Chat2Service } from '../../services/chat2.service';
+import { ChatService } from '../../services/chat.service';
 import { ObjectId } from 'mongodb';
 import { ClientChat } from '../../../model/shared-models/chat-models.model';
 import { SocketMessage } from '../../../model/io-sockets.model';
@@ -42,7 +42,7 @@ import { SocketMessage } from '../../../model/io-sockets.model';
 export class ChatSidebarComponent extends ComponentBase {
   constructor(
     readonly socketService: SocketService,
-    readonly chatService: Chat2Service,
+    readonly chatService: ChatService,
     readonly confirmationService: ConfirmationService,
     readonly messagingService: MessagingService,
     readonly menuService: MenuService,

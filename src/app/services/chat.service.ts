@@ -13,7 +13,7 @@ import { ChatTypes } from '../../model/shared-models/chat-types.model';
 @Injectable({
   providedIn: 'root'
 })
-export class Chat2Service {
+export class ChatService {
   constructor(
     readonly tokenService: TokenService,
     readonly messagingService: MessagingService,

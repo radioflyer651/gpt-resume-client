@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ChatService } from './chat.service.ts.obsolete';
+import { ChatService } from './chat.service';
 
-describe('ChatService', () => {
+describe('Chat2Service', () => {
   let service: ChatService;
 
   beforeEach(() => {

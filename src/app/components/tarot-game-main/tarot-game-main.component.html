@@ -1,1 +1,14 @@
-<p>tarot-game-main works!</p>
+<p-tabs>
+    <p-tabs [tabindex]="tabId">
+        <p-tab *ngFor="let game of gameService.games; let i = index"> Game {{ i }} </p-tab>
+    </p-tabs>
+    <p-tabpanels>
+        <p-tabpanel *ngFor="let game of gameService.games">
+
+        </p-tabpanel>
+    </p-tabpanels>
+</p-tabs>
+
+<div>
+    
+</div>

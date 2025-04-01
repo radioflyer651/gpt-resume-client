@@ -8,6 +8,7 @@ import { TokenService } from './token.service';
 import { ChatInfo, ClientChat } from '../../model/shared-models/chat-models.model';
 import { ObjectId } from 'mongodb';
 import { TarotGame } from '../../model/shared-models/tarot-game/tarot-game.model';
+import { ChatTypes } from '../../model/shared-models/chat-types.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -146,6 +147,11 @@ export class ClientApiService {
   /** Gets all chats for the current user. */
   getChatList(): Observable<ChatInfo[]> {
     return this.http.get<ChatInfo[]>(this.constructUrl(`chat/for-user`), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Returns all chats of a specified type from the server. */
+  getChatsOfType(chatType: ChatTypes): Observable<ClientChat[]> {
+    return this.http.get<ClientChat[]>(this.constructUrl(`chats-by-type/${chatType}`), this.optionsBuilder.withAuthorization());
   }
 
   getTarotGames(): Observable<TarotGame[]> {

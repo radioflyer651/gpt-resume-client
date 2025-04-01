@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { TarotGame } from '../../model/shared-models/tarot-game/tarot-game.model';
+import { TarotGame } from '../../../model/shared-models/tarot-game/tarot-game.model';
 import { BehaviorSubject, lastValueFrom, shareReplay } from 'rxjs';
-import { ClientApiService } from './client-api.service';
-import { ClientChat } from '../../model/shared-models/chat-models.model';
-import { SocketService } from './socket.service';
-import { ChatService } from './chat.service';
-import { TarotCardReference } from '../../model/shared-models/tarot-game/tarot-card.model';
+import { ClientApiService } from '../client-api.service';
+import { ClientChat } from '../../../model/shared-models/chat-models.model';
+import { SocketService } from '../socket.service';
+import { ChatService } from '../chat.service';
+import { TarotCardReference } from '../../../model/shared-models/tarot-game/tarot-card.model';
 import { ObjectId } from 'mongodb';
+import { ChatTypes } from '../../../model/shared-models/chat-types.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,14 @@ export class TarotGameService {
     readonly socketService: SocketService,
     readonly chatService: ChatService,
   ) {
+    this.initialize();
+  }
+
+  /** Initializes the service. */
+  private initialize(): void {
+    this.initializeSocketService();
     this.loadTarotGames();
+    this.loadTarotChats();
   }
 
   private initializeSocketService(): void {
@@ -39,15 +47,43 @@ export class TarotGameService {
     this._games.next(newVal);
   }
 
+  private _isLoadingChats = false;
+
+  get isLoadingChats(): boolean {
+    return this._isLoadingChats;
+  }
+  /** Loads the tarot chats to the chat service. */
+  async loadTarotChats(): Promise<void> {
+    try {
+      this._isLoadingChats = true;
+      await this.chatService.loadChatsOfType(ChatTypes.TarotGame);
+
+    } finally {
+      this._isLoadingChats = false;
+    }
+  }
+
+  private _isLoadingGames = false;
+
+  get isLoadingGames(): boolean {
+    return this._isLoadingGames;
+  }
+
   /** Gets all games form the server, and overwrites them locally. */
   async loadTarotGames(): Promise<TarotGame[]> {
-    const apiCall = this.apiClient.getTarotGames().pipe(shareReplay(1));
+    this._isLoadingGames = true;
 
-    apiCall.subscribe(games => {
-      this.games = games;
-    });
+    try {
+      const apiCall = this.apiClient.getTarotGames().pipe(shareReplay(1));
 
-    return lastValueFrom(apiCall);
+      apiCall.subscribe(games => {
+        this.games = games;
+      });
+
+      return lastValueFrom(apiCall);
+    } finally {
+      this._isLoadingGames = false;
+    }
   }
 
   /** Calls the socket.io to create a new tarot game, and returns the game and the new chat. */
@@ -62,6 +98,9 @@ export class TarotGameService {
 
     // Add the chat to the chat service.
     this.chatService.addChat(result.tarotChat);
+
+    // Add the game to the games list.
+    this.games.push(result.game);
 
     // Return the result.
     return result.game;

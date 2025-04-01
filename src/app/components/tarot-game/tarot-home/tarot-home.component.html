@@ -1,17 +1,24 @@
-<div>
-    <h2>Tarot Game</h2>
-</div>
-<p-tabs>
-    <p-tabs [tabindex]="tabId">
-        <p-tab *ngFor="let game of gameService.games; let i = index"> Game {{ i }} </p-tab>
+<div *ngIf="gameService.games.length > 0 && selectedGameId !== ''">
+    <p-tabs [(value)]="selectedGameId">
+        <p-tablist>
+            <p-tab [value]="game._id" *ngFor="let game of gameService.games; let i = index">
+                Game {{ i }}
+            </p-tab>
+        </p-tablist>
+        <p-tabpanels>
+            <p-tabpanel *ngFor="let game of gameService.games;let i = index" [value]="game._id">
+                <div>
+                    Tab: {{ i }}
+                </div>
+            </p-tabpanel>
+        </p-tabpanels>
     </p-tabs>
-    <p-tabpanels>
-        <p-tabpanel *ngFor="let game of gameService.games">
+</div>
 
-        </p-tabpanel>
-    </p-tabpanels>
-</p-tabs>
+<div *ngIf="gameService.games.length === 0 && !isLoadingGames">
+    You have no games yet!
+</div>
 
-<div>
-    
+<div *ngIf="isLoadingGames">
+    Loading Games
 </div>

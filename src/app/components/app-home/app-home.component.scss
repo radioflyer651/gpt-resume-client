@@ -1,0 +1,5 @@
+@import "../../../mixins";
+
+.page-container {
+    @extend %container-page-layout;
+}

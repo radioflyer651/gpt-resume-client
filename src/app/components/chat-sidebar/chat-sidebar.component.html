@@ -10,12 +10,12 @@
     <hr>
 
     <div class="chat-area" #chatArea>
-        <div class="chat-interior" *ngIf="!!chat">
+        <div class="chat-interior" *ngIf="!!(chat$ | async )">
             <div class="no-messages"
-                *ngIf="chat?.chatMessages && chat!.chatMessages.length < 1">
+                *ngIf="(chat$ | async )?.chatMessages && (chat$ | async )!.chatMessages.length < 1">
                 <app-chat-message [message]="noMessagesMessage" [user]="'assistant'"></app-chat-message>
             </div>
-            <app-chat-message *ngFor="let msg of chat?.chatMessages" [message]="msg.content"
+            <app-chat-message *ngFor="let msg of (chat$ | async )?.chatMessages" [message]="msg.content"
                 [user]="msg.role"></app-chat-message>
         </div>
     </div>
@@ -23,7 +23,7 @@
     <hr>
 
     <div class="text-center">
-        <p-button icon="pi pi-arrow-down" [raised]="true" [rounded]="true" severity="help" (click)="scrollToBottom()"/>
+        <p-button icon="pi pi-arrow-down" [raised]="true" [rounded]="true" severity="help" (click)="scrollToBottom()" />
     </div>
 
     <div>
@@ -34,7 +34,8 @@
             <textarea #messageInput rows="4" cols="30" pTextarea [(ngModel)]="newMessage"></textarea>
         </div>
         <div class="clearfix button-area">
-            <button pButton tabindex="-1" [raised]="true" (click)="newChat()" severity="danger"> Start New Chat
+            <button pButton tabindex="-1" *ngIf="canStartNewChat" [raised]="true" (click)="newChat()" severity="danger">
+                Start New Chat
             </button>
             <button pButton [raised]="true" label="Send" (click)="sendMessage()">
             </button>

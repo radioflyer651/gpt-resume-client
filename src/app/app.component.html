@@ -2,31 +2,32 @@
 
 <div class="site-content-container">
   <div class="left-side">
-    <app-login *ngIf="!(isLoginVisible$ | async) && !(pageSizeService.skinnyPage$ | async)"></app-login>
   </div>
   <div class="content">
     <router-outlet></router-outlet>
   </div>
   <div class="right-side">
-    <app-chat-sidebar [chatId]="(mainChatId$ | async)!"
-      *ngIf="!!(mainChatId$ | async) && (isLoginVisible$ | async) && !(pageSizeService.skinnyPage$ | async)"></app-chat-sidebar>
   </div>
 </div>
 
-<p-drawer [(visible)]="menuService.showMenu" position="right" position="full">
-  <div>Menu</div>
+<p-drawer [(visible)]="menuService.showMenu" position="left">
+  <h3>Menu</h3>
 
-  <div *ngIf="!(userService.isUserLoggedIn$ | async)">
+  <nav class="nav-links">
+    <a routerLink="/" (click)="closeMenu()">Home</a>
+    <a routerLink="/tarot-game" (click)="closeMenu()">Tarot Games</a>
+  </nav>
+
+  <div *ngIf="!(userService.isUserLoggedIn$ | async) && (pageSizeService.skinnyPage$ | async)">
     <app-login></app-login>
   </div>
 
-  <div *ngIf="!!(mainChatId$ | async) && (userService.isUserLoggedIn$ | async)">
-    <app-chat-sidebar [chatId]="(mainChatId$ | async)!"></app-chat-sidebar>
-  </div>
-
-  <div>
+  <div class="logout-button-wrapper">
     <p-button *ngIf="(userService.isUserLoggedIn$ | async)" (click)="logout()">Logout</p-button>
   </div>
+
 </p-drawer>
 
 <p-toast />
+
+<ng-template #emptyTemplate></ng-template>

@@ -1,0 +1,19 @@
+@import "./style_variables";
+
+%container-page-layout {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+
+    .left-side,
+    .right-side {
+        // flex: 1 1 auto;
+        width: $sidebar-width;
+        padding: $side-bar-padding;
+        padding-top: 0;
+    }
+
+    .content {
+        width: $content-width;
+    }
+}

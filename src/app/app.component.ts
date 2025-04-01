@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, ContentChild, TemplateRef } from '@angular/core';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { SiteHeaderComponent } from "./components/site-header/site-header.component";
 import { DrawerModule } from 'primeng/drawer';
 import { TextareaModule } from 'primeng/textarea';
@@ -31,14 +31,13 @@ import { ObjectId } from 'mongodb';
     FormsModule,
     ToastModule,
     LoginComponent,
-    ChatSidebarComponent,
     ButtonModule,
+    RouterModule,
   ],
   providers: [
     MessageService,
     ServerEventsService,
     PageSizeService,
-    ChatService,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -57,6 +56,9 @@ export class AppComponent extends ComponentBase {
 
   }
 
+  @ContentChild('#rightGutterContent')
+  rightGutterTemplate?: TemplateRef<any>;
+
   ngOnInit() {
     // Subscribe to the message service and show new messages, as toast, when they are received.
     this.messagingService.messageEvent$.pipe(
@@ -69,25 +71,11 @@ export class AppComponent extends ComponentBase {
         summary: message.content
       });
     });
-
-    // When the user logs in or out, we want the menu to close (assuming it was open).
-    this.userService.isUserLoggedIn$.subscribe(value => {
-      this.menuService.showMenu = false;
-    });
-
-    // Hook up the visibility of the login control.
-    this.isLoginVisible$ = this.userService.isUserLoggedIn$;
-
-    this.mainChatId$ = this.chatService.mainChat$.pipe(
-      map(c => c?._id)
-    );
   }
 
-  mainChatId$!: Observable<ObjectId | undefined>;
-
-  /** Observable emitting a boolean value, indicating whether or not the login
-   *   control should be visible. */
-  isLoginVisible$!: Observable<boolean>;
+  closeMenu(): void {
+    this.menuService.showMenu = false;
+  }
 
   logout(): void {
     this.userService.logout();

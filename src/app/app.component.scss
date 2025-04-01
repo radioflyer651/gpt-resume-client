@@ -1,4 +1,5 @@
 @import "../style_variables";
+@import "../mixins";
 
 .site-content-container {
     font-family: "Segoe UI", Arial, sans-serif;
@@ -10,20 +11,20 @@
     line-height: 1.4;
 }
 
-.site-content-container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
+// .site-content-container {
+//     @extend %container-page-layout;
+// }
 
-    .left-side,
-    .right-side {
-        // flex: 1 1 auto;
-        width: $sidebar-width;
-        padding: $side-bar-padding;
-        padding-top: 0;
-    }
+.logout-button-wrapper {
+    margin-top: 30px;
+}
 
-    .content {
-        width: $content-width;
+.nav-links {
+    a {
+        font-size: 1.2rem;
+        display: block;
+        cursor: pointer;
+
+        margin-bottom: 10px;
     }
 }

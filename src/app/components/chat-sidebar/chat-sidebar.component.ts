@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ComponentBase } from '../component-base/component-base.component';
 import { ScrollTopModule } from 'primeng/scrolltop';
-import { takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, takeUntil } from 'rxjs';
 import { ConfirmDialog, ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { SplitButtonModule } from 'primeng/splitbutton';
@@ -19,6 +19,8 @@ import { ChatService } from '../../services/chat.service';
 import { ObjectId } from 'mongodb';
 import { ClientChat } from '../../../model/shared-models/chat-models.model';
 import { SocketMessage } from '../../../model/io-sockets.model';
+import { ReadonlySubject } from '../../../utils/readonly-subject';
+import { ChatTypes } from '../../../model/shared-models/chat-types.model';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -68,18 +70,53 @@ export class ChatSidebarComponent extends ComponentBase {
           this.scrollToBottom(500);
         }
       });
+
+    this._chat = new ReadonlySubject(combineLatest([this.chatId$, this.chatService.chats$])
+      .pipe(
+        map(([chatId, chats]) => chats.find(c => c._id === chatId))
+      ));
+
+    // When the chat changes, we need to scroll down.
+    this.chat$.pipe(
+      takeUntil(this.ngDestroy$)
+    ).subscribe(chat => {
+      this.scrollToBottom();
+    });
   }
 
+  // #region chatId
+  private readonly _chatId = new BehaviorSubject<ObjectId>('');
+  readonly chatId$ = this._chatId.asObservable();
 
   /** Contains the ID of the chat that this component is interacting with. */
   @Input({ required: true })
-  chatId!: ObjectId;
+  get chatId(): ObjectId {
+    return this._chatId.getValue();
+  }
+
+  set chatId(newVal: ObjectId) {
+    this._chatId.next(newVal);
+  }
+  // #endregion
 
   @ViewChild('chatArea')
   messageContainer!: ElementRef<HTMLDivElement>;
 
   @ViewChild('messageInput')
   messageInput!: ElementRef<HTMLInputElement>;
+
+  // #region chat
+  private _chat!: ReadonlySubject<ClientChat | undefined>;
+
+  /** Observable that returns the selected chat. */
+  get chat$() {
+    return this._chat.observable$;
+  }
+
+  get chat(): ClientChat | undefined {
+    return this._chat.value;
+  }
+  // #endregion
 
   scrollToBottom(delay: number = 0): void {
     setTimeout(() => {
@@ -105,7 +142,7 @@ export class ChatSidebarComponent extends ComponentBase {
   ];
 
   sendMessage(): void {
-    if (!this.canSend) {
+    if (this.newMessage.trim() === '') {
       this.messagingService.sendUserMessage({
         level: 'error',
         content: 'You must enter a message to send.'
@@ -119,9 +156,9 @@ export class ChatSidebarComponent extends ComponentBase {
     this.scrollToBottom(500);
   }
 
-  /** Returns the chat we're currently working with, if we have one. */
-  get chat(): ClientChat | undefined {
-    return this.chatService.chats.find(c => c._id === this.chatId);
+  /** Returns whether or not we can shoe the "Start New Chat" button. */
+  get canStartNewChat(): boolean {
+    return this.chat?.chatType === ChatTypes.Main;
   }
 
   newChat(): void {

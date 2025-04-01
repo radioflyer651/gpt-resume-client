@@ -29,6 +29,12 @@
     background-color: gray;
     border-radius: 15px;
 
+    opacity: 0.85;
+
+    &:hover {
+        opacity: 1;
+    }
+
     .user-name {
         font-weight: bold;
         font-size: 1.2em;

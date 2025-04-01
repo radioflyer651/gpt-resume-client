@@ -1,0 +1,9 @@
+@import "../../../../mixins";
+
+.tarot-game-container {
+    @extend %container-page-layout;
+
+    .page-title {
+        text-align: center;
+    }
+}

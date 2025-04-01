@@ -1,0 +1,15 @@
+<div class="page-container">
+    <div class="left-side">
+        <app-login *ngIf="!(isLoginVisible$ | async) && !(pageSizeService.skinnyPage$ | async)"></app-login>
+    </div>
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
+    <div class="right-side">
+        <app-chat-sidebar [chatId]="(mainChatId$ | async)!"
+            *ngIf="!!(mainChatId$ | async) && (isLoginVisible$ | async) && !(pageSizeService.skinnyPage$ | async)"></app-chat-sidebar>
+        <div>
+            {{ !!(mainChatId$ | async) && (isLoginVisible$ | async) && !(pageSizeService.skinnyPage$ | async) }}
+        </div>
+    </div>
+</div>

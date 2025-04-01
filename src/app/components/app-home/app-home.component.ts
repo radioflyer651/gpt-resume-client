@@ -18,6 +18,7 @@ import { MessagingService } from '../../services/messaging.service';
 import { PageSizeService } from '../../services/page-size.service';
 import { ServerEventsService } from '../../services/server-events.service';
 import { UserService } from '../../services/user.service';
+import { ChatSlideoutComponent } from '../chat-slideout/chat-slideout.component';
 
 @Component({
   selector: 'app-app-home',
@@ -31,6 +32,7 @@ import { UserService } from '../../services/user.service';
     LoginComponent,
     ChatSidebarComponent,
     ButtonModule,
+    ChatSlideoutComponent,
   ],
   templateUrl: './app-home.component.html',
   styleUrl: './app-home.component.scss'

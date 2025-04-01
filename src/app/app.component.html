@@ -1,5 +1,12 @@
 <app-site-header></app-site-header>
 
+<div class="floater-container" *ngIf="(pageSizeService.skinnyPage$ | async)">
+  <div class="floater">
+    <p-button label="Chat" icon="pi pi-sparkles" [rounded]="true" (click)="toggleChatSlideout()"
+      [raised]="true"></p-button>
+  </div>
+</div>
+
 <div class="site-content-container">
   <div class="left-side">
   </div>

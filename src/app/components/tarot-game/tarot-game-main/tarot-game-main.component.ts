@@ -7,6 +7,8 @@ import { RouterModule } from '@angular/router';
 import { ChatSidebarComponent } from "../../chat-sidebar/chat-sidebar.component";
 import { TarotChatService } from '../../../services/tarot-game/tarot-chat.service';
 import { MessagingService } from '../../../services/messaging.service';
+import { PageSizeService } from '../../../services/page-size.service';
+import { ChatSlideoutComponent } from "../../chat-slideout/chat-slideout.component";
 
 @Component({
   selector: 'app-tarot-game-main',
@@ -14,8 +16,9 @@ import { MessagingService } from '../../../services/messaging.service';
     RouterModule,
     CommonModule,
     ButtonModule,
-    ChatSidebarComponent
-  ],
+    ChatSidebarComponent,
+    ChatSlideoutComponent
+],
   templateUrl: './tarot-game-main.component.html',
   styleUrl: './tarot-game-main.component.scss',
 })
@@ -25,6 +28,7 @@ export class TarotGameMainComponent {
     readonly chatService: ChatService,
     readonly tarotChatService: TarotChatService,
     readonly messagingService: MessagingService,
+    readonly pageSizeService: PageSizeService,
   ) {
   }
 

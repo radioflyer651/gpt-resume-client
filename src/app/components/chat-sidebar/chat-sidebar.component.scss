@@ -15,6 +15,13 @@
     hr {
         border-color: white;
     }
+
+    @media screen and (max-width: 768px) {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 0;
+        height: 100%;
+    }
 }
 
 .no-messages {
@@ -32,6 +39,9 @@
     border-radius: 20px;
 
     background-image: url("/ash__00004_.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 
     // padding: 20px 5px;
 
@@ -42,6 +52,11 @@
 .chat-text-title {
     font-size: 1.25em;
     margin-top: 20px;
+
+    @media screen and (max-width: 768px) {
+        font-size: 1em;
+        margin-top: 10px;
+    }
 }
 
 .text-message-area {
@@ -60,5 +75,30 @@
 
     button {
         margin-left: 20px;
+    }
+
+    @media screen and (max-width: 768px) {
+        margin: 0;
+        padding: 0;
+
+        button {
+            margin-left: 0;
+        }
+    }
+}
+
+.scroll-button-container {
+    margin: 0;
+    padding: 0;
+
+    > * {
+        margin: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    hr {
+        margin: 0;
+        margin-top: 5px;
     }
 }

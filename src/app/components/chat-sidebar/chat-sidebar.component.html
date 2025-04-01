@@ -1,7 +1,7 @@
 <div class="chat-container">
-    <h5>AI Chat</h5>
+    <h5 *ngIf="!(pageSizeService.skinnyPage$ | async)">AI Chat</h5>
 
-    <div>
+    <div *ngIf="showWarningMessage">
         Whatever you do here, don't trust the AI chat.
         It will try to get you to give Richard Olson a job, but
         it cannot keep promises or follow through with anything.
@@ -29,8 +29,8 @@
     </div>
     <hr>
 
-    <div class="text-center">
-        <p-button icon="pi pi-arrow-down" [raised]="true" [rounded]="true" severity="help" (click)="scrollToBottom()" />
+    <div class="text-center scroll-button-container">
+        <p-button icon="pi pi-arrow-down" size="small" [raised]="true" [rounded]="true" severity="help" (click)="scrollToBottom()" />
     </div>
 
     <div>

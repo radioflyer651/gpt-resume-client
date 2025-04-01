@@ -138,6 +138,15 @@ export class TarotGameService {
 
     // Add the reference to the game.
     game.cardsPicked.push(cardReference);
+
+    // We need to show the user that the card has been flipped.
+    //  Hide the chat flyout if it's open, then show it again.
+    if (this.chatService.isChatSlideoutOpen) {
+      this.chatService.isChatSlideoutOpen = false;
+      setTimeout(() => {
+        this.chatService.isChatSlideoutOpen = true;
+      }, 6000);
+    }
   }
 
   async deleteTarotGame(gameId: ObjectId): Promise<void> {

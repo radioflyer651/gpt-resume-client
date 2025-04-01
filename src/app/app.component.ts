@@ -5,7 +5,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { TextareaModule } from 'primeng/textarea';
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { MessagingService } from './services/messaging.service';
 import { ComponentBase } from './components/component-base/component-base.component';
 import { map, Observable, takeUntil } from 'rxjs';
@@ -83,5 +83,10 @@ export class AppComponent extends ComponentBase {
 
   logout(): void {
     this.userService.logout();
+  }
+
+  /** Toggles whether or not the chat window is open. */
+  toggleChatSlideout() {
+    this.chatService.isChatSlideoutOpen = !this.chatService.isChatSlideoutOpen;
   }
 }

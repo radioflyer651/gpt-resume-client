@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ComponentBase } from '../component-base/component-base.component';
 import { ScrollTopModule } from 'primeng/scrolltop';
-import { BehaviorSubject, combineLatest, map, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, takeUntil, tap } from 'rxjs';
 import { ConfirmDialog, ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { SplitButtonModule } from 'primeng/splitbutton';
@@ -22,6 +22,7 @@ import { SocketMessage } from '../../../model/io-sockets.model';
 import { ReadonlySubject } from '../../../utils/readonly-subject';
 import { ChatTypes } from '../../../model/shared-models/chat-types.model';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { PageSizeService } from '../../services/page-size.service';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -50,12 +51,14 @@ export class ChatSidebarComponent extends ComponentBase {
     readonly confirmationService: ConfirmationService,
     readonly messagingService: MessagingService,
     readonly menuService: MenuService,
+    readonly pageSizeService: PageSizeService,
   ) {
     super();
 
   }
 
   ngOnInit() {
+    console.log('Hi there!');
     this.scrollToBottom(1000);
 
     this.socketService.subscribeToSocketEvent('receiveChatMessage')
@@ -65,7 +68,7 @@ export class ChatSidebarComponent extends ComponentBase {
       });
 
     // When the menu opens, we want to scroll down.
-    this.menuService.showMenu$
+    this.chatService.isChatSlideoutOpen$
       .pipe(takeUntil(this.ngDestroy$))
       .subscribe(visible => {
         if (visible) {
@@ -161,6 +164,9 @@ export class ChatSidebarComponent extends ComponentBase {
     await this.chatService.sendChatMessage(this.chatId, newMessage);
     this.isAwaitingResponse = false;
   }
+
+  /** Controls the warning message on the top of the chat dialog. */
+  showWarningMessage = false;
 
   /** Boolean value indicating whether or not we have a chat message in flight
    *   and we're awaiting a reply.

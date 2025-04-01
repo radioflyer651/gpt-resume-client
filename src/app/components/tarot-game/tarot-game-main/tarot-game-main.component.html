@@ -10,6 +10,9 @@
         <router-outlet></router-outlet>
     </div>
     <div class="right-side">
-        <app-chat-sidebar *ngIf="isChatSet" [chatId]="chatId!"></app-chat-sidebar>
+        <app-chat-sidebar [chatId]="chatId!"
+            *ngIf="isChatSet && !(pageSizeService.skinnyPage$ | async)"></app-chat-sidebar>
     </div>
 </div>
+
+<app-chat-slideout *ngIf="chatId" [chatId]="chatId"></app-chat-slideout>

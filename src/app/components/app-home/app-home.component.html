@@ -10,3 +10,6 @@
             *ngIf="showChatWindow && !(pageSizeService.skinnyPage$ | async)"></app-chat-sidebar>
     </div>
 </div>
+
+
+<app-chat-slideout *ngIf="(mainChatId$ | async)" [chatId]="(mainChatId$ | async)!"></app-chat-slideout>

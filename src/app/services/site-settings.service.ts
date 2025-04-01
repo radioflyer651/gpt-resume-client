@@ -27,8 +27,7 @@ export class SiteSettingsService {
 
   // #region siteSettings
   private readonly _siteSettings = new BehaviorSubject<SiteSettings>({ type: 'site-settings', allowAudioChat: false });
-  readonly siteSettings$ = this._siteSettings.asObservable().pipe(
-    tap((v) => console.log(v)));
+  readonly siteSettings$ = this._siteSettings.asObservable();
 
   get siteSettings(): SiteSettings {
     return this._siteSettings.getValue();

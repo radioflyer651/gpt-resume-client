@@ -9,6 +9,7 @@ import { BehaviorSubject, filter, from, last, lastValueFrom, map, Observable, of
 import { ChatTypes } from '../../model/shared-models/chat-types.model';
 import { ReadonlySubject } from '../../utils/readonly-subject';
 import { constructApiUrl, getApiBaseUrl } from '../../utils/get-api-base-url.utils';
+import { PageSizeService } from './page-size.service';
 
 /** Contains the chats currently being worked with by this user.
  *   This service handles interactions occurring with this chat. */
@@ -21,6 +22,7 @@ export class ChatService {
     readonly messagingService: MessagingService,
     readonly apiClientService: ClientApiService,
     readonly socketService: SocketService,
+    readonly pageSizeService: PageSizeService,
   ) {
     this.initialize();
   }
@@ -166,6 +168,12 @@ export class ChatService {
       // Inform observers of the update.
       this.chats = this.chats;
     });
+
+    /** If the page size changes, we need the chat flyout to close. */
+    this.pageSizeService.pageResized$.subscribe(() => {
+      // Close the slideout.
+      this.isChatSlideoutOpen = false;
+    });
   }
 
   private initializeReceiveChatMessages(): void {
@@ -249,4 +257,18 @@ export class ChatService {
       map(c => c.message)
     );
   }
+
+  // #region isChatSlideoutOpen
+  private readonly _isChatSlideoutOpen = new BehaviorSubject<boolean>(false);
+  readonly isChatSlideoutOpen$ = this._isChatSlideoutOpen.asObservable();
+
+  /** Controls the flyout of the chat window for small screens. */
+  get isChatSlideoutOpen(): boolean {
+    return this._isChatSlideoutOpen.getValue();
+  }
+
+  set isChatSlideoutOpen(newVal: boolean) {
+    this._isChatSlideoutOpen.next(newVal);
+  }
+  // #endregion
 }

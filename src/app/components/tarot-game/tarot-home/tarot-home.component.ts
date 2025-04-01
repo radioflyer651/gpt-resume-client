@@ -9,6 +9,7 @@ import { TarotChatService } from '../../../services/tarot-game/tarot-chat.servic
 import { ObjectId } from 'mongodb';
 import { ComponentBase } from '../../component-base/component-base.component';
 import { first, take, takeUntil } from 'rxjs';
+import { TarotCardComponent } from "../tarot-card/tarot-card.component";
 
 @Component({
   selector: 'app-tarot-home',
@@ -17,7 +18,8 @@ import { first, take, takeUntil } from 'rxjs';
     CommonModule,
     FormsModule,
     ButtonModule,
-  ],
+    TarotCardComponent
+],
   templateUrl: './tarot-home.component.html',
   styleUrl: './tarot-home.component.scss'
 })

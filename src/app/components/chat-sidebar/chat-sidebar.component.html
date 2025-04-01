@@ -15,7 +15,8 @@
                 *ngIf="(chat$ | async )?.chatMessages && (chat$ | async )!.chatMessages.length < 1">
                 <app-chat-message [message]="noMessagesMessage" [user]="'assistant'"></app-chat-message>
             </div>
-            <app-chat-message *ngFor="let msg of (chat$ | async )?.chatMessages" [message]="msg.content"
+            <app-chat-message *ngFor="let msg of (chat$ | async )?.chatMessages; let index = index"
+                [message]="msg.content" [isLatest]="chat && index === chat!.chatMessages.length-1"
                 [user]="msg.role"></app-chat-message>
         </div>
     </div>

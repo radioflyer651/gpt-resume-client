@@ -1,4 +1,4 @@
-<div [class]="sideClass + ' chat-message'">
+<div [class]="sideClass + ' chat-message'" [ngClass]="{'last-image':isLatest}">
     <div class="user-name">
         {{ ownerName }}
     </div>

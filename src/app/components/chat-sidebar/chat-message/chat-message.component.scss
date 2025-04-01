@@ -29,7 +29,7 @@
     background-color: gray;
     border-radius: 15px;
 
-    opacity: 0.85;
+    opacity: 0.45;
 
     &:hover {
         opacity: 1;
@@ -40,3 +40,8 @@
         font-size: 1.2em;
     }
 }
+
+.last-image {
+    opacity: 0.85;
+}
+

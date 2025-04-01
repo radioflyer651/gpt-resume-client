@@ -1,0 +1,32 @@
+.tarot-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+
+    position: relative;
+}
+
+img {
+    width: 150px;
+    height: 100%;
+    margin: 10px;
+    transition: transform 0.3s ease-in-out;
+
+    border-radius: 18px;
+}
+.card-overlay {
+    position: absolute;
+    bottom: 25%;
+    width: 66.67%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid rgb(141, 120, 0);
+}

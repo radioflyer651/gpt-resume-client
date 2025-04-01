@@ -30,9 +30,9 @@ export class TarotGameService {
   }
 
   private initializeSocketService(): void {
-    this.socketService.subscribeToSocketEvent('receiveTarotFlipCard')
+    this.socketService.subscribeToSocketEvent('receiveTarotCardFlip')
       .subscribe(event => {
-        this.receiveTarotFlipCard(event.args[0], event.args[1]);
+        this.receiveTarotCardFlip(event.args[0], event.args[1]);
       });
   }
 
@@ -107,7 +107,7 @@ export class TarotGameService {
   }
 
   /** Receives a flipped card from the server. */
-  receiveTarotFlipCard(gameId: ObjectId, cardReference: TarotCardReference): void {
+  receiveTarotCardFlip(gameId: ObjectId, cardReference: TarotCardReference): void {
     // Find the game.
     const game = this.games.find(g => g._id === gameId);
 

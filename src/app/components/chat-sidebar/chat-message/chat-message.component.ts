@@ -45,6 +45,11 @@ export class ChatMessageComponent {
   @Input()
   message!: string;
 
+  /** Boolean value indicating whether or not this chat message is the last one
+   *   in the chat.  This message remains more opac than the others. */
+  @Input()
+  isLatest?: boolean;
+
   get safeMessage(): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(this.message);
   }

@@ -7,8 +7,8 @@
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel *ngFor="let game of gameService.games;let i = index" [value]="game._id">
-                <div>
-                    Tab: {{ i }}
+                <div class="card-container">
+                    <app-tarot-card *ngFor="let card of game.cardsPicked" [cardReference]="card"></app-tarot-card>
                 </div>
             </p-tabpanel>
         </p-tabpanels>

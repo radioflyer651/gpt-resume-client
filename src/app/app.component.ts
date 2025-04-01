@@ -20,6 +20,7 @@ import { ButtonModule } from 'primeng/button';
 import { ChatService } from './services/chat.service';
 import { ObjectId } from 'mongodb';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DockModule } from 'primeng/dock';
 
 @Component({
   selector: 'app-root',
@@ -35,11 +36,11 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     ButtonModule,
     RouterModule,
     ConfirmDialogModule,
+    DockModule,
   ],
   providers: [
     MessageService,
     ServerEventsService,
-    PageSizeService,
     ConfirmationService,
   ],
   templateUrl: './app.component.html',

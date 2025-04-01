@@ -3,32 +3,59 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 100%;
+    
+    min-width: 100px;
 
     position: relative;
+
+    .card-overlay {
+        font-weight: bold;
+        text-shadow: 0px -3px 2px black;
+        position: absolute;
+        bottom: 8%;
+        width: 66.67%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.75);
+        color: white;
+        text-align: center;
+        padding: 5px 3px;
+        border-radius: 8px;
+        border: 2px solid rgb(141, 120, 0);
+
+        font-size: 0.6em;
+        @media (min-width: 768px) {
+            font-size: 0.8em;
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 1em;
+        }
+    }
+    
+    .card-overlay_OLD {
+        font-weight: bold;
+        text-shadow: 0px -3px 2px black;
+        position: absolute;
+        bottom: 8%;
+        width: 66.67%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.75);
+        color: white;
+        text-align: center;
+        padding: 5px 3px;
+        border-radius: 8px;
+        border: 2px solid rgb(141, 120, 0);
+    }
 }
 
 img {
-    width: 150px;
+    // max-width: 150px;
+    width: 100%;
     height: 100%;
     margin: 10px;
     transition: transform 0.3s ease-in-out;
 
     border-radius: 18px;
-}
-.card-overlay {
-    font-weight: bold;
-    text-shadow: 0px -3px 2px black;
-    position: absolute;
-    bottom: 8%;
-    width: 66.67%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.75);
-    color: white;
-    text-align: center;
-    padding: 5px 3px;
-    border-radius: 8px;
-    border: 2px solid rgb(141, 120, 0);
 }

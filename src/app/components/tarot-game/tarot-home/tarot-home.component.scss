@@ -5,6 +5,12 @@
     flex-wrap: wrap;
     justify-content: space-around;
     align-content: space-between;
+
+    >* {
+        flex: 0 0 calc(25% - 20px); /* Force all elements to be exactly 25% minus margin */
+        margin: 10px;
+        box-sizing: border-box; /* Ensure padding and border are included in width */
+    }
 }
 
 .no-game-container {

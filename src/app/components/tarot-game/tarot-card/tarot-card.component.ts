@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { ComponentBase } from '../../component-base/component-base.component';
-import { ObjectId } from 'mongodb';
 import { environment } from '../../../../environments/environment';
 import { TarotCardReference } from '../../../../model/shared-models/tarot-game/tarot-card.model';
 

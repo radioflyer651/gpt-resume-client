@@ -227,7 +227,7 @@ export class ChatService {
   readonly receivedChatMessage = this._receivedChatMessage.asObservable();
 
   /** Sends a specified chat message to the server for a specified chat ID. */
-  sendChatMessage(chatId: ObjectId, message: string): void {
+  async sendChatMessage(chatId: ObjectId, message: string): Promise<void> {
     // Find the chat for this message.
     const chat = this.chats.find(c => c._id === chatId);
     if (chat) {
@@ -238,7 +238,8 @@ export class ChatService {
       });
     }
 
-    this.socketService.sendMessage('sendChatMessage', chatId, message);
+    // this.socketService.sendMessage('sendChatMessage', chatId, message);
+    return await this.socketService.sendMessageWithResponse('sendChatMessage', chatId, message);
   }
 
   /** Returns an observable that emits new chat messages for a specified chat Id. */

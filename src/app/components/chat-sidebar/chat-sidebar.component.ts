@@ -21,6 +21,7 @@ import { ClientChat } from '../../../model/shared-models/chat-models.model';
 import { SocketMessage } from '../../../model/io-sockets.model';
 import { ReadonlySubject } from '../../../utils/readonly-subject';
 import { ChatTypes } from '../../../model/shared-models/chat-types.model';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -35,7 +36,8 @@ import { ChatTypes } from '../../../model/shared-models/chat-types.model';
     ScrollTopModule,
     ConfirmDialogModule,
     ConfirmDialog,
-    SplitButtonModule
+    SplitButtonModule,
+    ProgressBarModule,
   ],
   providers: [ConfirmationService],
   templateUrl: './chat-sidebar.component.html',
@@ -141,7 +143,7 @@ export class ChatSidebarComponent extends ComponentBase {
     }
   ];
 
-  sendMessage(): void {
+  async sendMessage(): Promise<void> {
     if (this.newMessage.trim() === '') {
       this.messagingService.sendUserMessage({
         level: 'error',
@@ -150,11 +152,20 @@ export class ChatSidebarComponent extends ComponentBase {
       return;
     }
 
-    this.chatService.sendChatMessage(this.chatId, this.newMessage);
+    const newMessage = this.newMessage;
     this.newMessage = '';
     this.messageInput.nativeElement.focus();
+    this.isAwaitingResponse = true;
     this.scrollToBottom(500);
+
+    await this.chatService.sendChatMessage(this.chatId, newMessage);
+    this.isAwaitingResponse = false;
   }
+
+  /** Boolean value indicating whether or not we have a chat message in flight
+   *   and we're awaiting a reply.
+   */
+  isAwaitingResponse: boolean = false;
 
   /** Returns whether or not we can shoe the "Start New Chat" button. */
   get canStartNewChat(): boolean {

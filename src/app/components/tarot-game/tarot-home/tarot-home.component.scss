@@ -1,7 +1,23 @@
 .card-container {
+    min-height: 45vh;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
     align-content: space-between;
+}
+
+.no-game-container {
+    text-align: center;
+    margin: 20px;
+    width: 100%;
+
+    .no-game-message {
+        font-size: 2em;
+        font-weight: bold;
+    }
+}
+
+.no-cards-message {
+    width: 100%;
 }

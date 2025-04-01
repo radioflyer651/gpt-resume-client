@@ -15,14 +15,22 @@
                 </div>
                 <div class="card-container">
                     <app-tarot-card *ngFor="let card of game.cardsPicked" [cardReference]="card"></app-tarot-card>
+                    <div *ngIf="game.cardsPicked.length < 1" class="no-cards-message">
+                        You're about to begin! Give Ashlie a chat - and she'll draw cards for you.
+                    </div>
                 </div>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>
 </div>
 
-<div *ngIf="gameService.games.length === 0 && !isLoadingGames">
-    You have no games yet!
+<div *ngIf="gameService.games.length === 0 && !isLoadingGames" class="no-game-container">
+    <div class="no-game-message">
+        You have no games yet!
+    </div>
+    <div>
+        Click on the Start New Game button to begin.
+    </div>
 </div>
 
 <div *ngIf="isLoadingGames">

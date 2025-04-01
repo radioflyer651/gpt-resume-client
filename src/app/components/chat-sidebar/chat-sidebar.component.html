@@ -13,14 +13,20 @@
         <div class="chat-interior" *ngIf="!!(chat$ | async )">
             <div class="no-messages"
                 *ngIf="(chat$ | async )?.chatMessages && (chat$ | async )!.chatMessages.length < 1">
-                <app-chat-message [message]="noMessagesMessage" [user]="'assistant'" [disableAudio]="true" [isLatest]="true"></app-chat-message>
+                <app-chat-message [message]="noMessagesMessage" [user]="'assistant'" [disableAudio]="true"
+                    [isLatest]="true"></app-chat-message>
             </div>
             <app-chat-message *ngFor="let msg of (chat$ | async )?.chatMessages; let index = index"
                 [message]="msg.content" [isLatest]="chat && index === chat!.chatMessages.length-1"
                 [user]="msg.role"></app-chat-message>
+
         </div>
     </div>
 
+    <p-progressbar *ngIf="isAwaitingResponse" mode="indeterminate" [style]="{ height: '6px', width: '100%', }" />
+    <div *ngIf="isAwaitingResponse">
+        Ashlie is replying....
+    </div>
     <hr>
 
     <div class="text-center">
@@ -35,10 +41,11 @@
             <textarea #messageInput rows="4" cols="30" pTextarea [(ngModel)]="newMessage"></textarea>
         </div>
         <div class="clearfix button-area">
-            <button pButton tabindex="-1" *ngIf="canStartNewChat" [raised]="true" (click)="newChat()" severity="danger">
+            <button pButton tabindex="-1" [disabled]="isAwaitingResponse" *ngIf="canStartNewChat" [raised]="true"
+                (click)="newChat()" severity="danger">
                 Start New Chat
             </button>
-            <button pButton [raised]="true" label="Send" (click)="sendMessage()">
+            <button pButton [raised]="true" [disabled]="isAwaitingResponse" label="Send" (click)="sendMessage()">
             </button>
         </div>
     </div>

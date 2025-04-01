@@ -31,7 +31,8 @@ export class TarotChatService {
     this._currentGameChat = new ReadonlySubject<ClientChat | undefined>(
       combineLatest([this.currentTarotGame$, this.chatService.chats$]).pipe(
         map(([currentGame, chats]) => {
-          return chats.find(c => c._id === currentGame?.gameChatId);
+          const result = chats.find(c => c._id === currentGame?.gameChatId);
+          return result;
         })
       )
     );

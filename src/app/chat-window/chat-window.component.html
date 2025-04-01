@@ -1,0 +1,9 @@
+<div class="chat-window">
+    <div class="terminal">
+      <div class="output" *ngFor="let line of lines">{{ line }}</div>
+      <div class="input">
+        <span contenteditable="true" (input)="updateInput($event)" (blur)="focusInput()">{{ input }}</span><span class="cursor"></span>
+      </div>
+    </div>
+    <input type="text" class="hidden-input" (blur)="focusInput()" [(ngModel)]="input" />
+</div>

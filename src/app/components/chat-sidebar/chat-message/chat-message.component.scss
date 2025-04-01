@@ -17,6 +17,8 @@
     max-width: 70%;
     min-width: 51%;
 
+    position: relative;
+
     @media (max-width: 600px) {
         min-width: 90%;
     }
@@ -39,9 +41,22 @@
         font-weight: bold;
         font-size: 1.2em;
     }
+
+    .sound-button-bottom {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        margin: 5px;
+    }
+
+    .sound-button-top {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 5px;
+    }
 }
 
 .last-image {
     opacity: 0.85;
 }
-

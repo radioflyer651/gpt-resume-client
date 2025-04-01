@@ -1,0 +1,42 @@
+/* filepath: d:\other-projects\dyna-resume\client\src\app\chat-window\chat-window.component.scss */
+.chat-window {
+    background-color: black;
+    color: green;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 10px;
+    border: 1px solid green;
+    height: 300px;
+    overflow-y: auto;
+  }
+  
+  .terminal {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .output {
+    white-space: pre-wrap;
+  }
+  
+  .input {
+    display: flex;
+  }
+  
+  .cursor {
+    width: 10px;
+    height: 20px;
+    background-color: green;
+    animation: blink 1s step-start infinite;
+  }
+  
+  @keyframes blink {
+    50% {
+      background-color: transparent;
+    }
+  }
+
+.hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}

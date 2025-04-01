@@ -47,6 +47,25 @@ export class TarotGameService {
     this._games.next(newVal);
   }
 
+  addGame(game: TarotGame): void {
+    this.games.push(game);
+    this.emitGames();
+  }
+
+  removeGame(game: TarotGame): void {
+    const gameIndex = this.games.indexOf(game);
+    if (gameIndex < 0) {
+      return;
+    }
+
+    this.games.splice(gameIndex, 1);
+    this.emitGames();
+  }
+
+  protected emitGames(): void {
+    this._games.next(this.games);
+  }
+
   private _isLoadingChats = false;
 
   get isLoadingChats(): boolean {
@@ -100,7 +119,7 @@ export class TarotGameService {
     this.chatService.addChat(result.tarotChat);
 
     // Add the game to the games list.
-    this.games.push(result.game);
+    this.addGame(result.game);
 
     // Return the result.
     return result.game;
@@ -119,5 +138,27 @@ export class TarotGameService {
 
     // Add the reference to the game.
     game.cardsPicked.push(cardReference);
+  }
+
+  async deleteTarotGame(gameId: ObjectId): Promise<void> {
+    // Get the game from the game list.
+    const gameIndex = this.games.findIndex(g => g._id === gameId);
+
+    if (gameIndex < 0) {
+      console.error('Could not find the game to delete.');
+      return;
+    }
+
+    // Delete the game and chat on the server.
+    await lastValueFrom(this.apiClient.deleteGameById(gameId));
+
+    // Get the game.
+    const game = this.games[gameIndex];
+
+    // Remove the game from the game list.
+    this.removeGame(game);
+
+    // Remove the chat from the local service.
+    await this.chatService.removeChat(game.gameChatId);
   }
 }

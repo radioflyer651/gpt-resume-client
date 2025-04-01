@@ -5,7 +5,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { TextareaModule } from 'primeng/textarea';
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { MessagingService } from './services/messaging.service';
 import { ComponentBase } from './components/component-base/component-base.component';
 import { map, Observable, takeUntil } from 'rxjs';
@@ -19,6 +19,7 @@ import { MenuService } from './services/menu.service';
 import { ButtonModule } from 'primeng/button';
 import { ChatService } from './services/chat.service';
 import { ObjectId } from 'mongodb';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-root',
@@ -33,11 +34,13 @@ import { ObjectId } from 'mongodb';
     LoginComponent,
     ButtonModule,
     RouterModule,
+    ConfirmDialogModule,
   ],
   providers: [
     MessageService,
     ServerEventsService,
     PageSizeService,
+    ConfirmationService,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

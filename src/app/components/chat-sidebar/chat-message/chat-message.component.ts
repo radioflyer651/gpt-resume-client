@@ -2,11 +2,14 @@ import { Component, Input } from '@angular/core';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { ButtonModule } from 'primeng/button';
+import { ChatService } from '../../../services/chat.service';
 
 @Component({
   selector: 'app-chat-message',
   imports: [
     CommonModule,
+    ButtonModule,
   ],
   templateUrl: './chat-message.component.html',
   styleUrl: './chat-message.component.scss'
@@ -15,6 +18,7 @@ export class ChatMessageComponent {
   constructor(
     readonly userService: UserService,
     readonly sanitizer: DomSanitizer,
+    readonly chatService: ChatService,
   ) {
 
   }
@@ -50,7 +54,15 @@ export class ChatMessageComponent {
   @Input()
   isLatest?: boolean;
 
+  /** Boolean value indicating that the audio button should not be visible. */
+  @Input()
+  disableAudio?: boolean;
+
   get safeMessage(): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(this.message);
+  }
+
+  playMessageAudio() {
+    this.chatService.sendAudioRequest(this.message);
   }
 }

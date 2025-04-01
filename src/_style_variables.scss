@@ -1,6 +1,10 @@
-$header-height: 114px;
+$header-height: 122px;
 $header-bottom-margin: 40px;
-$header-padding: 20px;
+$header-padding-top: 20px;
+$header-padding-bottom: 20px;
+$header-padding-left: 20px;
+$header-padding-right: 20px;
+$header-padding: $header-padding-top $header-padding-right $header-padding-bottom $header-padding-left;
 
 $content-width: 800px;
 $sidebar-width: calc((100vw - $content-width) / 2);
@@ -8,4 +12,4 @@ $side-bar-padding: 10px;
 
 // The height left over on the page for content,
 //  after removing the header, and the header's margin.
-$free-content-height: calc(100vh - $header-height - $header-bottom-margin - $header-padding);
+$free-content-height: calc(100vh - $header-height - $header-bottom-margin - $header-padding-top - $header-padding-bottom);

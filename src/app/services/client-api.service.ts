@@ -157,4 +157,9 @@ export class ClientApiService {
   getTarotGames(): Observable<TarotGame[]> {
     return this.http.get<TarotGame[]>(this.constructUrl(`tarot/games`), this.optionsBuilder.withAuthorization());
   }
+
+  /** Deletes a game by its specified ID. */
+  deleteGameById(gameId: ObjectId): Observable<void> {
+    return this.http.delete<void>(this.constructUrl(`tarot/games/${gameId}`), this.optionsBuilder.withAuthorization());
+  }
 }

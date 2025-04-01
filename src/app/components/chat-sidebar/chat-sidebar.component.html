@@ -13,7 +13,7 @@
         <div class="chat-interior" *ngIf="!!(chat$ | async )">
             <div class="no-messages"
                 *ngIf="(chat$ | async )?.chatMessages && (chat$ | async )!.chatMessages.length < 1">
-                <app-chat-message [message]="noMessagesMessage" [user]="'assistant'"></app-chat-message>
+                <app-chat-message [message]="noMessagesMessage" [user]="'assistant'" [disableAudio]="true" [isLatest]="true"></app-chat-message>
             </div>
             <app-chat-message *ngFor="let msg of (chat$ | async )?.chatMessages; let index = index"
                 [message]="msg.content" [isLatest]="chat && index === chat!.chatMessages.length-1"

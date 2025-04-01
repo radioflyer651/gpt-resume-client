@@ -12,6 +12,11 @@
   <div class="header-center">
     <h1>Richard Olson</h1>
     <h3> AI Resume </h3>
+    <nav *ngIf="userService.isUserLoggedIn$ | async">
+      <a routerLink="/">Home</a>
+      <a routerLink="/tarot-game">Tarot Games</a>
+      <a (click)="logout()">Log Out</a>
+    </nav>
   </div>
 
   <div class="header-gutter">

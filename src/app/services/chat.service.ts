@@ -8,6 +8,7 @@ import { ObjectId } from 'mongodb';
 import { BehaviorSubject, filter, from, last, lastValueFrom, map, Observable, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
 import { ChatTypes } from '../../model/shared-models/chat-types.model';
 import { ReadonlySubject } from '../../utils/readonly-subject';
+import { constructApiUrl, getApiBaseUrl } from '../../utils/get-api-base-url.utils';
 
 /** Contains the chats currently being worked with by this user.
  *   This service handles interactions occurring with this chat. */
@@ -45,6 +46,18 @@ export class ChatService {
     // Add the new chat.
     this.chats.push(newChat);
     this.chats = this.chats;
+  }
+
+  /** Removes the specified chat from the chats list. */
+  removeChat(chatId: ObjectId) {
+    // Try to find an existing chat in the chats list.
+    const existingChatId = this.chats.findIndex(c => c._id === chatId);
+
+    // If found, then remove it.
+    if (existingChatId >= 0) {
+      this.chats.splice(existingChatId, 1);
+      this.chats = this.chats;
+    }
   }
 
   readonly _chats$ = new BehaviorSubject<ClientChat[]>([]);
@@ -175,6 +188,38 @@ export class ChatService {
       // Invoke the observable watching for new chat messages.
       this._receivedChatMessage.next({ chatId, message });
     });
+  }
+
+  /** Sends a request to the chat server to get audio for a specified message. */
+  async sendAudioRequest(message: string): Promise<void> {
+    // Request the audio from the server.  A file name will be returned that we can use to play the audio.
+    const result = (await this.socketService.sendMessageWithResponse('sendAudioRequest', message)) as string;
+
+    if (!result) {
+      return;
+    }
+
+    // Create the URL path to the audio file.
+    const urlPath = constructApiUrl(`chat/audio/${result}`);
+
+    // Get the token for our request.
+    const token = this.tokenService.token;
+
+    // If we don't have one, then we can't move forward.
+    if (!token) {
+      throw new Error(`No token available.  Please log in first.`);
+    }
+
+    // Play the audio.
+    const audio = new Audio();
+    // Add event listeners to debug issues
+    audio.addEventListener('error', (e) => {
+      console.error('Audio error:', e);
+      console.error('Audio error code:', audio.error?.code);
+      console.error('Audio error message:', audio.error?.message);
+    });
+    audio.src = `${urlPath}?token=${encodeURIComponent(token)}`;
+    return audio.play();
   }
 
   private readonly _receivedChatMessage = new Subject<{ chatId: ObjectId, message: ChatMessage; }>();

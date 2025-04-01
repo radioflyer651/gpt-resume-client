@@ -4,12 +4,14 @@ import { UserService } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { PageSizeService } from '../../services/page-size.service';
 import { MenuService } from '../../services/menu.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-site-header',
   imports: [
     CommonModule,
-    ButtonModule
+    ButtonModule,
+    RouterModule,
   ],
   templateUrl: './site-header.component.html',
   styleUrls: ['./site-header.component.scss']

@@ -44,6 +44,15 @@ export class SocketService {
       s.on('connect_error', (err) => {
         console.warn(`Socket Connection Error.`, err);
       });
+
+      // Log reconnect attempts for debugging
+      s.io.on("reconnect_attempt", (attempt) => {
+        console.log(`Socket reconnection attempt: ${attempt}`);
+      });
+
+      s.io.on("reconnect", (attempt) => {
+        console.log(`Socket reconnected after ${attempt} attempts`);
+      });
     });
   }
 
@@ -60,15 +69,16 @@ export class SocketService {
         // Create and initialize the new socket.
         let socket = io(environment.chatSocketIoEndpoint, {
           path: environment.chatSocketPath,
-          // upgrade: true,
           auth: { token },
-          // reconnectionAttempts: 5,
           reconnectionDelay: 5000,
           reconnection: true,
+          forceNew: true,
           extraHeaders: {
             'Authorization': token
           }
         });
+
+        console.log('Creating new socket connection');
 
         // Add handlers and such to the socket.
         this.initializeSocket(socket);
@@ -79,9 +89,8 @@ export class SocketService {
           subscriber.next(socket);
 
           // Return the cleanup function for this socket.
-          //  When a new value comes in, the subscriber will
-          //  unsubscribe, and automatically clean up our socket.
           return () => {
+            console.log('Cleaning up socket connection');
             if (socket) {
               socket.removeAllListeners();
               socket.disconnect();

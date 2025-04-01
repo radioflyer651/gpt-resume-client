@@ -1,5 +1,8 @@
+<div>
+    <p-button (click)="startNewTarotGame()"> Start New Game </p-button>
+</div>
 <div *ngIf="gameService.games.length > 0 && selectedGameId !== ''">
-    <p-tabs [(value)]="selectedGameId">
+    <p-tabs [(value)]="selectedGameId" [scrollable]="true" [lazy]="true">
         <p-tablist>
             <p-tab [value]="game._id" *ngFor="let game of gameService.games; let i = index">
                 Game {{ i }}
@@ -7,6 +10,9 @@
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel *ngFor="let game of gameService.games;let i = index" [value]="game._id">
+                <div>
+                    <p-button (click)="deleteGame(game._id)"> Delete Game </p-button>
+                </div>
                 <div class="card-container">
                     <app-tarot-card *ngFor="let card of game.cardsPicked" [cardReference]="card"></app-tarot-card>
                 </div>

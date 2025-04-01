@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ButtonModule } from 'primeng/button';
 import { ChatService } from '../../../services/chat.service';
+import { SiteSettingsService } from '../../../services/site-settings.service';
 
 @Component({
   selector: 'app-chat-message',
@@ -19,14 +20,15 @@ export class ChatMessageComponent {
     readonly userService: UserService,
     readonly sanitizer: DomSanitizer,
     readonly chatService: ChatService,
+    readonly siteSettingsService: SiteSettingsService,
   ) {
 
   }
-
+  
   /** Gets or sets the owner of the chat. */
   @Input()
   user!: 'assistant' | 'user' | 'system';
-
+  
   /** Returns the name of the person to place at the
    *   top of the chat. */
   get ownerName(): string {

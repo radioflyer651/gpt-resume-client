@@ -15,7 +15,7 @@
 
   <nav class="nav-links">
     <a routerLink="/" (click)="closeMenu()">Home</a>
-    <a routerLink="/tarot-game" (click)="closeMenu()">Tarot Games</a>
+    <a *ngIf="userService.isUserLoggedIn$ | async" routerLink="/tarot-game" (click)="closeMenu()">Tarot Games</a>
   </nav>
 
   <div *ngIf="!(userService.isUserLoggedIn$ | async) && (pageSizeService.skinnyPage$ | async)">

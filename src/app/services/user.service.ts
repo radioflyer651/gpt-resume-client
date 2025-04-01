@@ -7,6 +7,7 @@ import { TokenPayload } from '../../model/shared-models/token-payload.model';
 import { SiteUser } from '../../model/site-user.model';
 import { TokenService } from './token.service';
 import { ReadonlySubject } from '../../utils/readonly-subject';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class UserService {
     readonly clientApiService: ClientApiService,
     readonly messagingService: MessagingService,
     readonly tokenService: TokenService,
+    readonly router: Router,
   ) {
     // Setup the user property.
     this._user = new ReadonlySubject<SiteUser | undefined>(
@@ -95,6 +97,7 @@ export class UserService {
   }
 
   logout(): void {
+    this.router.navigate(['/']);
     this.clientApiService.logout();
   }
 

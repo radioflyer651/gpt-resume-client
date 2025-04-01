@@ -5,7 +5,7 @@ import { MessagingService } from './messaging.service';
 import { TokenService } from './token.service';
 import { SocketService } from './socket.service';
 import { ObjectId } from 'mongodb';
-import { BehaviorSubject, filter, from, last, lastValueFrom, map, Observable, shareReplay, Subject, tap } from 'rxjs';
+import { BehaviorSubject, filter, from, last, lastValueFrom, map, Observable, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
 import { ChatTypes } from '../../model/shared-models/chat-types.model';
 import { ReadonlySubject } from '../../utils/readonly-subject';
 
@@ -100,41 +100,6 @@ export class ChatService {
     return result;
   }
 
-  /** Gets the main chat for this user from the server. Returns the ID of the main chat.*/
-  loadMainChat(): Promise<ObjectId> {
-    const serverCall = this.apiClientService.getMainChat().pipe(shareReplay(1));
-
-    // Add the handler for when the call returns.
-    serverCall.subscribe(result => {
-      this.addChat(result);
-      this.messagingService.sendUserMessage({
-        level: 'info',
-        content: 'Main chat loaded.'
-      });
-    });
-
-    // Return the object ID that was returned.
-    return lastValueFrom(serverCall.pipe(map(v => v._id)));
-  }
-
-  /** Returns the main chat for this user. If one doesn't exist, then one is created/loaded from the server.*/
-  async getMainChat(): Promise<ClientChat> {
-    // Find all main chats, and put them in order from newest to oldest.
-    const mainChat = this.chats
-      .filter(c => c.chatType === ChatTypes.Main)
-      .sort((v1, v2) => v2.creationDate.valueOf() - v1.creationDate.valueOf());
-
-    // If we have one, then return it.
-    const lastChat = mainChat[0];
-    if (lastChat) {
-      return lastChat;
-    }
-
-    // Load and return the chat from the server.
-    const newChatId = await this.loadMainChat();
-    return this.chats.find(c => c._id === newChatId)!;
-  }
-
   /** Starts a new "main" chat, and returns it. */
   async startNewMainChat(): Promise<ObjectId> {
     // Get the chat from the server.
@@ -151,7 +116,6 @@ export class ChatService {
   /** Initializes this service. */
   protected async initialize(): Promise<void> {
     this._mainChat = new ReadonlySubject<ClientChat>(this._chats$.pipe(
-
       map(chats => {
         const copy = chats.slice();
         const filtered = copy.filter(c => c.chatType === ChatTypes.Main)
@@ -163,7 +127,32 @@ export class ChatService {
     this.initializeReceiveChatMessages();
 
     // Load the main chat for the user, in this application.
-    await this.loadMainChat();
+    this.tokenService.token$.pipe(
+      switchMap(token => {
+        if (!token) {
+          return of(undefined);
+        }
+
+        return this.apiClientService.getMainChat();
+      })
+    ).subscribe(chat => {
+      // If none found, then exit.
+      if (!chat) {
+        return;
+      }
+
+      // Remove the existing, if there is one.
+      const existingId = this.chats.findIndex(c => c._id === chat?._id);
+      if (existingId) {
+        this.chats.splice(existingId);
+      }
+
+      // Insert the new chat.
+      this.chats.push(chat);
+
+      // Inform observers of the update.
+      this.chats = this.chats;
+    });
   }
 
   private initializeReceiveChatMessages(): void {

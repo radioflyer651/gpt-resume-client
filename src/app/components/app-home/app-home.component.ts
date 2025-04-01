@@ -72,4 +72,18 @@ export class AppHomeComponent extends ComponentBase {
   logout(): void {
     this.userService.logout();
   }
+
+  /** Returns a boolean value indicating whether or not
+   *   to show the chat window. */
+  get showChatWindow() {
+    if (!this.userService.isUserLoggedIn) {
+      return false;
+    }
+
+    if (!this.chatService.mainChat) {
+      return false;
+    }
+
+    return true;
+  }
 }

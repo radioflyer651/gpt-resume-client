@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ObjectId } from 'mongodb';
-import { switchMap, of, Observable, EMPTY, BehaviorSubject } from 'rxjs';
+import { switchMap, of, Observable, EMPTY } from 'rxjs';
 import { io } from 'socket.io-client';
 import { environment } from '../../environments/environment';
-import { ChatMessage, ClientChat } from '../../model/shared-models/chat-models.model';
 import { ReadonlySubject } from '../../utils/readonly-subject';
 import { ClientApiService } from './client-api.service';
 import { MessagingService } from './messaging.service';
 import { TokenService } from './token.service';
-import { IoSocketType, SocketMessage } from '../../model/io-sockets.model';
+import { IoSocketType } from '../../model/io-sockets.model';
 import { SocketEvent } from '../../model/socket-event.model';
 
 /** This service handles socket.io management, and is responsible
@@ -24,7 +22,6 @@ export class SocketService {
     readonly apiClientService: ClientApiService,
   ) {
     this.initializeService();
-    console.log(`Creating`);
   }
 
   /** Performs all initializations for this service. */
@@ -48,10 +45,6 @@ export class SocketService {
         console.warn(`Socket Connection Error.`, err);
       });
     });
-
-    this.tokenService.token$.subscribe(token => {
-      console.log('Token: ', token);
-    });
   }
 
   /** Initializes the chat service. */
@@ -65,7 +58,6 @@ export class SocketService {
         }
 
         // Create and initialize the new socket.
-        console.log(`Connecting to socket: ${environment.chatSocketIoEndpoint}`);
         let socket = io(environment.chatSocketIoEndpoint, {
           path: environment.chatSocketPath,
           // upgrade: true,
@@ -147,7 +139,6 @@ export class SocketService {
 
   /** Subscribes to a specified event from NEW sockets connecting to the system. */
   subscribeToSocketEvent(event: string): Observable<SocketEvent> {
-    console.log('Subscribing to', event);
     return this.socket$.pipe(
       switchMap(socket => {
         // If we don't have a socket, then we won't have any events.

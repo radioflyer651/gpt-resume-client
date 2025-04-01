@@ -26,13 +26,6 @@ export class TarotGameMainComponent {
     readonly tarotChatService: TarotChatService,
     readonly messagingService: MessagingService,
   ) {
-    this.tarotChatService.currentGameChat$.subscribe(chat => {
-      console.log(`Chat Set: `, chat);
-    });
-
-    this.tarotChatService.currentTarotGameId$.subscribe(gameId => {
-      console.log(`Game Id Changed: ${gameId}`);
-    });
   }
 
   get chatId() {
@@ -45,7 +38,6 @@ export class TarotGameMainComponent {
 
   async startNewTarotGame() {
     const newGame = await this.gameService.createNewGame();
-    console.log(newGame);
     this.messagingService.sendUserMessage({
       level: 'info',
       content: 'Tarot Game Created'

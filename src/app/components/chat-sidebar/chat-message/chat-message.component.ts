@@ -5,12 +5,14 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ButtonModule } from 'primeng/button';
 import { ChatService } from '../../../services/chat.service';
 import { SiteSettingsService } from '../../../services/site-settings.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-chat-message',
   imports: [
     CommonModule,
     ButtonModule,
+    ProgressSpinnerModule,
   ],
   templateUrl: './chat-message.component.html',
   styleUrl: './chat-message.component.scss'

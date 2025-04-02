@@ -1,7 +1,13 @@
 <div [class]="sideClass + ' chat-message'" [ngClass]="{'last-image':isLatest}">
     <div class="sound-button-bottom" *ngIf="user === 'assistant' && !disableAudio">
-        <p-button icon="pi pi-volume-up" [disabled]="!(siteSettingsService.siteSettings$ | async)!.allowAudioChat"
-            (click)="playMessageAudio()" [rounded]="true" [raised]="true" severity="secondary"></p-button>
+
+        <div class="justify-center" *ngIf="chatService.isAudioRequestInProgress">
+            <p-progress-spinner ariaLabel="loading" [style]="{ width: '40px', height: '40px' }" />
+        </div>
+
+        <p-button icon="pi pi-volume-up" *ngIf="!chatService.isAudioRequestInProgress"
+            [disabled]="!(siteSettingsService.siteSettings$ | async)!.allowAudioChat" (click)="playMessageAudio()"
+            [rounded]="true" [raised]="true" severity="secondary"></p-button>
     </div>
     <div class="user-name">
         {{ ownerName }}

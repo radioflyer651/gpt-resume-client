@@ -200,6 +200,17 @@ export class ChatService {
 
   /** Sends a request to the chat server to get audio for a specified message. */
   async sendAudioRequest(message: string): Promise<void> {
+    // If an audio request is in progress, then block this from happening.
+    if (this.isAudioRequestInProgress) {
+      this.messagingService.sendUserMessage({
+        level: 'error',
+        content: 'Wait until the audio for the last request is finished before requesting another.',
+      });
+      return;
+    }
+
+    this.setIsAudioRequestInProgress(true);
+
     // Request the audio from the server.  A file name will be returned that we can use to play the audio.
     const result = (await this.socketService.sendMessageWithResponse('sendAudioRequest', message)) as string;
 
@@ -218,17 +229,48 @@ export class ChatService {
       throw new Error(`No token available.  Please log in first.`);
     }
 
-    // Play the audio.
-    const audio = new Audio();
-    // Add event listeners to debug issues
-    audio.addEventListener('error', (e) => {
-      console.error('Audio error:', e);
-      console.error('Audio error code:', audio.error?.code);
-      console.error('Audio error message:', audio.error?.message);
-    });
-    audio.src = `${urlPath}?token=${encodeURIComponent(token)}`;
-    return audio.play();
+    try {
+      // Play the audio.
+      const audio = new Audio();
+      // Add event listeners to debug issues
+      audio.addEventListener('error', (e) => {
+        console.error('Audio error:', e);
+        console.error('Audio error code:', audio.error?.code);
+        console.error('Audio error message:', audio.error?.message);
+      });
+
+      const playWatch = new Promise<void>((resolve) => {
+        audio.addEventListener('ended', () => {
+          console.log('Audio playback finished');
+          resolve();
+        });
+        audio.addEventListener('error', (e) => {
+          console.error('Audio playback error:', e);
+          resolve(); // Resolve even on error to avoid hanging
+        });
+      });
+      audio.src = `${urlPath}?token=${encodeURIComponent(token)}`;
+      await audio.play();
+      await playWatch;
+    } finally {
+      this.setIsAudioRequestInProgress(false);
+    }
   }
+
+  // #region isAudioRequestInProgress
+  private readonly _isAudioRequestInProgress = new BehaviorSubject<boolean>(false);
+  readonly isAudioRequestInProgress$ = this._isAudioRequestInProgress.asObservable();
+
+  /** Gets or sets a boolean value indicating whether or not an audio request is being requested
+   *   from the server, or currently playing.  */
+  get isAudioRequestInProgress(): boolean {
+    return this._isAudioRequestInProgress.getValue();
+  }
+
+  private setIsAudioRequestInProgress(newVal: boolean) {
+    this._isAudioRequestInProgress.next(newVal);
+  }
+  // #endregion
 
   private readonly _receivedChatMessage = new Subject<{ chatId: ObjectId, message: ChatMessage; }>();
   /** Observable that emits when a new chat message was received. */

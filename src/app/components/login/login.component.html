@@ -18,10 +18,39 @@
                 contact Richard directly for details.
             </div>
             <div class="button-container">
-                <p-button severity="info">?</p-button>
+                <p-button severity="info" (click)="showHelp()">?</p-button>
                 <p-button type="primary" (click)="submit()">OK</p-button>
             </div>
         </ng-template>
     </p-panel>
 </div>
 
+<p-dialog [(visible)]="isHelpDialogVisible" header="Login Info">
+    <div>
+        <h3> Why Login?? </h3>
+        <div>
+            Seeing my resume isn't a big dea. I'd love you to see it. AI isn't free though.
+            Every chat you make and, especially, every audio chat you make costs money. Therefore
+            I'm just having you login to make sure people who should be here are using the site.
+        </div>
+
+        <h5>Data? Websit? Name?</h5>
+        <div>
+            I only know the companies I've applied at. I can't be sure someone from that company
+            would enter the name in exactly as I did, so I'm going with your website. Just be sure
+            you have "www" in the name, and you'll get in. No paths or anything like that.
+        </div>
+        <div> You can give me a fake name. That's fine. I just need to differentiate you from Sally.</div>
+
+        <h5>Data Collection</h5>
+        <div>
+            Be aware, whatever you type goes into the database. It's required to keep an ongoing conversation
+            with the AI.
+        </div>
+    </div>
+    <ng-template #footer>
+        <div class="button-container">
+            <p-button (click)="closeInfo()">Close</p-button>
+        </div>
+    </ng-template>
+</p-dialog>

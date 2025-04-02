@@ -37,7 +37,7 @@ export class ChatMessageComponent {
     if (this.user === 'assistant') {
       return 'AI';
     } else {
-      return this.userService.user!.name;
+      return this.userService.user?.name ?? '';
     }
   }
 

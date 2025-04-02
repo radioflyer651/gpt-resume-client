@@ -1,6 +1,6 @@
 <app-site-header></app-site-header>
 
-<div class="floater-container" *ngIf="(pageSizeService.skinnyPage$ | async)">
+<div class="floater-container" *ngIf="(pageSizeService.skinnyPage$ | async) && (userService.isUserLoggedIn$ | async)">
   <div class="floater">
     <p-button label="Chat" icon="pi pi-sparkles" [rounded]="true" (click)="toggleChatSlideout()"
       [raised]="true"></p-button>

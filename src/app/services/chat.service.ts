@@ -168,12 +168,6 @@ export class ChatService {
       // Inform observers of the update.
       this.chats = this.chats;
     });
-
-    /** If the page size changes, we need the chat flyout to close. */
-    this.pageSizeService.pageResized$.subscribe(() => {
-      // Close the slideout.
-      this.isChatSlideoutOpen = false;
-    });
   }
 
   private initializeReceiveChatMessages(): void {
@@ -239,6 +233,9 @@ export class ChatService {
         console.error('Audio error message:', audio.error?.message);
       });
 
+      // Turn the whole play operation into a promise, so we can block
+      //  more input until it's done.
+      // This needs to be moved to its own functionality.
       const playWatch = new Promise<void>((resolve) => {
         audio.addEventListener('ended', () => {
           console.log('Audio playback finished');

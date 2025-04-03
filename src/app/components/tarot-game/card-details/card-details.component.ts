@@ -8,9 +8,6 @@ import { ReadonlySubject } from '../../../../utils/readonly-subject';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../environments/environment';
-import { PageSizeService } from '../../../services/page-size.service';
-
-type ElementStyle = { [key: string]: string | undefined | null; };
 
 @Component({
   selector: 'app-card-details',
@@ -24,7 +21,6 @@ type ElementStyle = { [key: string]: string | undefined | null; };
 export class CardDetailsComponent extends ComponentBase {
   constructor(
     readonly clientApiService: ClientApiService,
-    readonly pageSizeService: PageSizeService,
   ) {
     super();
   }
@@ -59,20 +55,6 @@ export class CardDetailsComponent extends ComponentBase {
       takeUntil(this.ngDestroy$),
     ));
 
-    this._cardStyle = new ReadonlySubject(this.cardImageUrl$.pipe(
-      combineLatestWith(this.pageSizeService.isSkinnyPage$),
-      map(([url, isSkinnyPage]) => {
-        const result = {} as ElementStyle;
-
-        // Only add the background URL if we have one.
-        if (url) {
-          result['background-image'] = `url('${url}')`;
-        }
-
-        return result;
-      }),
-      takeUntil(this.ngDestroy$)
-    ));
   }
 
   // #region cardImageUrl
@@ -84,18 +66,6 @@ export class CardDetailsComponent extends ComponentBase {
 
   get cardImageUrl(): string | undefined {
     return this._cardImageUrl.value;
-  }
-  // #endregion
-
-  // #region cardStyle
-  private _cardStyle!: ReadonlySubject<ElementStyle>;
-
-  get cardStyle$() {
-    return this._cardStyle.observable$;
-  }
-
-  get cardStyle(): ElementStyle {
-    return this._cardStyle.value;
   }
   // #endregion
 

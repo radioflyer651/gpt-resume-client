@@ -10,11 +10,16 @@
     <hr *ngIf="!isLastItem" class="field-divider">
 </ng-template>
 
-<div class="card-container" [style]="cardStyle">
+<div class="card-container">
     <p-progress-spinner *ngIf="!(cardDetails$ | async)" ariaLabel="loading" />
 
     <div *ngIf="(cardDetails$ | async)">
         <h4>{{ cardDetails?.cardName}}</h4>
+
+        <div class="image-container">
+            <img [src]="cardImageUrl">
+        </div>
+
         <ng-container *ngTemplateOutlet="cardProperty; context: {
                 fieldName: 'Alignment', 
                 fieldValue: cardDetails!.cardAlignment

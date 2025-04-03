@@ -1,6 +1,6 @@
 <app-site-header></app-site-header>
 
-<div class="floater-container" *ngIf="(pageSizeService.skinnyPage$ | async) && (userService.isUserLoggedIn$ | async)">
+<div class="floater-container" *ngIf="(pageSizeService.isSkinnyPage$ | async) && (userService.isUserLoggedIn$ | async)">
   <div class="floater">
     <p-button label="Chat" icon="pi pi-sparkles" [rounded]="true" (click)="toggleChatSlideout()"
       [raised]="true"></p-button>
@@ -25,7 +25,7 @@
     <a *ngIf="userService.isUserLoggedIn$ | async" routerLink="/tarot-game" (click)="closeMenu()">Tarot Games</a>
   </nav>
 
-  <div *ngIf="!(userService.isUserLoggedIn$ | async) && (pageSizeService.skinnyPage$ | async)">
+  <div *ngIf="!(userService.isUserLoggedIn$ | async) && (pageSizeService.isSkinnyPage$ | async)">
     <app-login></app-login>
   </div>
 

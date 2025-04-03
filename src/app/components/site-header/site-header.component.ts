@@ -52,7 +52,21 @@ export class SiteHeaderComponent {
     this.isLoginDialogVisible = true;
   }
 
-  toggleMenu(): void {
-    this.menuService.showMenu = !this.menuService.showMenu;
+  /** Returns a boolean value indicating whether or not the navigation
+   *   on the main menu should be visible. */
+  get isNavigationVisible(): boolean {
+    return this.userService.isUserLoggedIn;
+  }
+
+  /** Returns a boolean value indicating whether or not the login option
+   *   on the menu should be shown. */
+  get isMenuLoginVisible(): boolean {
+    return !this.userService.isUserLoggedIn && this.pageSizeService.isSkinnyPage;
+  }
+
+  /** Returns a boolean value indicating whether or not
+   *   the menu should be shown. */
+  get isMenuVisible(): boolean {
+    return this.isMenuLoginVisible || this.isNavigationVisible;
   }
 }

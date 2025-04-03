@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, fromEvent, map, shareReplay, startWith } from 'rxjs';
+import { ReadonlySubject } from '../../utils/readonly-subject';
 
 @Injectable({
   providedIn: 'root'
@@ -24,17 +25,27 @@ export class PageSizeService {
     );
 
     // Subscribe to the page size service to enable handling of what to show, and how.
-    this.skinnyPage$ = this.pageResized$.pipe(
+    this._isSkinnyPage = new ReadonlySubject(this.pageResized$.pipe(
       map(newSize => {
         return newSize.width < 1400;
       })
-    );
+    ));
 
   }
 
+  // #region isSkinnyPage
+  private _isSkinnyPage!: ReadonlySubject<boolean>;
+
   /** Observable to emit whether or not we're too small to show the gutters
    *   of the page. */
-  skinnyPage$!: Observable<boolean>;
+  get isSkinnyPage$() {
+    return this._isSkinnyPage.observable$;
+  }
+
+  get isSkinnyPage(): boolean {
+    return this._isSkinnyPage.value;
+  }
+  // #endregion
 
   /** Observable that emits when the page is resized. */
   pageResized$!: Observable<{ width: number; height: number; }>;

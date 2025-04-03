@@ -1,5 +1,5 @@
 <div class="chat-container">
-    <h5 *ngIf="!(pageSizeService.skinnyPage$ | async)">AI Chat</h5>
+    <h5 *ngIf="!(pageSizeService.isSkinnyPage$ | async)">AI Chat</h5>
 
     <div *ngIf="showWarningMessage">
         Whatever you do here, don't trust the AI chat.

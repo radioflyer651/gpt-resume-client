@@ -4,7 +4,7 @@
 
       <!-- <p-button (click)="toggleMenu()" icon="pi pi-bars" severity="contrast"></p-button> -->
 
-      <!-- <p-button *ngIf="(userService.isUserLoggedIn$ | async) && !(pageSizeService.skinnyPage$ | async)"
+      <!-- <p-button *ngIf="(userService.isUserLoggedIn$ | async) && !(pageSizeService.isSkinnyPage$ | async)"
         (click)="logout()">Log Out</p-button> -->
     </div>
   </div>
@@ -12,10 +12,9 @@
   <div class="header-center">
     <h1>Richard Olson</h1>
     <h3> AI Resume </h3>
-    <nav>
-      <a (click)="login()"
-        *ngIf="!(userService.isUserLoggedIn$ | async) && (pageSizeService.skinnyPage$ | async)">Login</a>
-      <ng-container *ngIf="userService.isUserLoggedIn$ | async">
+    <nav *ngIf="isMenuVisible">
+      <a (click)="login()" *ngIf="isMenuLoginVisible">Login</a>
+      <ng-container *ngIf="isNavigationVisible">
         <a routerLink="/">Home</a>
         <a routerLink="/tarot-game">Tarot Games</a>
         <a (click)="logout()">Log Out</a>

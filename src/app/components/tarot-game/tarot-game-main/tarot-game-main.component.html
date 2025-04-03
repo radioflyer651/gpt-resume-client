@@ -11,7 +11,7 @@
     </div>
     <div class="right-side">
         <app-chat-sidebar [chatId]="chatId!"
-            *ngIf="isChatSet && !(pageSizeService.skinnyPage$ | async)"></app-chat-sidebar>
+            *ngIf="isChatSet && !(pageSizeService.isSkinnyPage$ | async)"></app-chat-sidebar>
     </div>
 </div>
 

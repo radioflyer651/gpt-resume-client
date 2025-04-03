@@ -1,4 +1,4 @@
-<ng-container *ngIf="(pageSizeService.skinnyPage$ | async)">
+<ng-container *ngIf="(pageSizeService.isSkinnyPage$ | async)">
 
     <p-drawer appendTo="body" styleClass="h-[80vh]" [(visible)]="chatService.isChatSlideoutOpen" header="Chat">
         <app-chat-sidebar *ngIf="!!chatId" [chatId]="chatId"></app-chat-sidebar>

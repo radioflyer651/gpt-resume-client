@@ -1,0 +1,44 @@
+<ng-template #cardProperty let-fieldName="fieldName" let-fieldValue="fieldValue" let-isLastItem="isLastItem">
+    <div class="card-field">
+        <div class="field-name">
+            {{ fieldName }}
+        </div>
+        <div class="field-value">
+            {{ fieldValue }}
+        </div>
+    </div>
+    <hr *ngIf="!isLastItem" class="field-divider">
+</ng-template>
+
+<div class="card-container" [style]="cardStyle">
+    <p-progress-spinner *ngIf="!(cardDetails$ | async)" ariaLabel="loading" />
+
+    <div *ngIf="(cardDetails$ | async)">
+        <h4>{{ cardDetails?.cardName}}</h4>
+        <ng-container *ngTemplateOutlet="cardProperty; context: {
+                fieldName: 'Alignment', 
+                fieldValue: cardDetails!.cardAlignment
+            }"></ng-container>
+        <ng-container *ngTemplateOutlet="cardProperty; context: {
+                fieldName: 'Persona', 
+                fieldValue: cardDetails!.persona
+            }"></ng-container>
+        <ng-container *ngTemplateOutlet="cardProperty; context: {
+                fieldName: 'Tech Theme', 
+                fieldValue: cardDetails!.technologicalTheme
+            }"></ng-container>
+        <ng-container *ngTemplateOutlet="cardProperty; context: {
+                fieldName: 'Description', 
+                fieldValue: cardDetails!.description
+            }"></ng-container>
+        <ng-container *ngTemplateOutlet="cardProperty; context: {
+                fieldName: 'Interpretive Meaning', 
+                fieldValue: cardDetails!.meaning
+            }"></ng-container>
+        <ng-container *ngTemplateOutlet="cardProperty; context: {
+                fieldName: 'AI Image Description', 
+                fieldValue: cardDetails!.imageDescription,
+                isLastItem: true
+            }"></ng-container>
+    </div>
+</div>

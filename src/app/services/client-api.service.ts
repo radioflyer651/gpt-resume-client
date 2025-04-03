@@ -10,6 +10,7 @@ import { ObjectId } from 'mongodb';
 import { TarotGame } from '../../model/shared-models/tarot-game/tarot-game.model';
 import { ChatTypes } from '../../model/shared-models/chat-types.model';
 import { SiteSettings } from '../../model/shared-models/site-settings.model';
+import { TarotCard, TarotCardDetails } from '../../model/shared-models/tarot-game/tarot-card.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -167,5 +168,10 @@ export class ClientApiService {
   /** Returns the site settings from the server, indicating what abilities the site has turned off or on. */
   getSiteSettings(): Observable<SiteSettings> {
     return this.http.get<SiteSettings>(this.constructUrl(`site/settings`), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Returns details about a tarot card, specified by its ID. */
+  getTarotCardDetails(cardId: ObjectId): Observable<TarotCard> {
+    return this.http.get<TarotCard>(this.constructUrl(`tarot/card-details/${cardId}`), this.optionsBuilder.withAuthorization());
   }
 }

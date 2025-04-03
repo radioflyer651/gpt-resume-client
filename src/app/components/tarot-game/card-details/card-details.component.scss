@@ -1,0 +1,41 @@
+.card-container {
+    max-width: 600px;
+    background-color: rgb(46, 46, 46);
+    padding: 10px;
+    margin: 0;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    @media screen and (max-width: 768px) {
+        max-width: 90%;
+    }
+}
+
+.card-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    // margin-bottom: 20px;
+
+    .field-name {
+        align-self: start;
+        min-width: 150px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: rgb(62, 114, 156);
+    }
+
+    .field-value {
+        align-self: center;
+        flex: 1 1 auto;
+    }
+}
+
+hr.field-divider {
+    border: 1px solid white;
+    opacity: 0.45;
+    margin: 10px 0px;
+}

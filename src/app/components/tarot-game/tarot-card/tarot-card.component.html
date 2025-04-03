@@ -1,5 +1,12 @@
-<div class="tarot-card-container">
+<div class="tarot-card-container" (click)="showDetailDialog()">
     <img [src]="url">
 
     <div class="card-overlay"> {{ cardName }} </div>
 </div>
+
+<p-dialog [(visible)]="isCardDetailDialogVisible" *ngIf="cardReference">
+    <app-card-details [cardId]="cardReference!._id" [cardImageNumber]="cardReference.imageNumber"></app-card-details>
+    <ng-template #footer>
+        <p-button (click)="closDetailsDialog()">OK</p-button>
+    </ng-template>
+</p-dialog>

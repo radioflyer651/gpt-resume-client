@@ -7,6 +7,13 @@
   </div>
 </div>
 
+<div class="floater-container"
+  *ngIf="(pageSizeService.isSkinnyPage$ | async) && !(userService.isUserLoggedIn$ | async)">
+  <div class="floater">
+    <p-button label="Login" icon="pi pi-user" [rounded]="true" [raised]="true" (click)="login()"></p-button>
+  </div>
+</div>
+
 <div class="site-content-container">
   <div class="left-side">
   </div>
@@ -38,3 +45,8 @@
 <p-toast />
 <p-confirmdialog />
 <ng-template #emptyTemplate></ng-template>
+
+
+<p-dialog header="Edit Profile" [modal]="true" [(visible)]="loginService.isLoginDialogOpen" [style]="{ width: '25rem' }">
+  <app-login></app-login>
+</p-dialog>

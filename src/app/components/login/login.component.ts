@@ -24,7 +24,7 @@ import { DialogModule } from 'primeng/dialog';
 export class LoginComponent extends ComponentBase {
   constructor(
     readonly formBuilder: FormBuilder,
-    readonly userService: UserService
+    readonly userService: UserService,
   ) {
     super();
   }

@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
 import { LoginComponent } from "../login/login.component";
 import { TokenService } from '../../services/token.service';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-site-header',
@@ -27,29 +28,21 @@ export class SiteHeaderComponent {
     readonly pageSizeService: PageSizeService,
     readonly menuService: MenuService,
     readonly tokenService: TokenService,
+    readonly loginService: LoginService,
   ) {
 
   }
 
   ngOnInit(): void {
-    this.tokenService.tokenPayload$.subscribe(payload => {
-      if (payload) {
-        // Close the login dialog when the user does login.
-        this.isLoginDialogVisible = false;
-      }
-    });
   }
 
   logout(): void {
     this.userService.logout();
   }
 
-  /** Controls whether or not the login dialog is visible. */
-  isLoginDialogVisible = false;
-
   /** Shows the login dialog. */
   login(): void {
-    this.isLoginDialogVisible = true;
+    this.loginService.login();
   }
 
   /** Returns a boolean value indicating whether or not the navigation

@@ -30,3 +30,13 @@
     font-weight: bold;
 }
 
+.top-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+h5 {
+    margin-top: 20px;
+}

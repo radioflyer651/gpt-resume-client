@@ -12,6 +12,7 @@ import { bufferCount, distinct, distinctUntilChanged, first, map, take, takeUnti
 import { TarotCardComponent } from "../tarot-card/tarot-card.component";
 import { MessagingService } from '../../../services/messaging.service';
 import { ConfirmationService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-tarot-home',
@@ -20,7 +21,8 @@ import { ConfirmationService } from 'primeng/api';
     CommonModule,
     FormsModule,
     ButtonModule,
-    TarotCardComponent
+    TarotCardComponent,
+    DialogModule,
   ],
   templateUrl: './tarot-home.component.html',
   styleUrl: './tarot-home.component.scss'
@@ -146,6 +148,12 @@ export class TarotHomeComponent extends ComponentBase {
         this.selectedGameId = this.gameService.games[0]?._id ?? '';
       }
     });
+  }
 
+  /** Controls whether or not the tarot instruction dialog is open. */
+  isTarotInstructionsVisible = false;
+
+  showTarotInstructions() {
+    this.isTarotInstructionsVisible = true;
   }
 }

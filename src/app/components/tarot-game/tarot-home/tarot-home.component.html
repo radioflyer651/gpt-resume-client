@@ -1,6 +1,8 @@
-<div>
-    <p-button (click)="startNewTarotGame()"> Start New Game </p-button>
+<div class="top-buttons">
+    <p-button (click)="startNewTarotGame()" [rounded]="true" [raised]="true"> Start New Game </p-button>
+    <p-button (click)="showTarotInstructions()" severity="help" [rounded]="true" raised="true">?</p-button>
 </div>
+
 <div *ngIf="gameService.games.length > 0 && selectedGameId !== ''">
     <p-tabs [(value)]="selectedGameId" [scrollable]="true" [lazy]="true">
         <p-tablist>
@@ -15,6 +17,9 @@
                 </div>
                 <div *ngIf="game.cardsPicked.length < 1" class="no-cards-message">
                     You're about to begin! Give Ashlie a chat - and she'll draw cards for you.
+                </div>
+                <div>
+                    Sometimes, you just have to ask her to flip the next card. Or flip a card.
                 </div>
                 <div class="card-container">
                     <app-tarot-card *ngFor="let card of game.cardsPicked" [cardReference]="card"></app-tarot-card>
@@ -36,3 +41,31 @@
 <div *ngIf="isLoadingGames">
     Loading Games
 </div>
+
+<p-dialog [(visible)]="isTarotInstructionsVisible">
+    <ng-template #header>
+        Game Instructions
+    </ng-template>
+
+    <h3>Instructions</h3>
+    <div>
+        Ashlie is your tarot card reader. You will have her draw 5 cards, one by one. For each card
+        she draws, she will give you some information about that card.
+    </div>
+    <div>
+        After 5 cards are drawn, she will tell you what all cards mean together.
+    </div>
+    <div>
+        NOTE: Sometimes you have to ask her for the final reading. She's can be a little slow.
+    </div>
+
+    <h5>Special Note</h5>
+    <div>
+        This illustrates the ability of an AI to call functions (instead of just chatting), and
+        affect the world around it.
+    </div>
+
+    <ng-template #footer>
+        <p-button (click)="this.isTarotInstructionsVisible = false">OK</p-button>
+    </ng-template>
+</p-dialog>

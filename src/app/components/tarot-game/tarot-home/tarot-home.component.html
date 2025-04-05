@@ -1,6 +1,7 @@
 <div class="top-buttons">
-    <p-button (click)="startNewTarotGame()" [rounded]="true" [raised]="true"> Start New Game </p-button>
-    <p-button (click)="showTarotInstructions()" severity="help" [rounded]="true" raised="true">?</p-button>
+    <p-button (click)="startNewTarotGame()" label="Start New Game" [rounded]="true" [raised]="true"> </p-button>
+    <p-button (click)="showTarotInstructions()" severity="help" label="Instructions" [rounded]="true"
+        [raised]="true"></p-button>
 </div>
 
 <div *ngIf="gameService.games.length > 0 && selectedGameId !== ''">
@@ -13,7 +14,7 @@
         <p-tabpanels>
             <p-tabpanel *ngFor="let game of gameService.games;let i = index" [value]="game._id">
                 <div>
-                    <p-button (click)="deleteGame(game._id)"> Delete Game </p-button>
+                    <p-button (click)="deleteGame(game._id)" label="Delete Game"> </p-button>
                 </div>
                 <div *ngIf="game.cardsPicked.length < 1" class="no-cards-message">
                     You're about to begin! Give Ashlie a chat - and she'll draw cards for you.
@@ -66,6 +67,6 @@
     </div>
 
     <ng-template #footer>
-        <p-button (click)="this.isTarotInstructionsVisible = false">OK</p-button>
+        <p-button (click)="this.isTarotInstructionsVisible = false" label="OK"></p-button>
     </ng-template>
 </p-dialog>

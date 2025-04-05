@@ -18,8 +18,8 @@
                 contact Richard directly for details.
             </div>
             <div class="button-container">
-                <p-button severity="info" (click)="showHelp()">?</p-button>
-                <p-button type="primary" (click)="submit()">OK</p-button>
+                <p-button severity="info" label="?" (click)="showHelp()"></p-button>
+                <p-button type="primary" label="OK" (click)="submit()"></p-button>
             </div>
         </ng-template>
     </p-panel>
@@ -50,7 +50,7 @@
     </div>
     <ng-template #footer>
         <div class="button-container">
-            <p-button (click)="closeInfo()">Close</p-button>
+            <p-button (click)="closeInfo()" label="Close"></p-button>
         </div>
     </ng-template>
 </p-dialog>

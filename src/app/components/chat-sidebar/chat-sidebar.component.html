@@ -30,7 +30,8 @@
     <hr>
 
     <div class="text-center scroll-button-container">
-        <p-button icon="pi pi-arrow-down" size="small" [raised]="true" [rounded]="true" severity="help" (click)="scrollToBottom()" />
+        <p-button icon="pi pi-arrow-down" size="small" [raised]="true" [rounded]="true" severity="help"
+            (click)="scrollToBottom()" />
     </div>
 
     <div>
@@ -42,8 +43,8 @@
         </div>
         <div class="clearfix button-area">
             <button pButton tabindex="-1" [disabled]="isAwaitingResponse" *ngIf="canStartNewChat" [raised]="true"
-                (click)="newChat()" severity="danger">
-                Start New Chat
+                (click)="newChat()" severity="danger" label="Start New Chat">
+
             </button>
             <button pButton [raised]="true" [disabled]="isAwaitingResponse" label="Send" (click)="sendMessage()">
             </button>

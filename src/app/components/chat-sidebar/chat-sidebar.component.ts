@@ -58,7 +58,6 @@ export class ChatSidebarComponent extends ComponentBase {
   }
 
   ngOnInit() {
-    console.log('Hi there!');
     this.scrollToBottom(1000);
 
     this.socketService.subscribeToSocketEvent('receiveChatMessage')

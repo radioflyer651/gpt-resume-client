@@ -12,6 +12,7 @@ import { ChatTypes } from '../../model/shared-models/chat-types.model';
 import { SiteSettings } from '../../model/shared-models/site-settings.model';
 import { TarotCard, TarotCardDetails } from '../../model/shared-models/tarot-game/tarot-card.model';
 import { Company } from '../../model/shared-models/company.model';
+import { CompanyListingInfo } from '../../model/shared-models/company-listing.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -177,7 +178,7 @@ export class ClientApiService {
   }
 
   /** Returns all company listings in the system. */
-  getAllCompanies(): Observable<Company[]> {
-    return this.http.get<Company[]>(this.constructUrl('companies'), this.optionsBuilder.withAuthorization());
+  getAllCompanies(): Observable<CompanyListingInfo[]> {
+    return this.http.get<CompanyListingInfo[]>(this.constructUrl('companies'), this.optionsBuilder.withAuthorization());
   }
 }

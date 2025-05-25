@@ -11,11 +11,17 @@
     <p-table *ngIf="(companies | async)" [value]="(companies | async)!">\
         <ng-template #header>
             <tr>
-                <th>
+                <th class="header-cell">
                     Name
                 </th>
-                <th>
+                <th class="header-cell">
                     Website
+                </th>
+                <th class="number-cell">
+                    Contacts
+                </th>
+                <th class="number-cell">
+                    Job Listings
                 </th>
             </tr>
         </ng-template>
@@ -27,6 +33,12 @@
                 </td>
                 <td>
                     <a href="https://{{company.website}}" target="_blank">{{company.website}}</a>
+                </td>
+                <td class="number-cell">
+                    {{ company.companyContacts }}
+                </td>
+                <td class="number-cell">
+                    {{ company.jobListings }}
                 </td>
             </tr>
         </ng-template>

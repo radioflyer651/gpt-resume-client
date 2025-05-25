@@ -1,0 +1,34 @@
+<ng-template #controls>
+    <div class="control-panel">
+        <p-button label="Add Company"></p-button>
+    </div>
+
+</ng-template>
+
+<div class="company-list">
+    <h2>Company List</h2>
+
+    <p-table *ngIf="(companies | async)" [value]="(companies | async)!">\
+        <ng-template #header>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Website
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template #body let-company>
+            <tr>
+                <td>
+                    {{company.name}}
+                </td>
+                <td>
+                    <a href="https://{{company.website}}" target="_blank">{{company.website}}</a>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

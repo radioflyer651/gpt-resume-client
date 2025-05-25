@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable, fromEvent, map, shareReplay, startWith } from 'rxjs';
 import { ReadonlySubject } from '../../utils/readonly-subject';
+import { ComponentBase } from '../components/component-base/component-base.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PageSizeService {
+export class PageSizeService extends ComponentBase {
   constructor() {
+    super();
     this.initialize();
   }
 
@@ -25,7 +27,9 @@ export class PageSizeService {
     );
 
     // Subscribe to the page size service to enable handling of what to show, and how.
-    this._isSkinnyPage = new ReadonlySubject(this.pageResized$.pipe(
+    this._isSkinnyPage = new ReadonlySubject(
+      this.ngDestroy$,
+      this.pageResized$.pipe(
       map(newSize => {
         return newSize.width < 1400;
       })

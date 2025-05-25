@@ -21,11 +21,15 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'admin',
+        loadChildren: () => import('./admin.routes').then(m => m.TarotRoutes)
+    },
+    {
         path: 'tarot-game',
         loadChildren: () => import('./components/tarot-game/tarot-game.routes').then(m => m.TarotRoutes)
     },
     {
         path: '**',
         redirectTo: ''
-    }
+    },
 ];

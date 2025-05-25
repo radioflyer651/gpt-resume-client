@@ -6,21 +6,24 @@ import { ChatService } from '../chat.service';
 import { BehaviorSubject, combineLatest, combineLatestWith, map, Observable, withLatestFrom } from 'rxjs';
 import { TarotGame } from '../../../model/shared-models/tarot-game/tarot-game.model';
 import { ReadonlySubject } from '../../../utils/readonly-subject';
+import { ComponentBase } from '../../components/component-base/component-base.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TarotChatService {
+export class TarotChatService extends ComponentBase {
 
   constructor(
     readonly tarotGameService: TarotGameService,
     readonly chatService: ChatService,
   ) {
+    super();
     this.initialize();
   }
 
   initialize() {
     this._currentTarotGame = new ReadonlySubject<TarotGame | undefined>(
+      this.ngDestroy$,
       combineLatest([this.currentTarotGameId$, this.tarotGameService.games$]).pipe(
         map(([currentGameId, games]) => {
           return games.find(g => g._id === currentGameId);
@@ -29,6 +32,7 @@ export class TarotChatService {
     );
 
     this._currentGameChat = new ReadonlySubject<ClientChat | undefined>(
+      this.ngDestroy$,
       combineLatest([this.currentTarotGame$, this.chatService.chats$]).pipe(
         map(([currentGame, chats]) => {
           const result = chats.find(c => c._id === currentGame?.gameChatId);

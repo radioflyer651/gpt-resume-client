@@ -11,6 +11,7 @@ import { TarotGame } from '../../model/shared-models/tarot-game/tarot-game.model
 import { ChatTypes } from '../../model/shared-models/chat-types.model';
 import { SiteSettings } from '../../model/shared-models/site-settings.model';
 import { TarotCard, TarotCardDetails } from '../../model/shared-models/tarot-game/tarot-card.model';
+import { Company } from '../../model/shared-models/company.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -173,5 +174,10 @@ export class ClientApiService {
   /** Returns details about a tarot card, specified by its ID. */
   getTarotCardDetails(cardId: ObjectId): Observable<TarotCard> {
     return this.http.get<TarotCard>(this.constructUrl(`tarot/card-details/${cardId}`), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Returns all company listings in the system. */
+  getAllCompanies(): Observable<Company[]> {
+    return this.http.get<Company[]>(this.constructUrl('companies'), this.optionsBuilder.withAuthorization());
   }
 }

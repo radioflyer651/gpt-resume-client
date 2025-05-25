@@ -8,19 +8,23 @@ import { SiteUser } from '../../model/site-user.model';
 import { TokenService } from './token.service';
 import { ReadonlySubject } from '../../utils/readonly-subject';
 import { Router } from '@angular/router';
+import { ComponentBase } from '../components/component-base/component-base.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class UserService extends ComponentBase {
   constructor(
     readonly clientApiService: ClientApiService,
     readonly messagingService: MessagingService,
     readonly tokenService: TokenService,
     readonly router: Router,
   ) {
+    super();
+
     // Setup the user property.
     this._user = new ReadonlySubject<SiteUser | undefined>(
+      this.ngDestroy$,
       tokenService.tokenPayload$.pipe(
         map(token => {
           if (token) {
@@ -33,9 +37,11 @@ export class UserService {
     );
     this.user$ = this._user.observable$;
 
-    this._isUserLoggedIn = new ReadonlySubject(this.user$.pipe(
-      map(v => !!v)
-    ));
+    this._isUserLoggedIn = new ReadonlySubject(
+      this.ngDestroy$,
+      this.user$.pipe(
+        map(v => !!v)
+      ));
     this.isUserLoggedIn$ = this._isUserLoggedIn.observable$;
   }
 

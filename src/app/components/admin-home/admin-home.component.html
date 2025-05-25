@@ -1,0 +1,14 @@
+<div class="page-container">
+    <div class="left-side">
+
+    </div>
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
+    <div class="right-side">
+        <app-chat-sidebar [chatId]="(chatId$ | async)!"
+            *ngIf="showChatWindow && !(pageSizeService.isSkinnyPage$ | async)"></app-chat-sidebar>
+    </div>
+</div>
+
+<app-chat-slideout *ngIf="(chatId$ | async)" [chatId]="(chatId$ | async)!"></app-chat-slideout>

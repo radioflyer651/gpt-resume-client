@@ -4,6 +4,7 @@ import { TokenPayload } from '../../model/shared-models/token-payload.model';
 import { ReadonlySubject } from '../../utils/readonly-subject';
 import { nullToUndefined } from '../../utils/empty-and-null.utils';
 import { JwtPayload } from '../../model/jwt-payload.model';
+import { ComponentBase } from '../components/component-base/component-base.component';
 
 /** The key to store/retrieve the auth token on the local machine. */
 const tokenStoreKey = 't1';
@@ -11,10 +12,11 @@ const tokenStoreKey = 't1';
 @Injectable({
   providedIn: 'root'
 })
-export class TokenService {
+export class TokenService extends ComponentBase {
   // TODO: Handle token expiration.
 
   constructor() {
+    super();
     this.initialize();
   }
 
@@ -52,6 +54,7 @@ export class TokenService {
   //#endregion
 
   private readonly _tokenPayload = new ReadonlySubject<TokenPayload | undefined>(
+    this.ngDestroy$,
     this.token$.pipe(
       map(t => {
         if (t) {

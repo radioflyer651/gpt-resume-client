@@ -17,7 +17,6 @@ import { LoginService } from '../../services/login.service';
     ButtonModule,
     RouterModule,
     DialogModule,
-    LoginComponent
   ],
   templateUrl: './site-header.component.html',
   styleUrls: ['./site-header.component.scss']

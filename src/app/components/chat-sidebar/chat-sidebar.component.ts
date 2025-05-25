@@ -75,10 +75,12 @@ export class ChatSidebarComponent extends ComponentBase {
         }
       });
 
-    this._chat = new ReadonlySubject(combineLatest([this.chatId$, this.chatService.chats$])
-      .pipe(
-        map(([chatId, chats]) => chats.find(c => c._id === chatId))
-      ));
+    this._chat = new ReadonlySubject(
+      this.ngDestroy$,
+      combineLatest([this.chatId$, this.chatService.chats$])
+        .pipe(
+          map(([chatId, chats]) => chats.find(c => c._id === chatId))
+        ));
 
     // When the chat changes, we need to scroll down.
     this.chat$.pipe(

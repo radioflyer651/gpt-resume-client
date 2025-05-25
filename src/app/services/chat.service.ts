@@ -5,7 +5,7 @@ import { MessagingService } from './messaging.service';
 import { TokenService } from './token.service';
 import { SocketService } from './socket.service';
 import { ObjectId } from 'mongodb';
-import { BehaviorSubject, filter, from, last, lastValueFrom, map, Observable, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, EMPTY, filter, from, last, lastValueFrom, map, Observable, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
 import { ChatTypes } from '../../model/shared-models/chat-types.model';
 import { ReadonlySubject } from '../../utils/readonly-subject';
 import { constructApiUrl, getApiBaseUrl } from '../../utils/get-api-base-url.utils';
@@ -130,14 +130,16 @@ export class ChatService {
 
   /** Initializes this service. */
   protected async initialize(): Promise<void> {
-    this._mainChat = new ReadonlySubject<ClientChat>(this._chats$.pipe(
-      map(chats => {
-        const copy = chats.slice();
-        const filtered = copy.filter(c => c.chatType === ChatTypes.Main)
-          .sort((c1, c2) => c2.creationDate.valueOf() - c1.creationDate.valueOf());
+    this._mainChat = new ReadonlySubject<ClientChat>(
+      EMPTY,
+      this._chats$.pipe(
+        map(chats => {
+          const copy = chats.slice();
+          const filtered = copy.filter(c => c.chatType === ChatTypes.Main)
+            .sort((c1, c2) => c2.creationDate.valueOf() - c1.creationDate.valueOf());
 
-        return filtered[0];
-      })));
+          return filtered[0];
+        })));
 
     this.initializeReceiveChatMessages();
 

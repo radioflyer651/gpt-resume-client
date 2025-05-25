@@ -102,7 +102,7 @@ export class SocketService {
     );
 
     // Hook this up to the actual socket properties.
-    this._socket = new ReadonlySubject<IoSocketType | undefined>(socket$);
+    this._socket = new ReadonlySubject<IoSocketType | undefined>(EMPTY, socket$);
   }
 
   /** Hooks up all of the functions to the socket, when we have one. */

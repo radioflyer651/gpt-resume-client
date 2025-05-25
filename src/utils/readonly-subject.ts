@@ -1,9 +1,13 @@
-import { BehaviorSubject, combineLatest, map, Observable, shareReplay, Subscription } from "rxjs";
+import { BehaviorSubject, combineLatest, map, Observable, shareReplay, Subscription, takeUntil } from "rxjs";
 
 
 export class ReadonlySubject<T> {
-    constructor(source: Observable<T>) {
-        this.observable$ = source.pipe(shareReplay(1));
+    constructor(takeUntilObservable: Observable<any>, source: Observable<T>) {
+        if (takeUntil) {
+            this.observable$ = source.pipe(takeUntil(takeUntilObservable), shareReplay({ bufferSize: 1, refCount: true }));
+        } else {
+            this.observable$ = source.pipe(shareReplay(1));
+        }
     }
 
     /** Returns a shared  */

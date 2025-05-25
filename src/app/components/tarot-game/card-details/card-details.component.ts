@@ -28,32 +28,34 @@ export class CardDetailsComponent extends ComponentBase {
   ngOnInit() {
     // We need to update the details for this dialog whenever
     //  the card ID is changed.
-    this._cardDetails = new ReadonlySubject(this.cardId$.pipe(
-      switchMap(cardIdValue => {
-        // If there's no value, then there's nothing to get from the server.
-        if (cardIdValue.trim() === '') {
-          return EMPTY;
-        }
+    this._cardDetails = new ReadonlySubject(
+      this.ngDestroy$,
+      this.cardId$.pipe(
+        switchMap(cardIdValue => {
+          // If there's no value, then there's nothing to get from the server.
+          if (cardIdValue.trim() === '') {
+            return EMPTY;
+          }
 
-        // Return the value from the server.
-        return this.clientApiService.getTarotCardDetails(cardIdValue);
-      }),
-      takeUntil(this.ngDestroy$),
-    ));
+          // Return the value from the server.
+          return this.clientApiService.getTarotCardDetails(cardIdValue);
+        })
+      ));
 
 
-    this._cardImageUrl = new ReadonlySubject(this.cardId$.pipe(
-      combineLatestWith(this.cardImageNumber$),
-      map(([cardIdValue, cardImageNumber]) => {
-        // If there's no value, then there's nothing to get from the server.
-        if (cardIdValue.trim() === '') {
-          return undefined;
-        }
+    this._cardImageUrl = new ReadonlySubject(
+      this.ngDestroy$,
+      this.cardId$.pipe(
+        combineLatestWith(this.cardImageNumber$),
+        map(([cardIdValue, cardImageNumber]) => {
+          // If there's no value, then there's nothing to get from the server.
+          if (cardIdValue.trim() === '') {
+            return undefined;
+          }
 
-        return `${environment.apiBaseUrl}tarot/images/${this.cardId}/${cardImageNumber}`;
-      }),
-      takeUntil(this.ngDestroy$),
-    ));
+          return `${environment.apiBaseUrl}tarot/images/${this.cardId}/${cardImageNumber}`;
+        }),
+      ));
 
   }
 

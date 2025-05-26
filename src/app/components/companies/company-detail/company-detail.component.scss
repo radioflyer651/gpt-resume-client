@@ -1,0 +1,20 @@
+h5 {
+    &.contacts,
+    &.openings {
+        margin-top: 2em;
+    }
+}
+
+.toolbar-container {
+    margin-top: 1em;
+}
+
+.control-cell {
+    display: flex;
+    justify-content: end;
+
+    button,
+    p-button {
+        margin: 0 0.5em;
+    }
+}

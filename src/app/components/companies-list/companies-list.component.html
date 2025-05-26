@@ -29,7 +29,7 @@
         <ng-template #body let-company>
             <tr>
                 <td>
-                    {{company.name}}
+                    <a routerLink="../edit/{{company._id}}"> {{company.name}} </a>
                 </td>
                 <td>
                     <a href="https://{{company.website}}" target="_blank">{{company.website}}</a>

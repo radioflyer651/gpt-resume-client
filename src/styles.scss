@@ -13,6 +13,10 @@ body {
     clear: both;
 }
 
+.p-floatlabel {
+    margin-top: 2.0em;
+}
+
 @media print {
     .site-content-container * {
         visibility: collapse;

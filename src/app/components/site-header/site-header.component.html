@@ -13,12 +13,16 @@
     <h1>Richard Olson</h1>
     <h3> AI Resume </h3>
     <nav *ngIf="isMenuVisible">
+
       <a (click)="login()" *ngIf="isMenuLoginVisible">Login</a>
+
       <ng-container *ngIf="isNavigationVisible">
         <a routerLink="/">Home</a>
         <a routerLink="/tarot-game">Tarot Games</a>
+        <a routerLink="/admin/companies/list">Company List</a>
         <a (click)="logout()">Log Out</a>
       </ng-container>
+
     </nav>
   </div>
 

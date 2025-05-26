@@ -13,6 +13,9 @@ import { SiteSettings } from '../../model/shared-models/site-settings.model';
 import { TarotCard, TarotCardDetails } from '../../model/shared-models/tarot-game/tarot-card.model';
 import { Company } from '../../model/shared-models/company.model';
 import { CompanyListingInfo } from '../../model/shared-models/company-listing.model';
+import { CompanyContact } from '../../model/shared-models/job-tracking/company-contact.data';
+import { JobListing, JobListingLine } from '../../model/shared-models/job-tracking/job-listing.model';
+import { UpsertDbItem } from '../../model/shared-models/db-operation-types.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -180,5 +183,35 @@ export class ClientApiService {
   /** Returns all company listings in the system. */
   getAllCompanies(): Observable<CompanyListingInfo[]> {
     return this.http.get<CompanyListingInfo[]>(this.constructUrl('companies'), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Returns a specified company from the server. */
+  getCompanyById(companyId: ObjectId): Observable<Company> {
+    return this.http.get<Company>(this.constructUrl(`companies/${companyId}`), this.optionsBuilder.withAuthorization());
+  }
+
+  getContactsByCompanyId(companyId: ObjectId): Observable<CompanyContact[]> {
+    return this.http.get<CompanyContact[]>(this.constructUrl(`companies/${companyId}/contacts`), this.optionsBuilder.withAuthorization());
+  }
+
+  getJobListingsByCompanyId(companyId: ObjectId): Observable<JobListingLine[]> {
+    return this.http.get<JobListingLine[]>(this.constructUrl(`companies/${companyId}/job-listings`), this.optionsBuilder.withAuthorization());
+  }
+
+  getCompanyContactById(contactId: ObjectId): Observable<CompanyContact | undefined> {
+    return this.http.get<CompanyContact | undefined>(this.constructUrl(`companies/contacts/${contactId}`), this.optionsBuilder.withAuthorization());
+  }
+
+  getJobListingById(jobListingId: ObjectId): Observable<CompanyContact | undefined> {
+    return this.http.get<CompanyContact | undefined>(this.constructUrl(`companies/job-listings/${jobListingId}`), this.optionsBuilder.withAuthorization());
+  }
+
+  upsertContact(contact: UpsertDbItem<CompanyContact>): Observable<CompanyContact> {
+    return this.http.post<CompanyContact>(this.constructUrl(`companies/contacts`), contact, this.optionsBuilder.withAuthorization());
+  }
+
+  /** Updates a specified company object on the server. */
+  updateCompany(company: Company): Observable<void> {
+    return this.http.post<void>(this.constructUrl(`companies`), company, this.optionsBuilder.withAuthorization());
   }
 }

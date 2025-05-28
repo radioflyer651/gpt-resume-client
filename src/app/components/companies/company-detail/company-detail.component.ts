@@ -19,6 +19,7 @@ import { ObjectId } from 'mongodb';
 import { JobListingDialogComponent } from "../job-listing-dialog/job-listing-dialog.component";
 import { ConfirmationService } from 'primeng/api';
 import { CommentsEditorComponent } from "../../comments-editor/comments-editor.component";
+import { PanelModule } from 'primeng/panel';
 
 @Component({
   selector: 'app-company-detail',
@@ -34,7 +35,8 @@ import { CommentsEditorComponent } from "../../comments-editor/comments-editor.c
     ContactDialogComponent,
     JobListingDialogComponent,
     CommentsEditorComponent,
-],
+    PanelModule,
+  ],
   templateUrl: './company-detail.component.html',
   styleUrls: [
     './company-detail.component.scss',
@@ -137,6 +139,13 @@ export class CompanyDetailComponent extends ComponentBase {
     });
   }
 
+  get websiteField(): string {
+    return this.editTarget!.website;
+  }
+  set websiteField(value: string) {
+    this.editTarget!.website = value.replace(/^https?:\/\//i, '');
+  }
+
   /** Gets or sts the contacts for the company. */
   contacts?: CompanyContact[] = undefined;
 
@@ -145,6 +154,38 @@ export class CompanyDetailComponent extends ComponentBase {
 
   /** Gets or sets the company that's being edited. */
   editTarget: UpsertDbItem<Company> | undefined;
+
+  get canNavigateWebsite(): boolean {
+    return this.navigationWebsite !== '';
+  }
+
+  /** Value to navigate to if an appropriate website is provided for the company. */
+  get navigationWebsite(): string {
+    if (!this.editTarget) {
+      return '';
+    }
+
+    let value = this.editTarget.website.replace(/^https?:\/\//, '');
+    if (/^([\w\d\-]+\.){2,}/i.test(value)) {
+      return `https://${value}`;
+    }
+
+    return '';
+  }
+
+  navigateWebsite(): void {
+    if (!this.canNavigateWebsite) {
+      return;
+    }
+    
+    // Open the URL in a new tab and give it focus
+    const newWindow = window.open(this.navigationWebsite, '_blank');
+
+    // Focus the new window if it was successfully created
+    if (newWindow) {
+      newWindow.focus();
+    }
+  }
 
   /** Returns a boolean value indicating whether or not we're editing a new company. */
   get isNewCompany(): boolean {

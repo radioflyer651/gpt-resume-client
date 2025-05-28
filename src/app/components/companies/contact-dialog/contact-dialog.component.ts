@@ -16,6 +16,7 @@ import { NewDbItem, UpsertDbItem } from '../../../../model/shared-models/db-oper
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommentsEditorComponent } from "../../comments-editor/comments-editor.component";
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-contact-dialog',
@@ -30,8 +31,9 @@ import { CommentsEditorComponent } from "../../comments-editor/comments-editor.c
     ProgressSpinnerModule,
     ButtonModule,
     DialogModule,
-    CommentsEditorComponent
-],
+    CommentsEditorComponent,
+    TabsModule,
+  ],
   templateUrl: './contact-dialog.component.html',
   styleUrls: [
     './contact-dialog.component.scss',
@@ -88,6 +90,8 @@ export class ContactDialogComponent extends ComponentBase {
       }
     });
   }
+
+  tabIndex: number = 0;
 
   // #region companyId
   private readonly _companyId = new BehaviorSubject<ObjectId>('');
@@ -167,6 +171,8 @@ export class ContactDialogComponent extends ComponentBase {
 
   /** Called when the user clicks the submit or cancel button. */
   async onCompleteLocal(cancelled: boolean): Promise<void> {
+    this.tabIndex = 0;
+
     // Save the updated data if not cancelled.
     if (!cancelled) {
       await lastValueFrom(this.apiClient.upsertContact(this.targetContact!));

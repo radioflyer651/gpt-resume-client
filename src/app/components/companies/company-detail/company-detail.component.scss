@@ -1,8 +1,9 @@
-h5 {
-    &.contacts,
-    &.openings,
-    &.comments {
-        margin-top: 2em;
+.header-container {
+    width: 100%;
+    display: flex;
+
+    h5 {
+        flex: 1 1 auto;
     }
 }
 
@@ -20,6 +21,27 @@ h5 {
     }
 }
 
+.info-panel {
+    width: 100%;
+
+    p-floatlabel {
+        width: 100%;
+
+        input {
+            width: 100%;
+        }
+    }
+}
+
 p-button {
     margin-left: 1em;
+}
+
+p-panel {
+    margin-bottom: 1em;
+    display: block;
+}
+
+.page-toolbar {
+    margin-top: 2em;
 }

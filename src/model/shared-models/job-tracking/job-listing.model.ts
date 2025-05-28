@@ -52,7 +52,7 @@ export function createJobListing(companyId: ObjectId): UpsertDbItem<JobListing> 
     };
 
     return {
-        postingDate: undefined,
+        postingDate: new Date(),
         jobTitle: '',
         companyId: companyId, // Placeholder ObjectId
         urlLink: '',

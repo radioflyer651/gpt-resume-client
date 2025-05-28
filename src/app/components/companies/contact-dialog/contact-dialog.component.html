@@ -1,30 +1,46 @@
-<p-dialog [(visible)]="visible" [header]="headerText">
+<p-dialog [(visible)]="visible" [header]="headerText" [style]="{minHeight: '600px'}">
 
     <p-progress-spinner *ngIf="!targetContact"></p-progress-spinner>
 
     <div *ngIf="!!targetContact">
-        <p-floatlabel>
-            <input id="new-contact-first-name" pInputText [(ngModel)]="targetContact.firstName"
-                [autocomplete]="false" />
-            <label for="new-contact-first-name">First Name</label>
-        </p-floatlabel>
+        <p-tabs [(value)]="tabIndex">
+            <p-tablist>
+                <p-tab [value]="0">
+                    Contact Info
+                </p-tab>
+                <p-tab [value]="1">
+                    Comments
+                </p-tab>
+            </p-tablist>
 
-        <p-floatlabel>
-            <input id="new-contact-last-name" pInputText [(ngModel)]="targetContact.lastName" [autocomplete]="false" />
-            <label for="new-contact-last-name">Last Name</label>
-        </p-floatlabel>
+            <p-tabpanel [value]="0">
+                <p-floatlabel>
+                    <input id="new-contact-first-name" pInputText [(ngModel)]="targetContact.firstName"
+                        [autocomplete]="false" />
+                    <label for="new-contact-first-name">First Name</label>
+                </p-floatlabel>
 
-        <p-floatlabel>
-            <input id="new-contact-title" pInputText [(ngModel)]="targetContact.title" [autocomplete]="false" />
-            <label for="new-contact-title">Title</label>
-        </p-floatlabel>
+                <p-floatlabel>
+                    <input id="new-contact-last-name" pInputText [(ngModel)]="targetContact.lastName"
+                        [autocomplete]="false" />
+                    <label for="new-contact-last-name">Last Name</label>
+                </p-floatlabel>
 
-        <p-floatlabel>
-            <input id="new-contact-email" pInputText [(ngModel)]="targetContact.email" [autocomplete]="false" />
-            <label for="new-contact-email">Email</label>
-        </p-floatlabel>
+                <p-floatlabel>
+                    <input id="new-contact-title" pInputText [(ngModel)]="targetContact.title" [autocomplete]="false" />
+                    <label for="new-contact-title">Title</label>
+                </p-floatlabel>
 
-        <app-comments-editor [commentOwner]="targetContact"></app-comments-editor>
+                <p-floatlabel>
+                    <input id="new-contact-email" pInputText [(ngModel)]="targetContact.email" [autocomplete]="false" />
+                    <label for="new-contact-email">Email</label>
+                </p-floatlabel>
+            </p-tabpanel>
+
+            <p-tabpanel [value]="1">
+                <app-comments-editor [commentOwner]="targetContact"></app-comments-editor>
+            </p-tabpanel>
+        </p-tabs>
     </div>
 
     <ng-template #footer>

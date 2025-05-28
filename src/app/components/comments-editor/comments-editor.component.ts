@@ -67,8 +67,6 @@ export class CommentsEditorComponent extends ComponentBase {
       this.commentOwner.comments = [];
     }
 
-    console.log(`Setting ${this.selectedCommentIndex}: ${newVal}`);
-
     this.commentOwner.comments[this.selectedCommentIndex] = newVal;
   }
 

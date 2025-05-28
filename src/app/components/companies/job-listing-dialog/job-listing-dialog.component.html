@@ -1,0 +1,79 @@
+<p-dialog [(visible)]="visible" [style]="{minHeight: '800px'}">
+    <div class="job-listing-form" *ngIf="!!targetListing">
+        <h3>Job Listing Details</h3>
+
+        <p-tabs [(value)]="tabIndex" [style]="{height: '100%'}">
+            <p-tablist>
+                <p-tab [value]="0">
+                    <div>
+                        Job Details
+                    </div>
+                </p-tab>
+                <p-tab [value]="1">
+                    <div>
+                        Job Description
+                    </div>
+                </p-tab>
+                <p-tab [value]="2">
+                    <div>
+                        Comments
+                    </div>
+                </p-tab>
+            </p-tablist>
+
+            <p-tabpanel [value]="0">
+                <!-- Title Input -->
+                <p-float-label>
+                    <input id="job-title" type="text" pInputText [(ngModel)]="targetListing.jobTitle" />
+                    <label for="job-title">Job Title</label>
+                </p-float-label>
+
+                <!-- URL Link -->
+                <p-float-label>
+                    <input id="url-link" type="text" pInputText [(ngModel)]="targetListing.urlLink" />
+                    <label for="url-link">URL Link</label>
+                </p-float-label>
+
+                <!-- Posting Date -->
+                <p-float-label>
+                    <p-date-picker id="posting-date" [(ngModel)]="targetListing.postingDate"
+                        dateFormat="mm/dd/yy"></p-date-picker>
+                    <label for="posting-date">Posting Date</label>
+                </p-float-label>
+
+                <!-- Current Status Display -->
+                <div *ngIf="targetListing?.jobStatuses?.length" class="status-section">
+                    <h4>Current Status</h4>
+                    <div *ngFor="let status of targetListing.jobStatuses">
+                        <div><strong>Status:</strong> {{ status.status }}</div>
+                        <div><strong>Date:</strong> {{ status.statusDate | date:'MM/dd/yy' }}</div>
+                    </div>
+                </div>
+            </p-tabpanel>
+
+            <p-tabpanel [value]="1">
+                <!-- Description -->
+                <label for="description">Description</label>
+                <textarea id="description" rows="4" cols="50" pInputText [(ngModel)]="targetListing.description"
+                    [style]="{width: '100%', height: '100%'}"></textarea>
+            </p-tabpanel>
+
+            <p-tabpanel [value]="2">
+                <!-- Comments List -->
+                <div class="comments-section">
+                    <h4>Comments</h4>
+                    <app-comments-editor [commentOwner]="targetListing"></app-comments-editor>
+                </div>
+            </p-tabpanel>
+        </p-tabs>
+
+    </div>
+
+    <!-- Save Button -->
+    <ng-template #footer>
+        <div class="control-cell">
+            <p-button label="Cancel" (onClick)="onCompleteLocal(true)"></p-button>
+            <p-button label="OK" (onClick)="onCompleteLocal(false)"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>

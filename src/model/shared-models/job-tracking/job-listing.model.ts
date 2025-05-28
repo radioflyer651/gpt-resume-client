@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { UpsertDbItem } from "../db-operation-types.model";
 
 /** Represents a job posted on a job board or something similar. */
 export interface JobListing {
@@ -38,3 +39,25 @@ export interface JobListingStatus {
 
 /** A shortened version of the JobListing it allow it to be listed in a table. */
 export type JobListingLine = Pick<JobListing, '_id' | 'urlLink' | 'postingDate' | 'jobTitle' | 'postingDate'> & { currentStatus: JobListingStatus; };
+
+
+/**
+ * Returns an UpsertDbItem of JobListing with all fields initialized empty 
+ * or as placeholders for user input and editing.
+ */
+export function createJobListing(companyId: ObjectId): UpsertDbItem<JobListing> {
+    const emptyStatus: JobListingStatus = {
+        status: '',
+        statusDate: new Date(0), // Epoch as placeholder date
+    };
+
+    return {
+        postingDate: undefined,
+        jobTitle: '',
+        companyId: companyId, // Placeholder ObjectId
+        urlLink: '',
+        description: '',
+        jobStatuses: [],
+        comments: []
+    };
+}

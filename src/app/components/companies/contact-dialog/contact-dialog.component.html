@@ -23,17 +23,14 @@
             <input id="new-contact-email" pInputText [(ngModel)]="targetContact.email" [autocomplete]="false" />
             <label for="new-contact-email">Email</label>
         </p-floatlabel>
+
+        <app-comments-editor [commentOwner]="targetContact"></app-comments-editor>
     </div>
 
     <ng-template #footer>
-        <p-toolbar>
-            <ng-template #center>
-
-            </ng-template>
-            <ng-template #end>
-                <p-button label="OK" (onClick)="onCompleteLocal(false)"></p-button>
-                <p-button label="Cancel" (onClick)="onCompleteLocal(true)"></p-button>
-            </ng-template>
-        </p-toolbar>
+        <div class="control-cell">
+            <p-button label="Cancel" (onClick)="onCompleteLocal(true)"></p-button>
+            <p-button label="OK" (onClick)="onCompleteLocal(false)"></p-button>
+        </div>
     </ng-template>
 </p-dialog>

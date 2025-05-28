@@ -1,0 +1,10 @@
+
+.control-cell {
+    display: flex;
+    justify-content: end;
+
+    button,
+    p-button {
+        margin: 0 0.5em;
+    }
+}

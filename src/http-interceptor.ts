@@ -1,17 +1,26 @@
-import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse } from "@angular/common/http";
+import { map, Observable, of, switchMap, tap } from "rxjs";
 
 
 
 export function dateConverterInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
     // If any string matches time/date format on the body object, or a nested object, then
     //  we convert it to a Date object, and set it on the request body.
-    if (req.body) {
-        // const body = convertDateStrings(req.body);
-        // req = req.clone({ body });
-    }
+    // if (req.body) {
+    //     const body = convertDateStrings(req.body);
+    //     req = req.clone({ body });
+    // }
 
-    return next(req);
+    return next(req).pipe(
+        map(event => {
+            if (event instanceof HttpResponse) {
+                const body = convertDateStrings(event.body);
+                return event.clone({ body });
+            }
+
+            return event;
+        })
+    );
 }
 
 /**
@@ -19,6 +28,10 @@ export function dateConverterInterceptor(req: HttpRequest<unknown>, next: HttpHa
  * @param target The object to transform in-place.
  */
 export function convertDateStrings(target: any): any {
+    if (!target) {
+        return target;
+    }
+
     if (target && typeof target === 'object') {
         if (Array.isArray(target)) {
             for (let i = 0; i < target.length; i++) {
@@ -42,6 +55,9 @@ export function convertDateStrings(target: any): any {
 }
 
 function isValidDate(dateValue: string): boolean {
-    const timestamp = Date.parse(dateValue);
-    return !isNaN(timestamp);
+    if(typeof dateValue !== 'string'){
+        return false;
+    }
+
+    return /^20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$/.test(dateValue);
 }

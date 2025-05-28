@@ -8,7 +8,16 @@
 <div class="company-list">
     <h2>Company List</h2>
 
-    <p-table *ngIf="(companies | async)" [value]="(companies | async)!">\
+    <p-toolbar>
+        <ng-template #center>
+
+        </ng-template>
+        <ng-template #end>
+            <p-button label="New Company" routerLink="../edit/new"></p-button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table *ngIf="companyList" [value]="companyList">\
         <ng-template #header>
             <tr>
                 <th class="header-cell">
@@ -29,6 +38,8 @@
         <ng-template #body let-company>
             <tr>
                 <td>
+                    <p-button [rounded]="true" size="small" [text]="true" severity="danger" icon="pi pi-times"
+                        (click)="deleteCompanyConfirmation(company)"></p-button>
                     <a routerLink="../edit/{{company._id}}"> {{company.name}} </a>
                 </td>
                 <td>

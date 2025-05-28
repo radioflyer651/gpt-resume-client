@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { TokenPayload } from '../../model/shared-models/token-payload.model';
 import { LoginRequest } from '../../model/shared-models/login-request.model';
 import { environment } from '../../environments/environment';
-import { EMPTY, Observable, tap } from 'rxjs';
+import { EMPTY, map, Observable, tap } from 'rxjs';
 import { TokenService } from './token.service';
 import { ChatInfo, ClientChat } from '../../model/shared-models/chat-models.model';
 import { ObjectId } from 'mongodb';
@@ -202,16 +202,43 @@ export class ClientApiService {
     return this.http.get<CompanyContact | undefined>(this.constructUrl(`companies/contacts/${contactId}`), this.optionsBuilder.withAuthorization());
   }
 
-  getJobListingById(jobListingId: ObjectId): Observable<CompanyContact | undefined> {
-    return this.http.get<CompanyContact | undefined>(this.constructUrl(`companies/job-listings/${jobListingId}`), this.optionsBuilder.withAuthorization());
+  getJobListingById(jobListingId: ObjectId): Observable<JobListing | undefined> {
+    return this.http.get<JobListing | undefined>(this.constructUrl(`companies/job-listings/${jobListingId}`), this.optionsBuilder.withAuthorization());
   }
 
   upsertContact(contact: UpsertDbItem<CompanyContact>): Observable<CompanyContact> {
     return this.http.post<CompanyContact>(this.constructUrl(`companies/contacts`), contact, this.optionsBuilder.withAuthorization());
   }
 
+  upsertJobListing(jobListing: UpsertDbItem<JobListing>): Observable<JobListing> {
+    return this.http.post<JobListing>(this.constructUrl(`companies/job-listings`), jobListing, this.optionsBuilder.withAuthorization());
+  }
+
   /** Updates a specified company object on the server. */
-  updateCompany(company: Company): Observable<void> {
-    return this.http.post<void>(this.constructUrl(`companies`), company, this.optionsBuilder.withAuthorization());
+  upsertCompany(company: UpsertDbItem<Company>): Observable<Company> {
+    return this.http.post<Company>(this.constructUrl(`companies`), company, this.optionsBuilder.withAuthorization()).pipe(
+      map(newVal => {
+        // Ensure the original company has the new _id.
+        //  If the company was being updated, then it should already
+        //  have the original ID, and no actual change is made.
+        company._id = newVal._id;
+
+        return company as Company;
+      })
+    );
+  }
+
+  /** Deletes a company, specified by its ID, and all of its job descriptions and contacts. */
+  deleteCompany(companyId: ObjectId): Observable<void> {
+    return this.http.delete<void>(this.constructUrl(`companies/${companyId}`), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Deletes a specified contact by their ID. */
+  deleteContactById(contactId: ObjectId): Observable<void> {
+    return this.http.delete<void>(this.constructUrl(`companies/contacts/${contactId}`), this.optionsBuilder.withAuthorization());
+  }
+
+  deleteJobListingById(listingId: ObjectId): Observable<void> {
+    return this.http.delete<void>(this.constructUrl(`companies/job-listings/${listingId}`), this.optionsBuilder.withAuthorization());
   }
 }

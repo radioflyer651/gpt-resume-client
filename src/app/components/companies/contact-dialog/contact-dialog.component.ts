@@ -15,6 +15,7 @@ import { ClientApiService } from '../../../services/client-api.service';
 import { NewDbItem, UpsertDbItem } from '../../../../model/shared-models/db-operation-types.model';
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { CommentsEditorComponent } from "../../comments-editor/comments-editor.component";
 
 @Component({
   selector: 'app-contact-dialog',
@@ -29,9 +30,13 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     ProgressSpinnerModule,
     ButtonModule,
     DialogModule,
-  ],
+    CommentsEditorComponent
+],
   templateUrl: './contact-dialog.component.html',
-  styleUrl: './contact-dialog.component.scss'
+  styleUrls: [
+    './contact-dialog.component.scss',
+    '../../../../buttons.scss',
+  ]
 })
 export class ContactDialogComponent extends ComponentBase {
   constructor(

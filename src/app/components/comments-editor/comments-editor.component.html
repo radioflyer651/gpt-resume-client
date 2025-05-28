@@ -1,0 +1,24 @@
+<div class="comments-editor">
+    <div class="content-pane">
+        <p-tabs [(value)]="selectedCommentIndex" *ngIf="isEditable" class="no-comments-message">
+            <p-tablist>
+                <p-tab *ngFor="let comment of commentOwner.comments; let i = index" [value]="i">
+                    <div>Comment {{i}}</div>
+                </p-tab>
+            </p-tablist>
+
+            <p-tabpanel [value]="selectedCommentIndex">
+                <textarea [style]="{width: '100%', height: '100%'}" pTextarea [(ngModel)]="selectedComment"></textarea>
+            </p-tabpanel>
+        </p-tabs>
+
+        <div *ngIf="!isEditable" class="no-comments-message">
+            Add a new comment to edit in this area.
+        </div>
+    </div>
+
+    <div class="control-cell">
+        <p-button label="Delete" (click)="deleteComment()"></p-button>
+        <p-button label="New" (click)="newComment()"></p-button>
+    </div>
+</div>

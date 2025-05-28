@@ -16,6 +16,9 @@ import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CommentsEditorComponent } from "../../comments-editor/comments-editor.component";
 import { TabsModule } from 'primeng/tabs';
+import { EditStatusResult, StatusDialogComponent } from "../status-dialog/status-dialog.component";
+import { orderJobListingStatuses } from '../../../../model/shared-models/job-tracking/job-listing.functions';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-job-listing-dialog',
@@ -31,6 +34,7 @@ import { TabsModule } from 'primeng/tabs';
     DatePickerModule,
     CommentsEditorComponent,
     TabsModule,
+    StatusDialogComponent
   ],
   templateUrl: './job-listing-dialog.component.html',
   styleUrls: [
@@ -41,6 +45,7 @@ import { TabsModule } from 'primeng/tabs';
 export class JobListingDialogComponent extends ComponentBase {
   constructor(
     readonly clientApiService: ClientApiService,
+    readonly confirmationService: ConfirmationService,
   ) {
     super();
   }
@@ -116,6 +121,7 @@ export class JobListingDialogComponent extends ComponentBase {
 
   set visible(newVal: boolean) {
     this._visible.next(newVal);
+    this.isStatusDialogVisible = false;
     this.visibleChange.emit(newVal);
   }
   // #endregion
@@ -126,6 +132,74 @@ export class JobListingDialogComponent extends ComponentBase {
   /** Event called when the form is closed.  A boolean value is emitted to indicate whether or not the form was cancelled. */
   @Output()
   onClosed = new EventEmitter<boolean>();
+
+  /** Returns the display status to show in the UI, if any. */
+  get displayStatus(): JobListingStatus | undefined {
+    if (!this.targetListing?.jobStatuses || this.targetListing.jobStatuses.length < 1) {
+      return undefined;
+    }
+
+    // Return the last one from the list.
+    return this.targetListing.jobStatuses[this.targetListing.jobStatuses.length - 1];
+  }
+
+  /** Gets or sets the job status being edited in the dialog. */
+  editStatus!: JobListingStatus;
+
+  /** Controls the visibility of the status editor dialog. */
+  isStatusDialogVisible: boolean = false;
+
+  /** Gets or sets the mode of the status editor dialog. */
+  statusEditMode: 'edit' | 'new' = 'new';
+
+  /** Shows a dialog so the user can update the status of the project. */
+  editJobStatus(target: JobListingStatus | 'new'): void {
+    // Set the status we're editing, and set the mode.
+    if (target === 'new') {
+      this.statusEditMode = 'new';
+      this.editStatus = { status: 'New Status', statusDate: new Date() };
+    } else {
+      this.statusEditMode = 'edit';
+      this.editStatus = target;
+    }
+
+    this.isStatusDialogVisible = true;
+  }
+
+  /** Called when the job status dialog closes. */
+  onStatusDialogClosed({ cancelled, newValue }: EditStatusResult): void {
+    // Exit if cancelled.
+    if (cancelled) {
+      return;
+    }
+
+    // Take action, based on the edit mode.
+    if (this.statusEditMode === 'edit') {
+      // Update the original value.
+      this.editStatus.status = newValue.status;
+      this.editStatus.statusDate = newValue.statusDate;
+    } else {
+      // Add the status to the list.
+      this.targetListing.jobStatuses.push(newValue);
+    }
+
+    // Sort the list to be in date order.
+    orderJobListingStatuses(this.targetListing as JobListing);
+  }
+
+  /** Confirms and then deletes a specified job status. */
+  deleteJobStatus(status: JobListingStatus): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete the job status: ${status.status}?`,
+      accept: () => {
+        // Find the index, then delete it.
+        const statusIndex = this.targetListing.jobStatuses.indexOf(status);
+        if (statusIndex >= 0) {
+          this.targetListing.jobStatuses.splice(statusIndex, 1);
+        }
+      }
+    });
+  }
 
   /** Gets or sets the current tab index for the tab list. */
   tabIndex = 0;
@@ -138,7 +212,7 @@ export class JobListingDialogComponent extends ComponentBase {
   /** Called when the user clicks OK or cancel. */
   async onCompleteLocal(cancelled: boolean) {
     this.tabIndex = 0;
-    
+
     if (!cancelled) {
       // Save the listing.
       await this.saveListing();

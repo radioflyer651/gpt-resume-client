@@ -12,7 +12,15 @@
     height: 100%;
 }
 
-p-tabs{
+.status-header {
+    display: flex;
+
+    h4 {
+        flex: 1 1 auto;
+    }
+}
+
+p-tabs {
     height: 100%;
 }
 

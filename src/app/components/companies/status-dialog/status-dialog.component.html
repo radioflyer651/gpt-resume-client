@@ -1,0 +1,18 @@
+<p-dialog [(visible)]="visible" *ngIf="!!editTarget">
+    <p-floatlabel>
+        <input id="new-status" pInputText [(ngModel)]="editTarget.status" />
+        <label for="new-status">New Status</label>
+    </p-floatlabel>
+
+    <p-floatlabel>
+        <p-date-picker id="new-date" [(ngModel)]="editTarget.statusDate" appendTo="body"></p-date-picker>
+        <label for="new-date">Date</label>
+    </p-floatlabel>
+
+    <ng-template #footer>
+        <div class="control-cell">
+            <p-button label="Cancel" (click)="complete(true)"></p-button>
+            <p-button label="OK" (click)="complete(false)"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>

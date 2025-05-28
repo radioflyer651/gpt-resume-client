@@ -1,4 +1,5 @@
-p-button {
+p-button,
+p-splitbutton {
     margin-left: 1em;
 }
 
@@ -7,7 +8,8 @@ p-button {
     justify-content: end;
 
     button,
-    p-button {
+    p-button,
+    p-splitbutton {
         margin: 0 0.5em;
     }
 }

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { lastValueFrom, map, Observable, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, lastValueFrom, map, Observable, takeUntil } from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { Company } from '../../../../model/shared-models/company.model';
 import { ClientApiService } from '../../../services/client-api.service';
@@ -11,6 +11,8 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ObjectId } from 'mongodb';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { CheckboxModule } from 'primeng/checkbox';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-companies-list',
@@ -21,6 +23,8 @@ import { ConfirmationService } from 'primeng/api';
     TableModule,
     ToolbarModule,
     ConfirmDialogModule,
+    CheckboxModule,
+    FormsModule,
   ],
   templateUrl: './companies-list.component.html',
   styleUrl: './companies-list.component.scss'
@@ -36,7 +40,13 @@ export class CompaniesListComponent extends ComponentBase {
   ngOnInit() {
     const companies = this.apiClient
       .getAllCompanies().pipe(
-        map(companies => {
+        combineLatestWith(this.hideArchived$),
+        map(([companies, hideArchived]) => {
+          // Hide the archives, if needed.
+          if (hideArchived) {
+            companies = companies.filter(c => !c.archive);
+          }
+
           companies.sort((c1, c2) => {
             return c1.name.localeCompare(c2.name);
           });
@@ -51,6 +61,20 @@ export class CompaniesListComponent extends ComponentBase {
   }
 
   companyList: Company[] = [];
+
+  // #region hideArchived
+  private readonly _hideArchived = new BehaviorSubject<boolean>(true);
+  readonly hideArchived$ = this._hideArchived.asObservable();
+
+  /** Gets or sets a boolean value indicating whether or not to hide the archived companies in the listing. */
+  get hideArchived(): boolean {
+    return this._hideArchived.getValue();
+  }
+
+  set hideArchived(newVal: boolean) {
+    this._hideArchived.next(newVal);
+  }
+  // #endregion
 
   private async deleteCompany(company: Company): Promise<void> {
     // Delete the company on the server.

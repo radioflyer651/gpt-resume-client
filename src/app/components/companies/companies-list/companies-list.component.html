@@ -7,8 +7,14 @@
 
 <div class="company-list">
     <h2>Company List</h2>
-
     <p-toolbar>
+        <ng-template #start>
+            <div class="checkbox-container">
+                <p-checkbox [binary]="true" [(ngModel)]="hideArchived"></p-checkbox>
+                <label>Hide Archived Companies</label>
+            </div>
+        </ng-template>
+
         <ng-template #center>
 
         </ng-template>

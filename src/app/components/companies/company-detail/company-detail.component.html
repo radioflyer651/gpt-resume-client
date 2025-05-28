@@ -13,6 +13,10 @@
         </ng-template>
 
         <div class="info-panel">
+            <div class="checkbox-container">
+                <p-checkbox [binary]="true" [(ngModel)]="editTarget.archive"></p-checkbox>
+                <label>Archive This Company</label>
+            </div>
             <p-floatlabel>
                 <input id="company-name" pInputText [(ngModel)]="editTarget.name" />
                 <label for="company-name">Company name</label>
@@ -167,7 +171,7 @@
             </ng-template>
             <ng-template #end>
                 <p-button label="Back" routerLink="../../list"></p-button>
-                <p-button label="Save" (click)="saveCompanyInfo()"></p-button>
+                <p-splitbutton label="Save And Back" (onClick)="saveCompanyInfoAndReturn()" [model]="saveSplitMenu"></p-splitbutton>
             </ng-template>
         </p-toolbar>
     </div>

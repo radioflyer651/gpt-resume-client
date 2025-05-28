@@ -20,6 +20,8 @@ import { JobListingDialogComponent } from "../job-listing-dialog/job-listing-dia
 import { ConfirmationService } from 'primeng/api';
 import { CommentsEditorComponent } from "../../comments-editor/comments-editor.component";
 import { PanelModule } from 'primeng/panel';
+import { CheckboxModule } from 'primeng/checkbox';
+import { SplitButtonModule } from 'primeng/splitbutton';
 
 @Component({
   selector: 'app-company-detail',
@@ -36,6 +38,8 @@ import { PanelModule } from 'primeng/panel';
     JobListingDialogComponent,
     CommentsEditorComponent,
     PanelModule,
+    CheckboxModule,
+    SplitButtonModule,
   ],
   templateUrl: './company-detail.component.html',
   styleUrls: [
@@ -177,7 +181,7 @@ export class CompanyDetailComponent extends ComponentBase {
     if (!this.canNavigateWebsite) {
       return;
     }
-    
+
     // Open the URL in a new tab and give it focus
     const newWindow = window.open(this.navigationWebsite, '_blank');
 
@@ -286,5 +290,27 @@ export class CompanyDetailComponent extends ComponentBase {
     //  new ID in the URL.
     this.router.navigate(['..', this.editTarget!._id!], { relativeTo: this.route });
   }
+
+  async saveCompanyInfoAndReturn(): Promise<void> {
+    if (!this.editTarget!._id) {
+      delete this.editTarget!._id;
+    }
+
+    // Update the company on the server.
+    await lastValueFrom(this.clientApi.upsertCompany(this.editTarget!));
+
+    // Navigate to this company.  It might be jarring, but we need the
+    //  new ID in the URL.
+    this.router.navigate(['../..', 'list'], { relativeTo: this.route });
+  }
+
+  saveSplitMenu = [
+    {
+      label: 'Save',
+      command: async () => {
+        await this.saveCompanyInfo();
+      }
+    }
+  ];
 
 }

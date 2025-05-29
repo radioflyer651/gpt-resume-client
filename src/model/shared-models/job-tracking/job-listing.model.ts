@@ -35,11 +35,15 @@ export interface JobListingStatus {
     status: string;
     /** Gets or sets the date of this status. */
     statusDate: Date;
+    /** Gets or sets a boolean value indicating whether or not this job listing
+     *   is closed, making it "dead". */
+    isClosed?: boolean;
 }
 
 /** A shortened version of the JobListing it allow it to be listed in a table. */
-export type JobListingLine = Pick<JobListing, '_id' | 'urlLink' | 'postingDate' | 'jobTitle' | 'postingDate'> & { currentStatus: JobListingStatus; };
-
+export type JobListingLine = Pick<JobListing,
+    '_id' | 'urlLink' | 'postingDate' | 'jobTitle'>
+    & { currentStatus?: JobListingStatus; };
 
 /**
  * Returns an UpsertDbItem of JobListing with all fields initialized empty 

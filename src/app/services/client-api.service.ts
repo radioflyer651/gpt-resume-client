@@ -198,6 +198,11 @@ export class ClientApiService {
     return this.http.get<JobListingLine[]>(this.constructUrl(`companies/${companyId}/job-listings`), this.optionsBuilder.withAuthorization());
   }
 
+  /** Returns all job listings in a shortened format. */
+  getAllJobListings(): Observable<JobListingLine[]> {
+    return this.http.get<JobListingLine[]>(this.constructUrl('job-listings'), this.optionsBuilder.withAuthorization());
+  }
+
   getCompanyContactById(contactId: ObjectId): Observable<CompanyContact | undefined> {
     return this.http.get<CompanyContact | undefined>(this.constructUrl(`companies/contacts/${contactId}`), this.optionsBuilder.withAuthorization());
   }

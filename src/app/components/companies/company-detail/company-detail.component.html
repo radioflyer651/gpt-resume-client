@@ -37,7 +37,7 @@
                 <h5>
                     Job Listings
                 </h5>
-                <div>
+                <div *ngIf="!isNewCompany && jobListings">
                     <p-button icon="pi pi-plus" (click)="editJobListing('new')"></p-button>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                 <h5>
                     Contacts
                 </h5>
-                <div>
+                <div *ngIf="(!isNewCompany && contacts)">
                     <p-button icon="pi pi-plus" (click)="editContact('new')"></p-button>
                 </div>
             </div>

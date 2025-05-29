@@ -44,13 +44,14 @@
                 <!-- Status -->
 
                 <!-- Current Status Display -->
-                <div *ngIf="targetListing?.jobStatuses?.length" class="status-section">
+                <div class="status-section">
                     <div class="status-header">
                         <h4>Job Status</h4>
-                        <p-button label="New Status" size="small" severity="secondary" (click)="editJobStatus('new')"></p-button>
+                        <p-button label="New Status" size="small" severity="secondary"
+                            (click)="editJobStatus('new')"></p-button>
                     </div>
 
-                    <p-table [value]="targetListing.jobStatuses">
+                    <p-table [value]="targetListing.jobStatuses" *ngIf="targetListing?.jobStatuses?.length">
                         <ng-template #header>
                             <tr>
                                 <th>

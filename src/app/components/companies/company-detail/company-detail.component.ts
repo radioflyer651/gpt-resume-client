@@ -170,7 +170,7 @@ export class CompanyDetailComponent extends ComponentBase {
     }
 
     let value = this.editTarget.website.replace(/^https?:\/\//, '');
-    if (/^([\w\d\-]+\.){2,}/i.test(value)) {
+    if (/^([\w\d\-]+\.)+[\w\d]+/i.test(value)) {
       return `https://${value}`;
     }
 

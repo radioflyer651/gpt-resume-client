@@ -35,5 +35,59 @@ p-float-label {
         width: 100%;
     }
 
+    margin-bottom: 1em;
+}
+
+.job-link {
     margin-bottom: 2em;
+    font-size: 1.25em;
+}
+
+.analysis-header {
+    display: flex;
+
+    margin-top: 1em;
+
+    > h5 {
+        flex: 1 1 auto;
+    }
+}
+
+.job-analysis {
+    .analysis-field {
+        display: flex;
+        margin-bottom: 2em;
+
+        label {
+            width: 10em;
+            flex-shrink: 0;
+        }
+
+        .value {
+            flex: 1 1 auto;
+        }
+    }
+
+    p-floatlabel {
+        width: 100%;
+
+        input {
+            width: 100%;
+        }
+
+        textarea {
+            width: 100%;
+            font-size: 0.75rem;
+        }
+    }
+
+    p-chip {
+        margin: 4px;
+        background-color: rgb(76, 110, 76);
+    }
+
+    .chip-area {
+        width: 100%;
+        margin-bottom: 2em;
+    }
 }

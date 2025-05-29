@@ -262,7 +262,7 @@ export class CompanyDetailComponent extends ComponentBase {
   /** Deletes a job listing, specified by its ID, on the server. */
   private async deleteJobListing(jobListingId: ObjectId): Promise<void> {
     // Delete the listing on the server.
-    await this.clientApi.deleteJobListingById(jobListingId);
+    await lastValueFrom(this.clientApi.deleteJobListingById(jobListingId));
 
     // Lazy - update the job listings.
     this.jobListingsChanged$.next();

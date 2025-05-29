@@ -48,18 +48,6 @@ export class ContactDialogComponent extends ComponentBase {
   }
 
   ngOnInit() {
-    this.contactId$.subscribe(v => {
-      console.log(`contactId: ${v}`);
-    });
-
-    this.visible$.subscribe(v => {
-      console.log(`visible: ${v}`);
-    });
-
-    this.companyId$.subscribe(v => {
-      console.log(`Company ID: ${v}`);
-    });
-
     // Handles setting the employee whenever the company or contact IDs change.
     const employee$ = this.contactId$.pipe(
       combineLatestWith(this.companyId$, this.visible$),

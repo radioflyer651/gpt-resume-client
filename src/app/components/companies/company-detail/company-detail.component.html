@@ -88,7 +88,7 @@
                         </td>
                         <td class="control-cell">
                             <p-button icon="pi pi-cog" (click)="editJobListing(listing._id)"></p-button>
-                            <p-button icon="pi pi-times"></p-button>
+                            <p-button icon="pi pi-times" (click)="deleteJobListingClicked(listing)"></p-button>
                         </td>
                     </tr>
                 </ng-template>
@@ -171,7 +171,8 @@
             </ng-template>
             <ng-template #end>
                 <p-button label="Back" routerLink="../../list"></p-button>
-                <p-splitbutton label="Save And Back" (onClick)="saveCompanyInfoAndReturn()" [model]="saveSplitMenu"></p-splitbutton>
+                <p-splitbutton label="Save And Back" (onClick)="saveCompanyInfoAndReturn()"
+                    [model]="saveSplitMenu"></p-splitbutton>
             </ng-template>
         </p-toolbar>
     </div>

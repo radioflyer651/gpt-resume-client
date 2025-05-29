@@ -16,6 +16,7 @@ import { CompanyListingInfo } from '../../model/shared-models/company-listing.mo
 import { CompanyContact } from '../../model/shared-models/job-tracking/company-contact.data';
 import { JobListing, JobListingLine } from '../../model/shared-models/job-tracking/job-listing.model';
 import { UpsertDbItem } from '../../model/shared-models/db-operation-types.model';
+import { JobAnalysis } from '../../model/shared-models/job-tracking/job-analysis.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -245,5 +246,10 @@ export class ClientApiService {
 
   deleteJobListingById(listingId: ObjectId): Observable<void> {
     return this.http.delete<void>(this.constructUrl(`companies/job-listings/${listingId}`), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Performs an AI Analysis on a specified Job, and returns the analysis to the caller.  This should be attached to the job itself when done. */
+  updateJobListingAnalysis(jobId: ObjectId): Observable<JobAnalysis> {
+    return this.http.get<JobAnalysis>(this.constructUrl(`job-listings/get-updated-analysis/${jobId}`), this.optionsBuilder.withAuthorization());
   }
 }

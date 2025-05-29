@@ -71,7 +71,6 @@ export class CommentsEditorComponent extends ComponentBase {
   }
 
   onCommentClicked(index: number): void {
-    console.log(`Hi`);
     this.selectedCommentIndex = index;
   }
 

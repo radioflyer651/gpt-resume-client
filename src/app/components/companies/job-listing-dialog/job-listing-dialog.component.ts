@@ -19,6 +19,8 @@ import { TabsModule } from 'primeng/tabs';
 import { EditStatusResult, StatusDialogComponent } from "../status-dialog/status-dialog.component";
 import { orderJobListingStatuses } from '../../../../model/shared-models/job-tracking/job-listing.functions';
 import { ConfirmationService } from 'primeng/api';
+import { TextareaModule } from 'primeng/textarea';
+import { ChipModule } from 'primeng/chip';
 
 @Component({
   selector: 'app-job-listing-dialog',
@@ -34,7 +36,9 @@ import { ConfirmationService } from 'primeng/api';
     DatePickerModule,
     CommentsEditorComponent,
     TabsModule,
-    StatusDialogComponent
+    StatusDialogComponent,
+    TextareaModule,
+    ChipModule,
   ],
   templateUrl: './job-listing-dialog.component.html',
   styleUrls: [
@@ -71,7 +75,6 @@ export class JobListingDialogComponent extends ComponentBase {
     // Set the job listing.
     jobListing$.subscribe(listing => {
       this.targetListing = listing!;
-      console.log(listing);
     });
   }
 
@@ -108,6 +111,19 @@ export class JobListingDialogComponent extends ComponentBase {
 
   /** Observable of the JobListing being edited. */
   targetListing!: UpsertDbItem<JobListing>;
+
+  /** Returns a link that the user may click on, if the URL is valid. */
+  get urlLink(): string | undefined {
+    if (/https?:\/\/([\w\d\-]+\.)+([\w\d]+)/.test(this.targetListing.urlLink)) {
+      return this.targetListing.urlLink;
+    }
+    
+    if (/([\w\d\-]+\.)+([\w\d]+)/.test(this.targetListing.urlLink)) {
+      return 'https://' + this.targetListing.urlLink;
+    }
+
+    return undefined;
+  }
 
   // #region visible
   private readonly _visible = new BehaviorSubject<boolean>(false);
@@ -223,5 +239,30 @@ export class JobListingDialogComponent extends ComponentBase {
 
     // Inform the observer.
     this.onClosed.emit(cancelled);
+  }
+
+  get analysisRequiredSkills(): string {
+    if (!this.targetListing.analysis) {
+      return '';
+    }
+    return this.targetListing.analysis.requiredSkillList.join(', ');
+  }
+
+  get analysisOptionalSkills(): string {
+    if (!this.targetListing.analysis) {
+      return '';
+    }
+    return this.targetListing.analysis.optionalSkillList.join(', ');
+  }
+
+  /** Boolean value indicating whether or not the job's analysis is being updated on the server. */
+  isUpdatingAnalysis: boolean = false;
+
+  /** Updates the AI Analysis on this job. */
+  async updateAiAnalysis(): Promise<void> {
+    this.isUpdatingAnalysis = true;
+    const newAnalysis = await lastValueFrom(this.clientApiService.updateJobListingAnalysis(this.jobListingId));
+    this.targetListing.analysis = newAnalysis;
+    this.isUpdatingAnalysis = false;
   }
 }

@@ -1,6 +1,9 @@
-<p-dialog [(visible)]="visible" [style]="{minHeight: '800px'}">
-    <div class="job-listing-form" *ngIf="!!targetListing">
+<p-dialog [(visible)]="visible" [style]="{minHeight: '800px', width: '750px'}">
+    <ng-template #header>
         <h3>Job Listing Details</h3>
+    </ng-template>
+
+    <div class="job-listing-form" *ngIf="!!targetListing">
 
         <p-tabs [(value)]="tabIndex" [style]="{height: '100%'}">
             <p-tablist>
@@ -15,6 +18,11 @@
                     </div>
                 </p-tab>
                 <p-tab [value]="2">
+                    <div>
+                        AI Analysis
+                    </div>
+                </p-tab>
+                <p-tab [value]="3">
                     <div>
                         Comments
                     </div>
@@ -33,6 +41,10 @@
                     <input id="url-link" type="text" pInputText [(ngModel)]="targetListing.urlLink" />
                     <label for="url-link">URL Link</label>
                 </p-float-label>
+
+                <div *ngIf="!!urlLink" class="job-link">
+                    <a [href]="urlLink" target="_blank">Link</a>
+                </div>
 
                 <!-- Posting Date -->
                 <p-float-label>
@@ -84,6 +96,141 @@
             </p-tabpanel>
 
             <p-tabpanel [value]="2">
+                <div>
+                    <div class="analysis-header">
+                        <h5>Job Analysis</h5>
+                        <div *ngIf="!isUpdatingAnalysis">
+                            <p-button label="Update" (click)="updateAiAnalysis()"></p-button>
+                        </div>
+                    </div>
+
+                    <ng-template #analysisField let-label="label" let-value="value">
+                        <div class="analysis-field">
+                            <label> {{label}} </label>
+                            <div class="value"> {{value}} </div>
+                        </div>
+                    </ng-template>
+
+                    <div *ngIf="!isUpdatingAnalysis; else updatingAnalysis">
+                        <ng-template #noAnalysis>
+                            No analysis has been performed. Click the button above to do so.
+                        </ng-template>
+
+                        <div *ngIf="targetListing.analysis; else noAnalysis" class="job-analysis">
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Job Title', 
+                                value: targetListing.analysis.jobTitle}">
+                            </ng-content>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Company Name', 
+                                value: targetListing.analysis.companyName}">
+                            </ng-content>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Posting Date', 
+                                value: targetListing.analysis.datePosted}">
+                            </ng-content>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Job Description', 
+                                value: targetListing.analysis.jobDescription}">
+                            </ng-content>
+                            
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Is Contractor Role?', 
+                                value: targetListing.analysis.isContactRole}">
+                            </ng-content>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'MN Allowed?', 
+                                value: targetListing.analysis.allowWorkInMn}">
+                            </ng-content>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Min Pay', 
+                                value: targetListing.analysis.minCompensation}">
+                            </ng-content>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Max Pay', 
+                                value: targetListing.analysis.maxCompensation}">
+                            </ng-content>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                            {label: 'Location', 
+                            value: targetListing.analysis.jobLocation}">
+                            </ng-content>
+
+                            <div class="chip-area">
+                                <label>Required Technologies</label>
+                                <div>
+                                    <p-chip *ngFor="let skill of targetListing.analysis.requiredTechnologies">
+                                        {{ skill }}
+                                    </p-chip>
+                                </div>
+                            </div>
+
+                            <div class="chip-area">
+                                <label>Bonus Technologies</label>
+                                <div>
+                                    <p-chip *ngFor="let skill of targetListing.analysis.bonusTechnologies">
+                                        {{ skill }}
+                                    </p-chip>
+                                </div>
+                            </div>
+
+                            <div class="chip-area">
+                                <label>Required Skills</label>
+                                <div>
+                                    <p-chip *ngFor="let skill of targetListing.analysis.requiredSkillList">
+                                        {{ skill }}
+                                    </p-chip>
+                                </div>
+                            </div>
+
+                            <div class="chip-area">
+                                <label>Bonus Skills</label>
+                                <div>
+                                    <p-chip *ngFor="let skill of targetListing.analysis.optionalSkillList">
+                                        {{ skill }}
+                                    </p-chip>
+                                </div>
+                            </div>
+
+                            <div class="chip-area">
+                                <label>Other Qualifiers</label>
+                                <div>
+                                    <p-chip *ngFor="let skill of targetListing.analysis.otherQualifyingInfo">
+                                        {{ skill }}
+                                    </p-chip>
+                                </div>
+                            </div>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Other Information', 
+                                value: targetListing.analysis.otherInformation}">
+                            </ng-content>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                            {label: 'Education', 
+                            value: targetListing.analysis.educationRequirements}">
+                            </ng-content>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Company Description', 
+                                value: targetListing.analysis.companyDescription}">
+                            </ng-content>
+                        </div>
+                    </div>
+
+                    <ng-template #updatingAnalysis>
+                        Updating...
+                    </ng-template>
+                </div>
+            </p-tabpanel>
+
+            <p-tabpanel [value]="3">
                 <!-- Comments List -->
                 <div class="comments-section">
                     <h4>Comments</h4>

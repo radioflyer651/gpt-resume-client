@@ -13,6 +13,9 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
+import { PanelModule } from 'primeng/panel';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-companies-list',
@@ -25,6 +28,9 @@ import { FormsModule } from '@angular/forms';
     ConfirmDialogModule,
     CheckboxModule,
     FormsModule,
+    PanelModule,
+    FloatLabelModule,
+    InputTextModule,
   ],
   templateUrl: './companies-list.component.html',
   styleUrl: './companies-list.component.scss'
@@ -40,8 +46,8 @@ export class CompaniesListComponent extends ComponentBase {
   ngOnInit() {
     const companies = this.apiClient
       .getAllCompanies().pipe(
-        combineLatestWith(this.hideArchived$),
-        map(([companies, hideArchived]) => {
+        combineLatestWith(this.hideArchived$, this.nameFilter$),
+        map(([companies, hideArchived, nameFilter]) => {
           // Hide the archives, if needed.
           if (hideArchived) {
             companies = companies.filter(c => !c.archive);
@@ -50,6 +56,15 @@ export class CompaniesListComponent extends ComponentBase {
           companies.sort((c1, c2) => {
             return c1.name.localeCompare(c2.name);
           });
+
+          nameFilter = (nameFilter?.trim() ?? '').toLocaleLowerCase();
+
+          // Apply the filter, if needed.
+          if (nameFilter) {
+            companies = companies.filter(c => {
+              return c.name.toLocaleLowerCase().includes(nameFilter) || c.website.toLocaleLowerCase().includes(nameFilter);
+            });
+          }
 
           return companies;
         }),
@@ -73,6 +88,20 @@ export class CompaniesListComponent extends ComponentBase {
 
   set hideArchived(newVal: boolean) {
     this._hideArchived.next(newVal);
+  }
+  // #endregion
+
+  // #region nameFilter
+  private readonly _nameFilter = new BehaviorSubject<string>('');
+  readonly nameFilter$ = this._nameFilter.asObservable();
+
+  /** Gets or sets the filter string to filter companies by name with. */
+  get nameFilter(): string {
+    return this._nameFilter.getValue();
+  }
+
+  set nameFilter(newVal: string) {
+    this._nameFilter.next(newVal);
   }
   // #endregion
 

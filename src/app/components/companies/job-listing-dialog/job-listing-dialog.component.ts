@@ -18,9 +18,10 @@ import { CommentsEditorComponent } from "../../comments-editor/comments-editor.c
 import { TabsModule } from 'primeng/tabs';
 import { EditStatusResult, StatusDialogComponent } from "../status-dialog/status-dialog.component";
 import { orderJobListingStatuses } from '../../../../model/shared-models/job-tracking/job-listing.functions';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 import { TextareaModule } from 'primeng/textarea';
 import { ChipModule } from 'primeng/chip';
+import { SplitButtonModule } from 'primeng/splitbutton';
 
 @Component({
   selector: 'app-job-listing-dialog',
@@ -39,6 +40,7 @@ import { ChipModule } from 'primeng/chip';
     StatusDialogComponent,
     TextareaModule,
     ChipModule,
+    SplitButtonModule,
   ],
   templateUrl: './job-listing-dialog.component.html',
   styleUrls: [
@@ -117,7 +119,7 @@ export class JobListingDialogComponent extends ComponentBase {
     if (/https?:\/\/([\w\d\-]+\.)+([\w\d]+)/.test(this.targetListing.urlLink)) {
       return this.targetListing.urlLink;
     }
-    
+
     if (/([\w\d\-]+\.)+([\w\d]+)/.test(this.targetListing.urlLink)) {
       return 'https://' + this.targetListing.urlLink;
     }
@@ -174,6 +176,11 @@ export class JobListingDialogComponent extends ComponentBase {
     if (target === 'new') {
       this.statusEditMode = 'new';
       this.editStatus = { status: 'New Status', statusDate: new Date() };
+
+      if (!this.targetListing.jobStatuses || this.targetListing.jobStatuses.length < 1) {
+        this.editStatus.status = 'Applied';
+      }
+
     } else {
       this.statusEditMode = 'edit';
       this.editStatus = target;
@@ -222,8 +229,18 @@ export class JobListingDialogComponent extends ComponentBase {
 
   /** Saves the changes to the server. */
   async saveListing(): Promise<void> {
-    await lastValueFrom(this.clientApiService.upsertJobListing(this.targetListing));
+    const result = await lastValueFrom(this.clientApiService.upsertJobListing(this.targetListing));
+    this.targetListing._id = result._id;
   }
+
+  splitButtonModel: MenuItem[] = [
+    {
+      label: 'Save',
+      command: async () => {
+        await this.saveListing();
+      }
+    }
+  ];
 
   /** Called when the user clicks OK or cancel. */
   async onCompleteLocal(cancelled: boolean) {
@@ -261,8 +278,16 @@ export class JobListingDialogComponent extends ComponentBase {
   /** Updates the AI Analysis on this job. */
   async updateAiAnalysis(): Promise<void> {
     this.isUpdatingAnalysis = true;
+    // Save first.
+    await this.saveListing();
+
+    // Update the analysis.
     const newAnalysis = await lastValueFrom(this.clientApiService.updateJobListingAnalysis(this.jobListingId));
+
+    // Update the value locally.
     this.targetListing.analysis = newAnalysis;
+
+    // Indicate we're done with the operation.
     this.isUpdatingAnalysis = false;
   }
 }

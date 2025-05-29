@@ -9,6 +9,11 @@
         <label for="new-date">Date</label>
     </p-floatlabel>
 
+    <div class="checkbox-container">
+        <p-checkbox [binary]="true" [(ngModel)]="editTarget.isClosed"></p-checkbox>
+        <label for="is-job-closed">Closed</label>
+    </div>
+
     <ng-template #footer>
         <div class="control-cell">
             <p-button label="Cancel" (click)="complete(true)"></p-button>

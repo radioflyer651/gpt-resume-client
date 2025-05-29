@@ -8,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { JobListingStatus } from '../../../../model/shared-models/job-tracking/job-listing.model';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { CheckboxModule } from 'primeng/checkbox';
 
 export type EditStatusResult = {
   cancelled: boolean;
@@ -24,6 +25,7 @@ export type EditStatusResult = {
     ButtonModule,
     DialogModule,
     FloatLabelModule,
+    CheckboxModule,
   ],
   templateUrl: './status-dialog.component.html',
   styleUrls: [

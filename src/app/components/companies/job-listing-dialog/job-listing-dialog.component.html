@@ -136,7 +136,7 @@
                                 {label: 'Job Description', 
                                 value: targetListing.analysis.jobDescription}">
                             </ng-content>
-                            
+
                             <ng-content *ngTemplateOutlet="analysisField; context: 
                                 {label: 'Is Contractor Role?', 
                                 value: targetListing.analysis.isContactRole}">
@@ -244,7 +244,7 @@
     <ng-template #footer>
         <div class="control-cell">
             <p-button label="Cancel" (onClick)="onCompleteLocal(true)"></p-button>
-            <p-button label="OK" (onClick)="onCompleteLocal(false)"></p-button>
+            <p-splitbutton label="OK" (onClick)="onCompleteLocal(false)" [model]="splitButtonModel"></p-splitbutton>
         </div>
     </ng-template>
 </p-dialog>

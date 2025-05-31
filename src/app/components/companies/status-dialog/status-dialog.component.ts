@@ -50,6 +50,7 @@ export class StatusDialogComponent extends ComponentBase {
     this.visibleChange.emit(value);
   }
 
+  @Output()
   visibleChange = new EventEmitter<boolean>();
 
 

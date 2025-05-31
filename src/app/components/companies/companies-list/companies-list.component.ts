@@ -91,6 +91,10 @@ export class CompaniesListComponent extends ComponentBase {
   }
   // #endregion
 
+  clearSearch(): void {
+    this.nameFilter = '';
+  }
+
   // #region nameFilter
   private readonly _nameFilter = new BehaviorSubject<string>('');
   readonly nameFilter$ = this._nameFilter.asObservable();

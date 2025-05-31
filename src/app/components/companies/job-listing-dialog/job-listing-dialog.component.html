@@ -249,5 +249,5 @@
     </ng-template>
 </p-dialog>
 
-<app-status-dialog [value]="editStatus" [visible]="isStatusDialogVisible"
+<app-status-dialog [value]="editStatus" [(visible)]="isStatusDialogVisible"
     (closed)="onStatusDialogClosed($event)"></app-status-dialog>

@@ -6,3 +6,8 @@
 .header-cell {
     text-align: center;
 }
+
+.side-by-side {
+    display: flex;
+    align-items: baseline;
+}

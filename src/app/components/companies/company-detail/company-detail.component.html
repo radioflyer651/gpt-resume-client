@@ -44,7 +44,7 @@
         </ng-template>
 
         <ng-container *ngIf="(!isNewCompany && jobListings); else saveCompanyFirst">
-            <p-table [value]="jobListings">
+            <p-table [value]="jobListings" size="small">
                 <ng-template #header>
                     <tr>
                         <th>
@@ -109,7 +109,7 @@
         </ng-template>
 
         <ng-container *ngIf="(!isNewCompany && contacts); else saveCompanyFirst">
-            <p-table [value]="contacts">
+            <p-table [value]="contacts" size="small">
                 <ng-template #header>
                     <tr>
                         <th>
@@ -171,8 +171,8 @@
             </ng-template>
             <ng-template #end>
                 <p-button label="Back" routerLink="../../list"></p-button>
-                <p-splitbutton label="Save And Back" (onClick)="saveCompanyInfoAndReturn()"
-                    [model]="saveSplitMenu"></p-splitbutton>
+                <p-button label="Save" (onClick)="saveCompanyInfo()"></p-button>
+                <p-button label="Save And Back" (onClick)="saveCompanyInfoAndReturn()"></p-button>
             </ng-template>
         </p-toolbar>
     </div>

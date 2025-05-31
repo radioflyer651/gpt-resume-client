@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 import { ResumeStaticComponent } from './components/resume-static/resume-static.component';
 import { AppHomeComponent } from './components/app-home/app-home.component';
+import { TestPageComponent } from './components/test-page/test-page.component';
 
 export const routes: Routes = [
     {
         path: '',
-        pathMatch: 'full',
+        pathMatch: 'prefix',
         children: [
             {
                 path: '',
@@ -15,6 +16,10 @@ export const routes: Routes = [
                         path: '',
                         pathMatch: 'full',
                         component: ResumeStaticComponent
+                    },
+                    {
+                        path: 'test',
+                        component: TestPageComponent
                     },
                 ]
             }

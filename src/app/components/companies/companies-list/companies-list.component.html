@@ -7,11 +7,15 @@
 
 <div class="company-list">
     <h2>Company List</h2>
-    <p-panel header="filter">
-        <p-floatlabel>
-            <input id="name-filter" pInputText [(ngModel)]="nameFilter" />
-            <label for="name-filter">Name filter</label>
-        </p-floatlabel>
+    <p-panel>
+        <div class="side-by-side">
+            <p-floatlabel>
+                <input id="name-filter" pInputText [(ngModel)]="nameFilter" />
+                <label for="name-filter">Name filter</label>
+            </p-floatlabel>
+
+            <p-button label="Clear" (click)="clearSearch()"></p-button>
+        </div>
     </p-panel>
 
     <p-toolbar>
@@ -30,7 +34,7 @@
         </ng-template>
     </p-toolbar>
 
-    <p-table *ngIf="companyList" [value]="companyList">
+    <p-table *ngIf="companyList" [value]="companyList" size="small">
         <ng-template #header>
             <tr>
                 <th class="header-cell">

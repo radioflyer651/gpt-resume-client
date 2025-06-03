@@ -27,10 +27,10 @@ export class CommentsEditorComponent extends ComponentBase {
   constructor() {
     super();
   }
-  
+
   /** Gets or sets the target object that has comments. */
   @Input({ required: true })
-  commentOwner!:  { comments?: Comment[]; };
+  commentOwner!: { comments?: Comment[]; };
 
   private _selectedCommentIndex: number = 0;
   get selectedCommentIndex(): number {
@@ -59,7 +59,7 @@ export class CommentsEditorComponent extends ComponentBase {
   }
 
   /** Gets the currently selected comment. */
-  get selectedComment(): Comment {
+  get selectedComment(): Comment | undefined {
     if (this.commentOwner.comments && this.commentOwner.comments.length < 1) {
       return {
         title: 'New Comment',
@@ -67,7 +67,7 @@ export class CommentsEditorComponent extends ComponentBase {
       };
     }
 
-    return this.commentOwner.comments?.[this.selectedCommentIndex] ?? { title: 'New Comment', detail: '' };
+    return this.commentOwner.comments?.[this.selectedCommentIndex];
   }
 
   set selectedComment(newVal: Comment) {
@@ -94,6 +94,7 @@ export class CommentsEditorComponent extends ComponentBase {
   newComment(): void {
     if (!this.commentOwner.comments) {
       this.commentOwner.comments = [{ title: 'New Comment', detail: '' }];
+      this.selectedCommentIndex = 0;
     } else {
       this.commentOwner.comments.push({ title: 'New Comment', detail: '' });
       this.selectedCommentIndex = this.commentOwner.comments.length - 1;

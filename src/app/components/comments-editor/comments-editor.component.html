@@ -3,12 +3,20 @@
         <p-tabs [(value)]="selectedCommentIndex" *ngIf="isEditable" class="no-comments-message">
             <p-tablist>
                 <p-tab *ngFor="let comment of commentOwner.comments; let i = index" [value]="i">
-                    <div>Comment {{i}}</div>
+                    <div> {{comment.title }}</div>
                 </p-tab>
             </p-tablist>
 
             <p-tabpanel [value]="selectedCommentIndex">
-                <textarea [style]="{width: '100%', height: '100%'}" [rows]="5" pTextarea [(ngModel)]="selectedComment"></textarea>
+                <div>
+                    <p-floatlabel>
+                        <input id="comment-title" pInputText [(ngModel)]="selectedComment.title" />
+                        <label for="comment-title">Title</label>
+                    </p-floatlabel>
+
+                    <textarea [style]="{width: '100%', height: '100%'}" [rows]="8" pTextarea
+                        [(ngModel)]="selectedComment.detail"></textarea>
+                </div>
             </p-tabpanel>
         </p-tabs>
 

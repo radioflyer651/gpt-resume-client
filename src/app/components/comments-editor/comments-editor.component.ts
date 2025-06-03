@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 import { TabsModule } from 'primeng/tabs';
+import { Comment } from '../../../model/shared-models/comments.model';
+import { FloatLabel } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-comments-editor',
@@ -14,6 +17,8 @@ import { TabsModule } from 'primeng/tabs';
     ButtonModule,
     TextareaModule,
     TabsModule,
+    FloatLabel,
+    InputTextModule,
   ],
   templateUrl: './comments-editor.component.html',
   styleUrl: './comments-editor.component.scss'
@@ -22,10 +27,10 @@ export class CommentsEditorComponent extends ComponentBase {
   constructor() {
     super();
   }
-
+  
   /** Gets or sets the target object that has comments. */
   @Input({ required: true })
-  commentOwner!: { comments?: string[]; };
+  commentOwner!:  { comments?: Comment[]; };
 
   private _selectedCommentIndex: number = 0;
   get selectedCommentIndex(): number {
@@ -54,15 +59,18 @@ export class CommentsEditorComponent extends ComponentBase {
   }
 
   /** Gets the currently selected comment. */
-  get selectedComment(): string {
+  get selectedComment(): Comment {
     if (this.commentOwner.comments && this.commentOwner.comments.length < 1) {
-      return '';
+      return {
+        title: 'New Comment',
+        detail: ''
+      };
     }
 
-    return this.commentOwner.comments?.[this.selectedCommentIndex] ?? '';
+    return this.commentOwner.comments?.[this.selectedCommentIndex] ?? { title: 'New Comment', detail: '' };
   }
 
-  set selectedComment(newVal: string) {
+  set selectedComment(newVal: Comment) {
     if (!this.commentOwner.comments) {
       this.commentOwner.comments = [];
     }
@@ -85,9 +93,9 @@ export class CommentsEditorComponent extends ComponentBase {
 
   newComment(): void {
     if (!this.commentOwner.comments) {
-      this.commentOwner.comments = [''];
+      this.commentOwner.comments = [{ title: 'New Comment', detail: '' }];
     } else {
-      this.commentOwner.comments.push('');
+      this.commentOwner.comments.push({ title: 'New Comment', detail: '' });
       this.selectedCommentIndex = this.commentOwner.comments.length - 1;
     }
   }

@@ -66,6 +66,6 @@ export function createJobListing(companyId: ObjectId): UpsertDbItem<JobListing> 
         urlLink: '',
         description: '',
         jobStatuses: [],
-        comments: []
+        comments: [],
     };
 }

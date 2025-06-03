@@ -170,6 +170,21 @@ export class JobListingDialogComponent extends ComponentBase {
   /** Gets or sets the mode of the status editor dialog. */
   statusEditMode: 'edit' | 'new' = 'new';
 
+  get jobDescription(): string {
+    return this.targetListing?.description || '';
+  }
+  set jobDescription(value: string) {
+    this.targetListing.description = value;
+
+    // Set the job title to the first line of the job description
+    //  by default, if the title isn't set already.  This is just
+    //  a common occurrence in job descriptions.
+    if (this.targetListing.jobTitle.trim() === '' && value && value.trim() !== '') {
+      const lines = value.split('\n');
+      this.targetListing.jobTitle = lines[0];
+    }
+  }
+
   /** Shows a dialog so the user can update the status of the project. */
   editJobStatus(target: JobListingStatus | 'new'): void {
     // Set the status we're editing, and set the mode.

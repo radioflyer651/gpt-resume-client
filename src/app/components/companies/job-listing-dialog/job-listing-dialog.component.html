@@ -91,7 +91,7 @@
             <p-tabpanel [value]="1">
                 <!-- Description -->
                 <label for="description">Description</label>
-                <textarea id="description" rows="20" cols="50" pInputText [(ngModel)]="targetListing.description"
+                <textarea id="description" rows="20" cols="50" pInputText [(ngModel)]="jobDescription"
                     [style]="{width: '100%', height: '100%'}"></textarea>
             </p-tabpanel>
 
@@ -206,6 +206,11 @@
                                     </p-chip>
                                 </div>
                             </div>
+
+                            <ng-content *ngTemplateOutlet="analysisField; context: 
+                                {label: 'Hiring Manager Clues', 
+                                value: targetListing.analysis.hiringManagerClues}">
+                            </ng-content>
 
                             <ng-content *ngTemplateOutlet="analysisField; context: 
                                 {label: 'Other Information', 

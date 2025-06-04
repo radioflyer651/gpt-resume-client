@@ -4,7 +4,7 @@ import { ComponentBase } from '../component-base/component-base.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PaginatedResult } from '../../../model/shared-models/paginated-result.model';
-import { LazyLoadEvent } from 'primeng/api';
+import { LazyLoadEvent, LazyLoadMeta } from 'primeng/api';
 import { PaginationHelper } from '../../../utils/pagination-helper.utils';
 
 interface Person {
@@ -43,10 +43,13 @@ export class TestPageComponent extends ComponentBase {
 
   pageCount: number = 40;
 
-  async loadDataInternal(skip: number, limit: number) {
+  async loadDataInternal(lazyLoadMeta: LazyLoadMeta) {
+    const skip = lazyLoadMeta.first!;
+    const limit = lazyLoadMeta.last! - lazyLoadMeta.first! + 1;
+
     const result = new Promise<any>((res, rej) => {
       setTimeout(() => {
-        res(getData(skip, limit));
+        res(getData(skip, limit, lazyLoadMeta));
       }, 500);
     });
 
@@ -56,14 +59,40 @@ export class TestPageComponent extends ComponentBase {
   dataLoader = new PaginationHelper<Person>(this.loadDataInternal);
 
   loadData(event: TableLazyLoadEvent) {
-    console.log(`Calling: ${event.first}, ${event.rows}`);
-    this.dataLoader.loadData(event.first!, event.rows!, event);
+    this.dataLoader.loadData(event);
   }
 }
 
+function getData(skip: number, limit: number, lazyLoadMeta: LazyLoadMeta): PaginatedResult<Person> {
 
-function getData(skip: number, limit: number): PaginatedResult<Person> {
-  const data = testData.slice(skip, skip + limit);
+  const metaOrder = !lazyLoadMeta.sortField ? [] :
+    Array.isArray(lazyLoadMeta.sortField) ? lazyLoadMeta.sortField.slice().reverse() : [lazyLoadMeta.sortField];
+
+  let data = testData.slice();
+
+  metaOrder.forEach(m => {
+    data.sort((a, b) => {
+      const s1 = a[m as keyof Person];
+      const s2 = b[m as keyof Person];
+
+      if (typeof s1 === 'string') {
+        return s1.localeCompare(s2 as string) * (lazyLoadMeta.sortOrder ?? 1);
+      }
+      if (typeof s1 === 'number') {
+        return (s1 - (s2 as number)) * (lazyLoadMeta.sortOrder ?? 1);
+      }
+      if (typeof s1 === 'boolean') {
+        const s1b = s1 ? 0 : 1;
+        const s2b = s2 ? 0 : 1;
+
+        return (s1b - s2b) * (lazyLoadMeta.sortOrder ?? 1);
+      }
+
+      return 0;
+    });
+  });
+
+  data = data.slice(skip, skip + limit);
   return {
     data: data,
     totalCount: testData.length

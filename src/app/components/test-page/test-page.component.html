@@ -3,13 +3,21 @@
     <p-table [value]="dataLoader.virtualData" [totalRecords]="dataLoader.totalCount" [rows]="pageCount"
         [virtualScroll]="true" [virtualScrollItemSize]="itemHeight" [lazy]="true" [loading]="dataLoader.isLoading"
         [showLoader]="false" [virtualScrollOptions]="scrollOptions" (onLazyLoad)="loadData($event)" scrollHeight="600px"
-        size="small" [lazyLoadOnInit]="true">
+        size="small" [lazyLoadOnInit]="true" [globalFilterFields]="['person.firstName']">
         <ng-template pTemplate="header">
             <tr>
-                <th>ID</th>
-                <th> First Name </th>
-                <th> Last Name </th>
-                <th> Age </th>
+                <th pSortableColumn="id" [style]="{width: '20%'}">
+                    ID <p-sortIcon field="id" />
+                </th>
+                <th pSortableColumn="firstName">
+                    First Name <p-sortIcon field="firstName" />
+                </th>
+                <th pSortableColumn="lastName">
+                    Last Name <p-sortIcon field="lastName" />
+                </th>
+                <th pSortableColumn="age">
+                    Age <p-sortIcon field="age" />
+                </th>
             </tr>
         </ng-template>
 

@@ -2,10 +2,11 @@ import { TableLazyLoadEvent } from "primeng/table";
 import { PaginatedResult } from "../model/shared-models/paginated-result.model";
 import { ReadonlySubject } from "./readonly-subject";
 import { BehaviorSubject, Subject } from "rxjs";
+import { LazyLoadMeta } from "primeng/api";
 
 
 export class PaginationHelper<T> {
-    constructor(readonly loadDataFunction: (skip: number, limit: number) => Promise<PaginatedResult<T>>) {
+    constructor(readonly loadDataFunction: (lazyLoadMeta: LazyLoadMeta) => Promise<PaginatedResult<T>>) {
 
     }
 
@@ -18,12 +19,23 @@ export class PaginationHelper<T> {
         return this._totalCount;
     }
 
+    /** The sort properties of the last call. */
+    _lastSortSpecification!: SortSpecification;
+
+    _lastSortDirection!: number;
+
     /** Given a skip/limit value set, returns a boolean value indicating whether or not
      *   data has to be loaded from the server for these.  (It might already be loaded). */
-    private requiresLoad(skip: number, limit: number): boolean {
+    private requiresLoad(skip: number, limit: number, lazyLoadMeta: LazyLoadMeta): boolean {
         if (!this._initialLoadComplete) {
             return true;
         }
+
+        // Compare the sort options.
+        if (!compareSortValue(this._lastSortSpecification, lazyLoadMeta.sortField ?? undefined)) {
+            return true;
+        }
+
 
         // If any data is missing, then we need to load it.
         for (let i = skip; i < skip + limit; i++) {
@@ -36,9 +48,20 @@ export class PaginationHelper<T> {
         return false;
     }
 
-    async loadData(skip: number, limit: number, event: TableLazyLoadEvent): Promise<void> {
+    private clearVirtualData() {
+        this._virtualData = [];
+    }
+
+    async loadData(event: TableLazyLoadEvent): Promise<void> {
+        if (typeof event.first !== 'number' || typeof event.last !== 'number') {
+            throw new Error(`first and last must be provided.`);
+        }
+
+        let skip = event.first!;
+        let limit = event.last! - event.first! + 1;
+
         // Exit if we already have the required data loaded.
-        if (!this.requiresLoad(skip, limit)) {
+        if (!this.requiresLoad(skip, limit, event)) {
             return;
         }
 
@@ -46,7 +69,7 @@ export class PaginationHelper<T> {
         this._isLoading.next(true);
 
         // Load the data.
-        const result = await this.loadDataFunction(skip, limit);
+        const result = await this.loadDataFunction(event);
 
         // If this is the first time, we need to make room for the total data set.
         if (!this._initialLoadComplete) {
@@ -87,4 +110,28 @@ export class PaginationHelper<T> {
     get virtualData(): T[] {
         return this._virtualData.slice();
     }
+}
+
+export type SortSpecification = undefined | string | string[];
+export function normalizeSortSpecification(sortSpecification: SortSpecification): string[] {
+    if (!sortSpecification) {
+        return [];
+    }
+
+    if (typeof sortSpecification === 'string') {
+        return [sortSpecification];
+    }
+
+    return sortSpecification;
+}
+
+export function compareSortValue(v1: SortSpecification, v2: SortSpecification): boolean {
+    const s1 = normalizeSortSpecification(v1);
+    const s2 = normalizeSortSpecification(v2);
+
+    if (s1.length !== s2.length) {
+        return false;
+    }
+
+    return s1.every((v, i) => s2[i] === v);
 }

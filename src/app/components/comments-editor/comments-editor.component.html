@@ -9,10 +9,17 @@
 
             <p-tabpanel [value]="selectedCommentIndex">
                 <div>
-                    <p-floatlabel>
-                        <input id="comment-title" pInputText [(ngModel)]="selectedComment.title" />
-                        <label for="comment-title">Title</label>
-                    </p-floatlabel>
+                    <div class="comments-header">
+                        <p-floatlabel>
+                            <input id="comment-title" pInputText [(ngModel)]="selectedComment.title" />
+                            <label for="comment-title">Title</label>
+                        </p-floatlabel>
+
+                        <div class="checkbox-container">
+                            <p-checkbox [binary]="true" [(ngModel)]="selectedComment.isPrivateComment"></p-checkbox>
+                            <label for="is-private">Private Comment</label>
+                        </div>
+                    </div>
 
                     <textarea [style]="{width: '100%', height: '100%'}" [rows]="8" pTextarea
                         [(ngModel)]="selectedComment.detail"></textarea>

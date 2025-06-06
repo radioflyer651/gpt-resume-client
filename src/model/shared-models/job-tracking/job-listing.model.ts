@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { UpsertDbItem } from "../db-operation-types.model";
 import { JobAnalysis } from "./job-analysis.model";
-import { Comment } from '../comments.model';
+import { Comment } from "../comments.model";
 
 /** Represents a job posted on a job board or something similar. */
 export interface JobListing {
@@ -67,6 +67,6 @@ export function createJobListing(companyId: ObjectId): UpsertDbItem<JobListing> 
         urlLink: '',
         description: '',
         jobStatuses: [],
-        comments: [],
+        comments: []
     };
 }

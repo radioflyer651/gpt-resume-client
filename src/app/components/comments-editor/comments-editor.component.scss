@@ -49,6 +49,21 @@ p-floatlabel {
     margin-bottom: 1.5em;
 }
 
+.comments-header {
+    display: flex;
+    align-items: baseline;
+
+    > *:not(.checkbox-container) {
+        flex: 1 1 auto;
+    }
+}
+
+.checkbox-container {
+    label {
+        margin-left: 0.25em;
+    }
+}
+
 textarea {
     margin-bottom: 1.5em;
 }

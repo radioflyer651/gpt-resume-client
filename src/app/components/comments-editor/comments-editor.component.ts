@@ -8,6 +8,7 @@ import { TabsModule } from 'primeng/tabs';
 import { Comment } from '../../../model/shared-models/comments.model';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-comments-editor',
@@ -19,9 +20,12 @@ import { InputTextModule } from 'primeng/inputtext';
     TabsModule,
     FloatLabel,
     InputTextModule,
+    CheckboxModule,
   ],
   templateUrl: './comments-editor.component.html',
-  styleUrl: './comments-editor.component.scss'
+  styleUrls: [
+    './comments-editor.component.scss'
+  ]
 })
 export class CommentsEditorComponent extends ComponentBase {
   constructor() {
@@ -55,19 +59,19 @@ export class CommentsEditorComponent extends ComponentBase {
   /** Returns a boolean value indicating whether or not the comment controls are editable.
    *   (if there's no comments, then it's not editable.)  */
   get isEditable(): boolean {
-    return !!this.commentOwner.comments && this.commentOwner.comments.length > 0;
+    return !!this.commentOwner?.comments && this.commentOwner.comments.length > 0;
   }
 
   /** Gets the currently selected comment. */
   get selectedComment(): Comment | undefined {
-    if (this.commentOwner.comments && this.commentOwner.comments.length < 1) {
+    if (this.commentOwner?.comments && this.commentOwner.comments.length < 1) {
       return {
         title: 'New Comment',
         detail: ''
       };
     }
 
-    return this.commentOwner.comments?.[this.selectedCommentIndex];
+    return this.commentOwner?.comments?.[this.selectedCommentIndex];
   }
 
   set selectedComment(newVal: Comment) {

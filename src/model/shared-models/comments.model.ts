@@ -1,5 +1,5 @@
 
-/** Detailed comments have a subject and the value, so they can be identified easier. */
+/** Just a piece of information to attach to other items. */
 export interface Comment {
     /** The title or subject of the comment. */
     title: string;

@@ -158,6 +158,12 @@
         </p-panel>
     </ng-container>
 
+    <p-panel>
+        <div *ngIf="!!(apolloCompany$ | async)">
+            No Apollo company linked with this company.
+        </div>
+    </p-panel>
+
     <ng-template #saveCompanyFirst>
         <div>
             Comments, Contacts, and Job Listings can be added once the company is saved.

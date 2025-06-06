@@ -5,7 +5,7 @@ import { ClientApiService } from '../../../services/client-api.service';
 import { NewDbItem, UpsertDbItem } from '../../../../model/shared-models/db-operation-types.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { distinct, lastValueFrom, map, Observable, of, startWith, Subject, switchMap, takeUntil } from 'rxjs';
+import { distinct, lastValueFrom, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { CompanyContact } from '../../../../model/shared-models/job-tracking/company-contact.data';
 import { JobListingLine } from '../../../../model/shared-models/job-tracking/job-listing.model';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -22,6 +22,8 @@ import { CommentsEditorComponent } from "../../comments-editor/comments-editor.c
 import { PanelModule } from 'primeng/panel';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SplitButtonModule } from 'primeng/splitbutton';
+import { ApolloCompany } from '../../../../model/apollo/apollo-api-response.model';
+import { ApolloService } from '../../../services/apollo.service';
 
 @Component({
   selector: 'app-company-detail',
@@ -53,6 +55,7 @@ export class CompanyDetailComponent extends ComponentBase {
     readonly router: Router,
     readonly route: ActivatedRoute,
     readonly confirmationService: ConfirmationService,
+    readonly apolloService: ApolloService,
   ) {
     super();
 
@@ -67,6 +70,8 @@ export class CompanyDetailComponent extends ComponentBase {
   /** Emitted when the job listings have changed. */
   jobListingsChanged$ = new Subject<void>();
 
+  apolloCompanyChanged$ = new Subject<void>();
+
   ngOnInit() {
     // Observable to get the company ID from the route.
     this.companyId$ = this.route.paramMap.pipe(
@@ -76,19 +81,22 @@ export class CompanyDetailComponent extends ComponentBase {
     );
 
     // Get the company from the ID.
-    const companyFromId$ = this.companyId$.pipe(switchMap(id => {
-      // If it's 'new', then we have to create a new company.
-      //  Otherwise, we have to get it from the server.
-      if (id === 'new') {
-        // Return a new company.
-        return of(this.createNewCompany());
+    const companyFromId$: Observable<UpsertDbItem<Company>> = this.companyId$.pipe(
+      switchMap(id => {
+        // If it's 'new', then we have to create a new company.
+        //  Otherwise, we have to get it from the server.
+        if (id === 'new') {
+          // Return a new company.
+          return of(this.createNewCompany());
 
-      } else {
-        // Clear the current company, for initialization sake.
-        this.editTarget = undefined;
-        return this.clientApi.getCompanyById(id);
-      }
-    }));
+        } else {
+          // Clear the current company, for initialization sake.
+          this.editTarget = undefined;
+          return this.clientApi.getCompanyById(id);
+        }
+      }),
+      shareReplay(1),
+    );
 
     // Get the contacts for the id.
     const contactsFromId$ = this.companyId$.pipe(
@@ -141,6 +149,24 @@ export class CompanyDetailComponent extends ComponentBase {
     jobListingsFromId$.subscribe(jobs => {
       this.jobListings = jobs;
     });
+
+    this.apolloCompany$ = companyFromId$.pipe(
+      switchMap((company) => {
+        if (!company?.apolloId) {
+          return of(undefined);
+        }
+
+        return this.apolloCompanyChanged$.pipe(
+          startWith(undefined),
+          switchMap(() =>
+            this.apolloService.getApolloCompanyById(company.apolloId!)
+              .pipe(
+                startWith('loading' as const)
+              ),
+          ));
+      }),
+      takeUntil(this.ngDestroy$),
+    );
   }
 
   get websiteField(): string {
@@ -312,5 +338,12 @@ export class CompanyDetailComponent extends ComponentBase {
       }
     }
   ];
+
+  // #region Apollo Company
+
+  apolloCompany$!: Observable<ApolloCompany | undefined | 'loading'>;
+
+
+  // #endregion
 
 }

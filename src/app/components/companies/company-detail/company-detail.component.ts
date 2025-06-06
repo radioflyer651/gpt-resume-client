@@ -346,4 +346,18 @@ export class CompanyDetailComponent extends ComponentBase {
 
   // #endregion
 
+  get glassDoorLink(): string {
+    if (!this.editTarget?.name) {
+      return '';
+    }
+
+    // Get the domain-only.
+    const domain = /([\w\d_\-]+\.[\w\d]+\b(?!\.))/.exec(this.editTarget.website);
+    if (!domain) {
+      return '';
+    }
+
+    return `https://www.glassdoor.com/Search/results.htm?keyword=${encodeURI(domain[0])}`;
+  }
+
 }

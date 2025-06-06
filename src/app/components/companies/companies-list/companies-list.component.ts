@@ -48,6 +48,9 @@ export class CompaniesListComponent extends ComponentBase {
       .getAllCompanies().pipe(
         combineLatestWith(this.hideArchived$, this.nameFilter$),
         map(([companies, hideArchived, nameFilter]) => {
+          // Remove any leading/trailing whitespace from the filter.
+          nameFilter = nameFilter?.trim();
+
           // Hide the archives, if needed.
           if (hideArchived) {
             companies = companies.filter(c => !c.archive);

@@ -28,6 +28,9 @@
             <div *ngIf="canNavigateWebsite">
                 <a [href]="navigationWebsite" target="_blank">{{navigationWebsite}}</a>
             </div>
+            <div *ngIf="glassDoorLink">
+                <a [href]="glassDoorLink" target="_blank">Glass Door Search</a>
+            </div>
         </div>
     </p-panel>
 

@@ -17,8 +17,8 @@ import { CompanyContact } from '../../model/shared-models/job-tracking/company-c
 import { JobListing, JobListingLine } from '../../model/shared-models/job-tracking/job-listing.model';
 import { UpsertDbItem } from '../../model/shared-models/db-operation-types.model';
 import { JobAnalysis } from '../../model/shared-models/job-tracking/job-analysis.model';
-import { ApolloCompany } from '../../model/apollo/apollo-api-response.model';
-import { LApolloOrganization } from '../../model/shared-models/apollo-local.model';
+import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/apollo/apollo-local.model';
+import { ApolloDataInfo } from '../../model/shared-models/apollo/apollo-data-info.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -265,8 +265,23 @@ export class ClientApiService {
     return this.http.post<ObjectId>(this.constructUrl(`apollo/companies/update-for-company/${companyId}`), undefined, this.optionsBuilder.withAuthorization());
   }
 
-  /** Given a specified id for an ApolloCompany, returns the company data in the databse, if it exists. */
+  /** Given a specified id for an ApolloCompany, returns the company data in the database, if it exists. */
   getApolloCompanyById(apolloCompanyId: ObjectId): Observable<LApolloOrganization | undefined> {
     return this.http.get<LApolloOrganization | undefined>(this.constructUrl(`apollo/companies/${apolloCompanyId}`), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Updates the database with the employees for an Apollo Company, specified by its apollo ID. */
+  loadApolloEmployees(apolloCompanyId: ObjectId): Observable<ApolloDataInfo> {
+    return this.http.post<ApolloDataInfo>(this.constructUrl(`apollo/companies/update-employees/${apolloCompanyId}`), undefined, this.optionsBuilder.withAuthorization());
+  }
+
+  /** Returns the status of the data pull operation that is made against Apollo.io, for an Apollo company, specified by it's Apollo ID. */
+  getApolloEmployeeStatusForApolloCompany(apolloCompanyId: string): Observable<ApolloDataInfo> {
+    return this.http.get<ApolloDataInfo>(this.constructUrl(`apollo/companies/employee-data-status/${apolloCompanyId}`), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Returns all loaded employees for an Apollo company, specified by its apollo company ID. */
+  getApolloEmployeesForApolloCompany(apolloCompanyId: string): Observable<LApolloPerson[]> {
+    return this.http.get<LApolloPerson[]>(this.constructUrl(`apollo/companies/${apolloCompanyId}/employees`), this.optionsBuilder.withAuthorization());
   }
 }

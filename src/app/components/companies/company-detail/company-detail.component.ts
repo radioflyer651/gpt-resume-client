@@ -5,7 +5,7 @@ import { ClientApiService } from '../../../services/client-api.service';
 import { NewDbItem, UpsertDbItem } from '../../../../model/shared-models/db-operation-types.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { distinct, lastValueFrom, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, distinct, lastValueFrom, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { CompanyContact } from '../../../../model/shared-models/job-tracking/company-contact.data';
 import { JobListingLine } from '../../../../model/shared-models/job-tracking/job-listing.model';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -22,9 +22,11 @@ import { CommentsEditorComponent } from "../../comments-editor/comments-editor.c
 import { PanelModule } from 'primeng/panel';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { ApolloCompany } from '../../../../model/apollo/apollo-api-response.model';
 import { ApolloService } from '../../../services/apollo.service';
-import { LApolloOrganization } from '../../../../model/shared-models/apollo-local.model';
+import { LApolloOrganization } from '../../../../model/shared-models/apollo/apollo-local.model';
+import { ApolloDataStateTypes } from '../../../../model/shared-models/apollo/apollo-data-info.model';
+
+type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
 
 @Component({
   selector: 'app-company-detail',
@@ -72,6 +74,8 @@ export class CompanyDetailComponent extends ComponentBase {
   jobListingsChanged$ = new Subject<void>();
 
   apolloCompanyChanged$ = new Subject<undefined | 'linking' | 'complete'>();
+
+
 
   ngOnInit() {
     // Observable to get the company ID from the route.
@@ -156,8 +160,6 @@ export class CompanyDetailComponent extends ComponentBase {
         return this.apolloCompanyChanged$.pipe(
           startWith(undefined),
           switchMap((changedValue) => {
-            console.log(`Click: ${changedValue}`, company);
-
             // If we're linking the company, then show "loading".
             if (changedValue === 'linking') {
               return of('loading' as const);
@@ -193,6 +195,31 @@ export class CompanyDetailComponent extends ComponentBase {
     this.hasApolloCompany$ = this.apolloCompany$.pipe(
       map(company => {
         return typeof company === 'object';
+      }),
+      takeUntil(this.ngDestroy$),
+    );
+
+    this.apolloEmployeeLoadState$ = this.apolloCompanyValue$.pipe(
+      switchMap(company => {
+        return this.apolloEmployeeLoadStateChanged$.pipe(
+          startWith(undefined), // Trigger the first update.
+          switchMap(_ => {
+            // If we don't have a company, then we're not ready.
+            if (!company) {
+              return of('not-ready' as ApolloEmployeeLoadedStateTypes);
+            }
+
+            return this.clientApi.getApolloEmployeeStatusForApolloCompany(company._id).pipe(
+              map(status => {
+                return status.state as ApolloEmployeeLoadedStateTypes;
+              }),
+              catchError(err => {
+                return of('new' as ApolloEmployeeLoadedStateTypes);
+              }),
+            );
+          }),
+          startWith('not-ready' as ApolloEmployeeLoadedStateTypes),
+        );
       }),
       takeUntil(this.ngDestroy$),
     );
@@ -392,6 +419,25 @@ export class CompanyDetailComponent extends ComponentBase {
 
       // Indicate that we're done.
       this.apolloCompanyChanged$.next('complete');
+    });
+  }
+
+  // #endregion
+
+  // #region Apollo Employees
+
+  apolloEmployeeLoadState$!: Observable<ApolloEmployeeLoadedStateTypes>;
+
+  apolloEmployeeLoadStateChanged$ = new Subject<void>();
+
+  loadApolloEmployees(): void {
+    if (!this.editTarget?.apolloId) {
+      return;
+    }
+
+    this.clientApi.loadApolloEmployees(this.editTarget.apolloId).subscribe((result) => {
+      // I know - inefficient, but reload the employ information.
+      this.apolloEmployeeLoadStateChanged$.next();
     });
   }
 

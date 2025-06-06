@@ -159,16 +159,22 @@
                     Comments
                 </h5>
             </ng-template>
-            
+
             <app-comments-editor [commentOwner]="editTarget!"></app-comments-editor>
         </p-panel>
     </ng-container>
 
     <p-panel>
         <ng-template #header>
-            <h5>
-                Apollo Company Link
-            </h5>
+            <div class="d-flex w-100">
+                <h5 class="flex-fill">
+                    Apollo Company Link
+                </h5>
+
+                <div>
+                    <p-button (click)="loadApolloEmployees()" label="Load Employees"></p-button>
+                </div>
+            </div>
         </ng-template>
         <div *ngIf="hasApolloCompany$ | async; else noApolloCompany">
             <ng-container *ngIf="apolloCompanyValue$ | async as apolloCompany">
@@ -187,11 +193,6 @@
                     <ng-container
                         *ngTemplateOutlet="apolloField; 
                         context: {label: 'Domain', value: apolloCompany.domain || apolloCompany.primaryDomain }"></ng-container>
-
-                    <ng-container *ngIf="apolloCompany.organizationHeadcount">
-                        <ng-container *ngTemplateOutlet="apolloField; 
-                        context: {label: 'Head Count', value: apolloCompany.organizationHeadcount }"></ng-container>
-                    </ng-container>
 
                     <ng-container *ngIf="apolloCompany.primaryPhone">
                         <ng-container *ngTemplateOutlet="apolloField; 

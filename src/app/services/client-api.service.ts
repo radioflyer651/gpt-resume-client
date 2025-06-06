@@ -18,6 +18,7 @@ import { JobListing, JobListingLine } from '../../model/shared-models/job-tracki
 import { UpsertDbItem } from '../../model/shared-models/db-operation-types.model';
 import { JobAnalysis } from '../../model/shared-models/job-tracking/job-analysis.model';
 import { ApolloCompany } from '../../model/apollo/apollo-api-response.model';
+import { LApolloOrganization } from '../../model/shared-models/apollo-local.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -255,17 +256,17 @@ export class ClientApiService {
   }
 
   /** Returns a listing of all ApolloCompany objects in the database. */
-  getApolloCompanyList(): Observable<ApolloCompany[]> {
-    return this.http.get<ApolloCompany[]>(this.constructUrl(`apollo/companies`), this.optionsBuilder.withAuthorization());
+  getApolloCompanyList(): Observable<LApolloOrganization[]> {
+    return this.http.get<LApolloOrganization[]>(this.constructUrl(`apollo/companies`), this.optionsBuilder.withAuthorization());
   }
 
   /** Updates the Apollo database with the company data for the company that has the same domain as the one specified by id. */
   updateApolloCompanyForCompany(companyId: ObjectId): Observable<ObjectId> {
-    return this.http.get<ObjectId>(`apollo/companies/update-for-company/${companyId}`, this.optionsBuilder.withAuthorization());
+    return this.http.post<ObjectId>(this.constructUrl(`apollo/companies/update-for-company/${companyId}`), undefined, this.optionsBuilder.withAuthorization());
   }
 
   /** Given a specified id for an ApolloCompany, returns the company data in the databse, if it exists. */
-  getApolloCompanyById(apolloCompanyId: ObjectId): Observable<ApolloCompany | undefined> {
-    return this.http.get<ApolloCompany | undefined>(`companies/${apolloCompanyId}`, this.optionsBuilder.withAuthorization());
+  getApolloCompanyById(apolloCompanyId: ObjectId): Observable<LApolloOrganization | undefined> {
+    return this.http.get<LApolloOrganization | undefined>(this.constructUrl(`apollo/companies/${apolloCompanyId}`), this.optionsBuilder.withAuthorization());
   }
 }

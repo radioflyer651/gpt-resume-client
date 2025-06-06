@@ -45,3 +45,18 @@ p-panel {
 .page-toolbar {
     margin-top: 2em;
 }
+
+
+.apollo-field {
+    display: flex;
+    margin-bottom: 2em;
+
+    label {
+        width: 10em;
+        flex-shrink: 0;
+    }
+
+    .value {
+        flex: 1 1 auto;
+    }
+}

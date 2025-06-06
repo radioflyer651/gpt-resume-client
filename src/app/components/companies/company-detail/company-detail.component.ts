@@ -24,6 +24,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ApolloCompany } from '../../../../model/apollo/apollo-api-response.model';
 import { ApolloService } from '../../../services/apollo.service';
+import { LApolloOrganization } from '../../../../model/shared-models/apollo-local.model';
 
 @Component({
   selector: 'app-company-detail',
@@ -70,7 +71,7 @@ export class CompanyDetailComponent extends ComponentBase {
   /** Emitted when the job listings have changed. */
   jobListingsChanged$ = new Subject<void>();
 
-  apolloCompanyChanged$ = new Subject<void>();
+  apolloCompanyChanged$ = new Subject<undefined | 'linking' | 'complete'>();
 
   ngOnInit() {
     // Observable to get the company ID from the route.
@@ -152,18 +153,46 @@ export class CompanyDetailComponent extends ComponentBase {
 
     this.apolloCompany$ = companyFromId$.pipe(
       switchMap((company) => {
-        if (!company?.apolloId) {
-          return of(undefined);
-        }
-
         return this.apolloCompanyChanged$.pipe(
           startWith(undefined),
-          switchMap(() =>
-            this.apolloService.getApolloCompanyById(company.apolloId!)
+          switchMap((changedValue) => {
+            console.log(`Click: ${changedValue}`, company);
+
+            // If we're linking the company, then show "loading".
+            if (changedValue === 'linking') {
+              return of('loading' as const);
+            }
+
+            // If there's no ID, then we can't get it.
+            if (!company?.apolloId) {
+              return of(undefined);
+            }
+
+            // Otherwise, we'll load the company.  Let the loading status
+            //  be controlled by the following observable.
+            return this.apolloService.getApolloCompanyById(company.apolloId!)
               .pipe(
                 startWith('loading' as const)
-              ),
-          ));
+              );
+          })
+        );
+      }),
+      takeUntil(this.ngDestroy$),
+    );
+
+    this.apolloCompanyValue$ = this.apolloCompany$.pipe(
+      map(c => {
+        if (typeof c === 'object') {
+          return c;
+        }
+
+        return undefined;
+      })
+    );
+
+    this.hasApolloCompany$ = this.apolloCompany$.pipe(
+      map(company => {
+        return typeof company === 'object';
       }),
       takeUntil(this.ngDestroy$),
     );
@@ -341,8 +370,30 @@ export class CompanyDetailComponent extends ComponentBase {
 
   // #region Apollo Company
 
-  apolloCompany$!: Observable<ApolloCompany | undefined | 'loading'>;
+  apolloCompany$!: Observable<LApolloOrganization | undefined | 'loading'>;
 
+  apolloCompanyValue$!: Observable<LApolloOrganization | undefined>;
+
+  hasApolloCompany$!: Observable<boolean>;
+
+  findApolloCompany() {
+    // Ensure we have a company to link.
+    if (!this.editTarget?._id) {
+      return;
+    }
+
+    // Indicate that we're linking the company.
+    this.apolloCompanyChanged$.next('linking');
+    this.apolloService.updateApolloCompanyForCompanyId(this.editTarget._id).subscribe((value) => {
+      // If we have a value, set it on the edit target.
+      if (value) {
+        this.editTarget!.apolloId = value._id;
+      }
+
+      // Indicate that we're done.
+      this.apolloCompanyChanged$.next('complete');
+    });
+  }
 
   // #endregion
 

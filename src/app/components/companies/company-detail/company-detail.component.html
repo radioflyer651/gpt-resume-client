@@ -4,7 +4,7 @@
 
 <div *ngIf="editTarget">
     <p-panel>
-        <ng-template #header class="openings">
+        <ng-template #header>
             <div class="header-container">
                 <h5>
                     Company Info
@@ -35,7 +35,7 @@
     </p-panel>
 
     <p-panel>
-        <ng-template #header class="openings">
+        <ng-template #header>
             <div class="header-container">
                 <h5>
                     Job Listings
@@ -100,7 +100,7 @@
     </p-panel>
 
     <p-panel>
-        <ng-template #header class="openings">
+        <ng-template #header>
             <div class="header-container">
                 <h5>
                     Contacts
@@ -154,17 +154,80 @@
 
     <ng-container *ngIf="!isNewCompany && editTarget; else saveCompanyFirst">
         <p-panel>
-            <h5>
-                Comments
-            </h5>
+            <ng-template #header>
+                <h5>
+                    Comments
+                </h5>
+            </ng-template>
+            
             <app-comments-editor [commentOwner]="editTarget!"></app-comments-editor>
         </p-panel>
     </ng-container>
 
     <p-panel>
-        <div *ngIf="!!(apolloCompany$ | async)">
-            No Apollo company linked with this company.
+        <ng-template #header>
+            <h5>
+                Apollo Company Link
+            </h5>
+        </ng-template>
+        <div *ngIf="hasApolloCompany$ | async; else noApolloCompany">
+            <ng-container *ngIf="apolloCompanyValue$ | async as apolloCompany">
+
+                <ng-template #apolloField let-label="label" let-value="value">
+                    <div class="apollo-field">
+                        <label> {{label}} </label>
+                        <div class="value"> {{value}} </div>
+                    </div>
+                </ng-template>
+
+                <div>
+                    <ng-container *ngTemplateOutlet="apolloField; 
+                        context: {label: 'Company Name', value: apolloCompany.name }"></ng-container>
+
+                    <ng-container
+                        *ngTemplateOutlet="apolloField; 
+                        context: {label: 'Domain', value: apolloCompany.domain || apolloCompany.primaryDomain }"></ng-container>
+
+                    <ng-container *ngIf="apolloCompany.organizationHeadcount">
+                        <ng-container *ngTemplateOutlet="apolloField; 
+                        context: {label: 'Head Count', value: apolloCompany.organizationHeadcount }"></ng-container>
+                    </ng-container>
+
+                    <ng-container *ngIf="apolloCompany.primaryPhone">
+                        <ng-container *ngTemplateOutlet="apolloField; 
+                        context: {label: 'Company Phone Number', value: apolloCompany.primaryPhone }"></ng-container>
+                    </ng-container>
+
+                    <div class="apollo-field" *ngIf="apolloCompany.linkedInUrl">
+                        <label> LinkedIn URL: </label>
+                        <a [href]="apolloCompany.linkedInUrl" target="_blank"> {{apolloCompany.linkedInUrl}} </a>
+                    </div>
+
+                    <div class="apollo-field" *ngIf="apolloCompany.websiteUrl">
+                        <label> Website URL: </label>
+                        <a [href]="apolloCompany.websiteUrl" target="_blank"> {{apolloCompany.websiteUrl}} </a>
+                    </div>
+
+                    <div class="apollo-field" *ngIf="apolloCompany.twitterUrl">
+                        <label> Twitter URL: </label>
+                        <a [href]="apolloCompany.twitterUrl" target="_blank"> {{apolloCompany.twitterUrl}} </a>
+                    </div>
+
+                </div>
+            </ng-container>
         </div>
+
+        <ng-template #noApolloCompany>
+            <div *ngIf="!(apolloCompany$ | async)">
+                No Apollo company linked with this company.
+            </div>
+            <div>
+                <p-button label="Find Apollo Co." (click)="findApolloCompany()"></p-button>
+            </div>
+            <div *ngIf="(apolloCompany$ | async) === 'loading'">
+                Loading...
+            </div>
+        </ng-template>
     </p-panel>
 
     <ng-template #saveCompanyFirst>

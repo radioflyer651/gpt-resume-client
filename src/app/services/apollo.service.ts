@@ -3,7 +3,7 @@ import { ClientApiService } from './client-api.service';
 import { catchError, Observable, of, switchMap } from 'rxjs';
 import { ObjectId } from 'mongodb';
 import { MessagingService } from './messaging.service';
-import { LApolloOrganization } from '../../model/shared-models/apollo/apollo-local.model';
+import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/apollo/apollo-local.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,5 +43,10 @@ export class ApolloService {
 
         return of(undefined);
       }));
+  }
+
+  /** Returns all employees for a specified apollo company ID. */
+  getEmployeesForApolloCompanyId(apolloCompanyId: string): Observable<LApolloPerson> {
+    return this.clientApiService.getApolloEmployeeStatusForApolloCompany(apolloCompanyId);
   }
 }

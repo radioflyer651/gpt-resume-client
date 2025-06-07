@@ -1,4 +1,4 @@
-<div *ngIf="!(editTarget)">
+<div *ngIf="!(companyService.subscribeToState('company') | async)">
     Loading...
 </div>
 
@@ -171,14 +171,17 @@
                     Apollo Company Link
                 </h5>
 
-                <div>
-                    <p-button (click)="loadApolloEmployees()" label="Load Employees"></p-button>
+                <div *ngIf="!apolloEmployeeDataState || apolloEmployeeDataState.state !== 'in-progress'">
+                    <p-button
+                        *ngIf="!apolloEmployeeDataState || (apolloEmployeeDataState.state !== 'in-progress' && apolloEmployeeDataState.state !== 'complete')"
+                        (click)="loadApolloEmployees()" label="Load Employees"></p-button>
+                    <p-button *ngIf="apolloEmployeeDataState?.state === 'complete'" (click)="showApolloEmployeeList()"
+                        label="Show Employees"></p-button>
                 </div>
             </div>
         </ng-template>
-        <div *ngIf="hasApolloCompany$ | async; else noApolloCompany">
-            <ng-container *ngIf="apolloCompanyValue$ | async as apolloCompany">
-
+        <div>
+            <ng-container *ngIf="companyService.apolloCompany$ | async as apolloCompany; else noApolloCompany">
                 <ng-template #apolloField let-label="label" let-value="value">
                     <div class="apollo-field">
                         <label> {{label}} </label>
@@ -219,13 +222,13 @@
         </div>
 
         <ng-template #noApolloCompany>
-            <div *ngIf="!(apolloCompany$ | async)">
+            <div *ngIf="(companyService.subscribeToState('apollo-company') | async) === 'not-available'">
                 No Apollo company linked with this company.
             </div>
             <div>
                 <p-button label="Find Apollo Co." (click)="findApolloCompany()"></p-button>
             </div>
-            <div *ngIf="(apolloCompany$ | async) === 'loading'">
+            <div *ngIf="(companyService.subscribeToState('apollo-company') | async) === 'loading'">
                 Loading...
             </div>
         </ng-template>
@@ -253,7 +256,22 @@
 </div>
 
 <app-contact-dialog [(visible)]="isEditContactVisible" [contactId]="editContactTargetId"
-    [companyId]="(companyId$ | async)!" (onComplete)="onNewContactClosed($event)"></app-contact-dialog>
+    [companyId]="(companyService.companyId$| async)!" (onComplete)="onNewContactClosed($event)"></app-contact-dialog>
 
 <app-job-listing-dialog [(visible)]="isEditJobListingVisible" [jobListingId]="editJobListingTargetId"
-    [companyId]="(companyId$ | async)!" (onClosed)="onListingDetailClosed($event)"></app-job-listing-dialog>
+    [companyId]="(companyService.companyId$ | async)!"
+    (onClosed)="onListingDetailClosed($event)"></app-job-listing-dialog>
+
+<ng-container *ngIf="isApolloEmployeeListVisible">
+    <p-dialog [(visible)]="isApolloEmployeeListVisible">
+        <ng-template #header>
+            Employee List
+        </ng-template>
+
+        <app-employee-list></app-employee-list>
+
+        <ng-template #footer>
+            <p-button label="Close" (click)="hideApolloEmployeeList()"></p-button>
+        </ng-template>
+    </p-dialog>
+</ng-container>

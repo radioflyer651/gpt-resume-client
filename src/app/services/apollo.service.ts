@@ -46,7 +46,7 @@ export class ApolloService {
   }
 
   /** Returns all employees for a specified apollo company ID. */
-  getEmployeesForApolloCompanyId(apolloCompanyId: string): Observable<LApolloPerson> {
-    return this.clientApiService.getApolloEmployeeStatusForApolloCompany(apolloCompanyId);
+  getEmployeesForApolloCompanyId(apolloCompanyId: string): Observable<LApolloPerson[]> {
+    return this.clientApiService.getApolloEmployeesForApolloCompany(apolloCompanyId);
   }
 }

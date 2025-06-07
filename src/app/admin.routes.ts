@@ -3,7 +3,7 @@ import { AdminHomeComponent } from "./components/admin-home/admin-home.component
 import { CompanyDetailComponent } from "./components/companies/company-detail/company-detail.component";
 import { CompaniesListComponent } from "./components/companies/companies-list/companies-list.component";
 
-export const TarotRoutes: Routes = [
+export const adminRoutes: Routes = [
     {
         path: '',
         component: AdminHomeComponent,

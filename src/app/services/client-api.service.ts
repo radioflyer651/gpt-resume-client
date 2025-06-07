@@ -276,8 +276,8 @@ export class ClientApiService {
   }
 
   /** Returns the status of the data pull operation that is made against Apollo.io, for an Apollo company, specified by it's Apollo ID. */
-  getApolloEmployeeStatusForApolloCompany(apolloCompanyId: string): Observable<LApolloPerson> {
-    return this.http.get<LApolloPerson>(this.constructUrl(`apollo/companies/employee-data-status/${apolloCompanyId}`), this.optionsBuilder.withAuthorization());
+  getApolloEmployeeStatusForApolloCompany(apolloCompanyId: string): Observable<ApolloDataInfo> {
+    return this.http.get<ApolloDataInfo>(this.constructUrl(`apollo/companies/employee-data-status/${apolloCompanyId}`), this.optionsBuilder.withAuthorization());
   }
 
   /** Returns all loaded employees for an Apollo company, specified by its apollo company ID. */

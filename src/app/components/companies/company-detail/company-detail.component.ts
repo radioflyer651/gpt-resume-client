@@ -24,7 +24,10 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ApolloService } from '../../../services/apollo.service';
 import { LApolloOrganization } from '../../../../model/shared-models/apollo/apollo-local.model';
-import { ApolloDataStateTypes } from '../../../../model/shared-models/apollo/apollo-data-info.model';
+import { ApolloDataInfo, ApolloDataStateTypes } from '../../../../model/shared-models/apollo/apollo-data-info.model';
+import { CompanyService } from '../../../services/company.service';
+import { EmployeeListComponent } from "../../apollo/employee-list/employee-list.component";
+import { DialogModule } from 'primeng/dialog';
 
 type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
 
@@ -45,6 +48,11 @@ type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
     PanelModule,
     CheckboxModule,
     SplitButtonModule,
+    EmployeeListComponent,
+    DialogModule,
+  ],
+  providers: [
+    CompanyService
   ],
   templateUrl: './company-detail.component.html',
   styleUrls: [
@@ -58,171 +66,36 @@ export class CompanyDetailComponent extends ComponentBase {
     readonly router: Router,
     readonly route: ActivatedRoute,
     readonly confirmationService: ConfirmationService,
+    readonly companyService: CompanyService,
     readonly apolloService: ApolloService,
   ) {
     super();
-
+    this.companyService.destroyerObservable = this.ngDestroy$;
   }
 
-  /** Company ID obtained from the route parameters. */
-  companyId$!: Observable<ObjectId>;
-
-  /** Triggered when the contact list is changed. */
-  contactsChanged$ = new Subject<void>();
-
-  /** Emitted when the job listings have changed. */
-  jobListingsChanged$ = new Subject<void>();
-
-  apolloCompanyChanged$ = new Subject<undefined | 'linking' | 'complete'>();
-
-
-
   ngOnInit() {
-    // Observable to get the company ID from the route.
-    this.companyId$ = this.route.paramMap.pipe(
-      map(pm => pm.get('companyId')!),
-      distinct(),
-      takeUntil(this.ngDestroy$)
-    );
+    this.companyService.contactList$.pipe(takeUntil(this.ngDestroy$))
+      .subscribe(contactList => {
+        this.contacts = contactList;
+      });
 
-    // Get the company from the ID.
-    const companyFromId$: Observable<UpsertDbItem<Company>> = this.companyId$.pipe(
-      switchMap(id => {
-        // If it's 'new', then we have to create a new company.
-        //  Otherwise, we have to get it from the server.
-        if (id === 'new') {
-          // Return a new company.
-          return of(this.createNewCompany());
+    this.companyService.jobsListings$.pipe(takeUntil(this.ngDestroy$))
+      .subscribe(jobListings => {
+        this.jobListings = jobListings;
+      });
 
-        } else {
-          // Clear the current company, for initialization sake.
-          this.editTarget = undefined;
-          return this.clientApi.getCompanyById(id);
-        }
-      }),
-      shareReplay(1),
-    );
-
-    // Get the contacts for the id.
-    const contactsFromId$ = this.companyId$.pipe(
-      switchMap(id => {
-        // If the ID is new, then we don't have any contacts.
-        if (id === 'new') {
-          return of([]);
-        } else {
-          // Clear the property while it's being retrieved from the server.
-          //  If another call is made, this part should be synchronous, and ultimately
-          //  be resolved by the next call.
-          this.contacts = undefined;
-          return this.contactsChanged$.pipe(
-            startWith(undefined), // Trigger the first update to get the contacts from the server.
-            switchMap(() => this.clientApi.getContactsByCompanyId(id)),
-          );
-        }
-      }));
-
-    /** Get the job listings for this company. */
-    const jobListingsFromId$ = this.companyId$.pipe(switchMap(id => {
-      // If the ID is new, then we don't have any contacts.
-      if (id === 'new') {
-        return of([]);
-      } else {
-        // Clear the property while it's being retrieved from the server.
-        //  If another call is made, this part should be synchronous, and ultimately
-        //  be resolved by the next call.
-        this.jobListings = undefined;
-        return this.jobListingsChanged$.pipe(
-          startWith(undefined), // Make sure we trigger the first update.
-          switchMap(() => this.clientApi.getJobListingsByCompanyId(id)), // Return the API call.
-        );
-      }
-    }));
-
-    // Yes yes yes... we're subscribing in a completely separate step - not inline.  Sue me.
-    //  NOTE: The takeUntil on companyId$ handles unsubscribing for all of these.
-    companyFromId$.subscribe(company => {
-      if (!company) {
-        throw new Error(`No company exists for the ID.`);
-      }
-      this.editTarget = company;
-    });
-
-    contactsFromId$.subscribe(contacts => {
-      this.contacts = contacts;
-    });
-
-    jobListingsFromId$.subscribe(jobs => {
-      this.jobListings = jobs;
-    });
-
-    this.apolloCompany$ = companyFromId$.pipe(
-      switchMap((company) => {
-        return this.apolloCompanyChanged$.pipe(
-          startWith(undefined),
-          switchMap((changedValue) => {
-            // If we're linking the company, then show "loading".
-            if (changedValue === 'linking') {
-              return of('loading' as const);
-            }
-
-            // If there's no ID, then we can't get it.
-            if (!company?.apolloId) {
-              return of(undefined);
-            }
-
-            // Otherwise, we'll load the company.  Let the loading status
-            //  be controlled by the following observable.
-            return this.apolloService.getApolloCompanyById(company.apolloId!)
-              .pipe(
-                startWith('loading' as const)
-              );
-          })
-        );
-      }),
-      takeUntil(this.ngDestroy$),
-    );
-
-    this.apolloCompanyValue$ = this.apolloCompany$.pipe(
-      map(c => {
-        if (typeof c === 'object') {
-          return c;
+    this.companyService.company$.pipe(takeUntil(this.ngDestroy$))
+      .subscribe(company => {
+        if (!company) {
+          return company;
         }
 
-        return undefined;
-      })
-    );
+        this.editTarget = { ...company };
+      });
 
-    this.hasApolloCompany$ = this.apolloCompany$.pipe(
-      map(company => {
-        return typeof company === 'object';
-      }),
-      takeUntil(this.ngDestroy$),
-    );
-
-    this.apolloEmployeeLoadState$ = this.apolloCompanyValue$.pipe(
-      switchMap(company => {
-        return this.apolloEmployeeLoadStateChanged$.pipe(
-          startWith(undefined), // Trigger the first update.
-          switchMap(_ => {
-            // If we don't have a company, then we're not ready.
-            if (!company) {
-              return of('not-ready' as ApolloEmployeeLoadedStateTypes);
-            }
-
-            return this.clientApi.getApolloEmployeeStatusForApolloCompany(company._id).pipe(
-              map(status => {
-                return status.state as ApolloEmployeeLoadedStateTypes;
-              }),
-              catchError(err => {
-                return of('new' as ApolloEmployeeLoadedStateTypes);
-              }),
-            );
-          }),
-          startWith('not-ready' as ApolloEmployeeLoadedStateTypes),
-        );
-      }),
-      takeUntil(this.ngDestroy$),
-    );
+    this.companyService.apolloEmployeeDataState$.subscribe(value => {
+      this.apolloEmployeeDataState = value;
+    });
   }
 
   get websiteField(): string {
@@ -300,7 +173,7 @@ export class CompanyDetailComponent extends ComponentBase {
   onNewContactClosed(cancelled: boolean): void {
     if (!cancelled) {
       // Trigger a refresh on the contact list.
-      this.contactsChanged$.next();
+      this.companyService.reloadProperty('contact-list');
     }
   }
 
@@ -308,7 +181,7 @@ export class CompanyDetailComponent extends ComponentBase {
   private async deleteContact(contactId: ObjectId): Promise<void> {
     await lastValueFrom(this.clientApi.deleteContactById(contactId));
     // Lazy - reloading the contacts from the server.
-    this.contactsChanged$.next();
+    this.companyService.reloadProperty('contact-list');
   }
 
   deleteContactClicked(contact: CompanyContact): void {
@@ -337,7 +210,7 @@ export class CompanyDetailComponent extends ComponentBase {
   async onListingDetailClosed(cancelled: boolean) {
     if (!cancelled) {
       // We need to reload the listings.
-      this.jobListingsChanged$.next();
+      this.companyService.reloadProperty('job-listings');
     }
   }
 
@@ -347,7 +220,7 @@ export class CompanyDetailComponent extends ComponentBase {
     await lastValueFrom(this.clientApi.deleteJobListingById(jobListingId));
 
     // Lazy - update the job listings.
-    this.jobListingsChanged$.next();
+    this.companyService.reloadProperty('job-listings');
   }
 
   deleteJobListingClicked(jobListing: JobListingLine): void {
@@ -397,29 +270,8 @@ export class CompanyDetailComponent extends ComponentBase {
 
   // #region Apollo Company
 
-  apolloCompany$!: Observable<LApolloOrganization | undefined | 'loading'>;
-
-  apolloCompanyValue$!: Observable<LApolloOrganization | undefined>;
-
-  hasApolloCompany$!: Observable<boolean>;
-
   findApolloCompany() {
-    // Ensure we have a company to link.
-    if (!this.editTarget?._id) {
-      return;
-    }
-
-    // Indicate that we're linking the company.
-    this.apolloCompanyChanged$.next('linking');
-    this.apolloService.updateApolloCompanyForCompanyId(this.editTarget._id).subscribe((value) => {
-      // If we have a value, set it on the edit target.
-      if (value) {
-        this.editTarget!.apolloId = value._id;
-      }
-
-      // Indicate that we're done.
-      this.apolloCompanyChanged$.next('complete');
-    });
+    this.companyService.findApolloCompany();
   }
 
   // #endregion
@@ -455,6 +307,19 @@ export class CompanyDetailComponent extends ComponentBase {
     }
 
     return `https://www.glassdoor.com/Search/results.htm?keyword=${encodeURI(domain[0])}`;
+  }
+
+  isApolloEmployeeListVisible: boolean = false;
+
+  /** Contains the status of whether or not Apollo employee data has been loaded from apollo. */
+  apolloEmployeeDataState: ApolloDataInfo | undefined;
+
+  showApolloEmployeeList() {
+    this.isApolloEmployeeListVisible = true;
+  }
+
+  hideApolloEmployeeList() {
+    this.isApolloEmployeeListVisible = false;
   }
 
 }

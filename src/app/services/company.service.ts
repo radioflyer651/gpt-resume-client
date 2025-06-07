@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ClientApiService } from './client-api.service';
-import { combineLatestWith, distinct, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, distinct, EMPTY, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ObjectId } from 'mongodb';
 import { Company } from '../../model/shared-models/company.model';
 import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/apollo/apollo-local.model';
@@ -9,10 +9,20 @@ import { JobListing, JobListingLine } from '../../model/shared-models/job-tracki
 import { CompanyContact } from '../../model/shared-models/job-tracking/company-contact.data';
 import { StateObservable } from '../../utils/state-observable.utils';
 import { ApolloDataInfo } from '../../model/shared-models/apollo/apollo-data-info.model';
+import { ReadonlySubject } from '../../utils/readonly-subject';
 
-export type CompanyLoadingTypes = 'init' | 'loading' | 'loaded' | 'error' | 'not-available';
+export type CompanyLoadingTypes = 'init' | 'loading' | 'loaded' | 'error' | 'not-available' | 'linking';
 
-export type CompanyServiceStateNames = 'company' | 'jobListings' | 'contact-list' | 'apollo-company' | 'apollo-employee-list' | 'apollo-employee-list-data';
+export type CompanyServiceStateNames = 'company' | 'job-listings' | 'contact-list' | 'apollo-company' | 'apollo-employee-list' | 'apollo-employee-list-data';
+
+/* NOTE:
+*  ActivatedRoutes don't function properly in a service.  They tend to take the route at upper levels
+*   in the component tree, if provided in the root.  Therefore, the service must be provided at the component level
+*   using the providers property on the component.
+* 
+*   Further, since they must be implemented at lower levels, they will be destroyed at those levels too.
+*   With that being the case, we need to explicitly clean up the services, through manual means.
+*/
 
 /** Provides company information for the current company, specified by the current route. */
 @Injectable({
@@ -21,33 +31,41 @@ export type CompanyServiceStateNames = 'company' | 'jobListings' | 'contact-list
 export class CompanyService {
   constructor(
     readonly router: Router,
-    readonly route: ActivatedRoute,
+    private route: ActivatedRoute,
     readonly apiService: ClientApiService,
   ) {
     this.initialize();
-
   }
+
+  private ngDestroySubject = new Subject<Observable<void>>();
+
+  /** Set by the owning component, used to cleanup observables on this service. */
+  set destroyerObservable(newVal: Observable<void>) {
+    this.ngDestroySubject.next(newVal);
+  }
+
+  /** Must be called manually. */
+  private ngDestroy$ = this.ngDestroySubject.pipe(
+    switchMap(destroyer => {
+      return destroyer;
+    })
+  );
+
 
   initialize(): void {
     this.companyId$ = this.route.paramMap.pipe(
       map(params => {
         if (params.has('companyId')) {
-          // Get the ID from the route.
-          const companyId = params.get('companyId');
-
-          // We can only return an ID if it's a string.
-          if (typeof companyId === 'string') {
-            return companyId;
-          }
+          return params.get('companyId') ?? undefined;
         }
 
-        // No ID, or if the ID's not a string, then... what do you do?
         return undefined;
       }),
-      distinct(),
+      takeUntil(this.ngDestroy$)
     );
 
-    this.company$ = this.getReloadObserver('company', this.companyId$.pipe(
+
+    this._company = new ReadonlySubject(EMPTY, this.getReloadObserver('company', this.companyId$.pipe(
       switchMap(companyId => {
         // We only want a persistent company that can be
         //  represented by an ID.  Even 'new' should not return anything.
@@ -58,7 +76,9 @@ export class CompanyService {
         const result = this.apiService.getCompanyById(companyId);
         this.stateObservable.wrapState(result, 'company', 'loading', 'loaded', 'error');
         return result;
-      })));
+      }),
+      takeUntil(this.ngDestroy$),
+    )));
 
     this.contactList$ = this.getReloadObserver('contact-list', this.companyId$.pipe(
       switchMap(companyId => {
@@ -71,9 +91,11 @@ export class CompanyService {
         const result = this.apiService.getContactsByCompanyId(companyId);
         this.stateObservable.wrapState(result, 'contact-list', 'loading', 'loaded', 'error');
         return result;
-      })));
+      }),
+      takeUntil(this.ngDestroy$),
+    ));
 
-    this.jobsListings$ = this.getReloadObserver('jobListings', this.companyId$.pipe(
+    this.jobsListings$ = this.getReloadObserver('job-listings', this.companyId$.pipe(
       switchMap(companyId => {
         // We only want a persistent company that can be
         //  represented by an ID.  Even 'new' should not return anything.
@@ -82,11 +104,13 @@ export class CompanyService {
         }
 
         const result = this.apiService.getJobListingsByCompanyId(companyId);
-        this.stateObservable.wrapState(result, 'jobListings', 'loading', 'loaded', 'error');
+        this.stateObservable.wrapState(result, 'job-listings', 'loading', 'loaded', 'error');
         return result;
-      })));
+      }),
+      takeUntil(this.ngDestroy$),
+    ));
 
-    this.apolloCompanyId$ = this.apolloCompany$.pipe(
+    this.apolloCompanyId$ = this.company$.pipe(
       map(company => {
         // If there's no company, then there's no apolloCompany!
         if (!company) {
@@ -94,8 +118,9 @@ export class CompanyService {
         }
 
         // Return the ID from this.
-        return company.apolloAccountId;
-      })
+        return company.apolloId;
+      }),
+      takeUntil(this.ngDestroy$),
     );
 
     this.apolloCompany$ = this.getReloadObserver('apollo-company', this.apolloCompanyId$.pipe(
@@ -107,7 +132,8 @@ export class CompanyService {
 
         const result = this.apiService.getApolloCompanyById(aCompanyId);
         return this.stateObservable.wrapState(result, 'apollo-company', 'loading', 'loaded', 'error');
-      })
+      }),
+      takeUntil(this.ngDestroy$),
     ));
 
     this.apolloEmployeeDataState$ = this.getReloadObserver('apollo-employee-list-data', this.apolloCompanyId$.pipe(
@@ -119,7 +145,8 @@ export class CompanyService {
 
         const result = this.apiService.getApolloEmployeeStatusForApolloCompany(aCompanyId);
         return this.stateObservable.wrapState(result, 'apollo-employee-list-data', 'loading', 'loaded', 'error');
-      })
+      }),
+      takeUntil(this.ngDestroy$)
     ));
 
     this.apolloEmployeeList$ = this.getReloadObserver('apollo-employee-list', this.apolloCompanyId$.pipe(
@@ -135,9 +162,22 @@ export class CompanyService {
           return of(undefined);
         }
 
-        const result = this.apiService.getApolloEmployeesForApolloCompany(aCompanyId);
+        const result = this.apiService.getApolloEmployeesForApolloCompany(aCompanyId).pipe(
+          map(value => {
+            value.sort((v1, v2) => {
+              if (!v1.title || !v2.title) {
+                return 0;
+              }
+
+              return v1.title!.localeCompare(v2.title!);
+            });
+
+            return value;
+          })
+        );
         return this.stateObservable.wrapState(result, 'apollo-employee-list', 'loading', 'loaded', 'error');
-      })
+      }),
+      takeUntil(this.ngDestroy$)
     ));
 
   }
@@ -150,9 +190,21 @@ export class CompanyService {
     return this.stateObservable.subscribeToState(stateName);
   }
 
-  companyId$!: Observable<ObjectId | 'new' | undefined>;
+  // companyId$!: Observable<ObjectId | 'new' | undefined>;
 
-  company$!: Observable<Company | undefined>;
+  // #region company
+  private _company!: ReadonlySubject<Company | undefined>;
+
+  get company$() {
+    return this._company.observable$;
+  }
+
+  get company(): Company | undefined {
+    return this._company.value;
+  }
+  // #endregion
+
+  companyId$!: Observable<ObjectId | 'new' | undefined>;
 
   jobsListings$!: Observable<JobListingLine[] | undefined>;
 
@@ -165,6 +217,38 @@ export class CompanyService {
   apolloEmployeeList$!: Observable<LApolloPerson[] | undefined>;
 
   apolloEmployeeDataState$!: Observable<ApolloDataInfo | undefined>;
+
+  /** Updates the apollo company on the current company, if one is attached. */
+  findApolloCompany() {
+    // We musth ave a company to do this.
+    if (!this.company) {
+      this.stateObservable.setValue('apollo-company', 'not-available');
+      return;
+    }
+
+    // Trigger the update.
+    const result = this.apiService.updateApolloCompanyForCompany(this.company._id);
+    const wrappedResult = this.stateObservable.wrapState(result, 'apollo-company', 'linking', 'loaded', 'error').pipe(
+      tap(value => {
+        // This should be set for us to proceed, but stranger things have happened!
+        if (!this.company) {
+          return;
+        }
+
+        // Set the apollo ID on the company.
+        this.company.apolloId = value;
+
+        // Trigger a reload of the company.
+        this.reloadProperty('apollo-company');
+        this.reloadProperty('apollo-employee-list-data');
+      }),
+      shareReplay(1)
+    );
+
+    // If nothing subscribes, then nothing happens.  Let's subscribe to be sure.
+    wrappedResult.subscribe(() => { });
+    return wrappedResult;
+  }
 
   /** Trigger observable for reloading the states of this observable. */
   private reloader$ = new Subject<CompanyServiceStateNames>();

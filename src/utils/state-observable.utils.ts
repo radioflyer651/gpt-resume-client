@@ -30,20 +30,20 @@ export class StateObservable<T_STATE_NAMES extends string, T_STATE_TYPES> {
     subscribeToState(stateName: T_STATE_NAMES): Observable<T_STATE_TYPES> {
         if (this.destroyerObservable$) {
             return this.stateList$.pipe(
-                map(value => value[stateName]),
+                map(value => value[stateName] ?? this.defaultValue),
                 distinct(),
                 takeUntil(this.destroyerObservable$),
             );
 
         } else {
             return this.stateList$.pipe(
-                map(value => value[stateName]),
+                map(value => value[stateName] ?? this.defaultValue),
                 distinct(),
             );
         }
     }
 
-    wrapState(targetObservable: Observable<any>, stateName: T_STATE_NAMES, initialState: T_STATE_TYPES, finishedState: T_STATE_TYPES, errorState?: T_STATE_TYPES) {
+    wrapState<T>(targetObservable: Observable<T>, stateName: T_STATE_NAMES, initialState: T_STATE_TYPES, finishedState: T_STATE_TYPES, errorState?: T_STATE_TYPES) {
         this.setValue(stateName, initialState);
         let isComplete = false;
 

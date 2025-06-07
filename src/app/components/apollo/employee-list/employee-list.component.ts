@@ -2,14 +2,17 @@ import { Component } from '@angular/core';
 import { ComponentBase } from '../../component-base/component-base.component';
 import { ClientApiService } from '../../../services/client-api.service';
 import { ApolloService } from '../../../services/apollo.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CompanyService } from '../../../services/company.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { map, Observable } from 'rxjs';
-import { LApolloPerson } from '../../../../model/shared-models/apollo/apollo-local.model';
+import { BehaviorSubject, combineLatestWith, filter, map, Observable, withLatestFrom } from 'rxjs';
+import { PanelModule } from 'primeng/panel';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
+import { ApolloPerson } from '../../../../model/shared-models/apollo/apollo-api-response.model';
 
 @Component({
   selector: 'app-employee-list',
@@ -18,6 +21,10 @@ import { LApolloPerson } from '../../../../model/shared-models/apollo/apollo-loc
     FormsModule,
     TableModule,
     ButtonModule,
+    RouterModule,
+    PanelModule,
+    FloatLabelModule,
+    InputTextModule,
   ],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.scss'
@@ -35,7 +42,46 @@ export class EmployeeListComponent extends ComponentBase {
   }
 
   ngOnInit(): void {
+    this.employeeSearchList$ = this.companyService.apolloEmployeeList$.pipe(
+      combineLatestWith(this.searchText$),
+      map(([value, searchText]) => {
+        searchText = searchText.trim().toLocaleLowerCase();
 
+        if (!value || !searchText) {
+          return value;
+        }
+
+        const filterOn = (value: string | undefined) => {
+          if (!value) {
+            return false;
+          }
+
+          return value.toLocaleLowerCase().includes(searchText);
+        };
+
+        return value.filter(v => {
+          return filterOn(v.name) || filterOn(v.title) || filterOn(v.seniority);
+        });
+      })
+    );
   }
 
+  // #region searchText
+  clearSearch() {
+    this.searchText = '';
+  }
+
+  private readonly _searchText = new BehaviorSubject<string>('');
+  readonly searchText$ = this._searchText.asObservable();
+
+  get searchText(): string {
+    return this._searchText.getValue();
+  }
+
+  set searchText(newVal: string) {
+    this._searchText.next(newVal);
+  }
+  // #endregion
+
+  employeeSearchList$!: Observable<ApolloPerson[] | undefined>;
 }

@@ -4,6 +4,7 @@ import { catchError, Observable, of, switchMap } from 'rxjs';
 import { ObjectId } from 'mongodb';
 import { MessagingService } from './messaging.service';
 import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/apollo/apollo-local.model';
+import { ApolloPerson } from '../../model/shared-models/apollo/apollo-api-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +47,7 @@ export class ApolloService {
   }
 
   /** Returns all employees for a specified apollo company ID. */
-  getEmployeesForApolloCompanyId(apolloCompanyId: string): Observable<LApolloPerson[]> {
+  getEmployeesForApolloCompanyId(apolloCompanyId: string): Observable<ApolloPerson[]> {
     return this.clientApiService.getApolloEmployeesForApolloCompany(apolloCompanyId);
   }
 }

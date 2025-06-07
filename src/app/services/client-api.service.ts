@@ -19,6 +19,7 @@ import { UpsertDbItem } from '../../model/shared-models/db-operation-types.model
 import { JobAnalysis } from '../../model/shared-models/job-tracking/job-analysis.model';
 import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/apollo/apollo-local.model';
 import { ApolloDataInfo } from '../../model/shared-models/apollo/apollo-data-info.model';
+import { ApolloPerson } from '../../model/shared-models/apollo/apollo-api-response.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -275,13 +276,18 @@ export class ClientApiService {
     return this.http.post<ApolloDataInfo>(this.constructUrl(`apollo/companies/update-employees/${apolloCompanyId}`), undefined, this.optionsBuilder.withAuthorization());
   }
 
+  /** Instructs the server to reset any existing download state, and obtain employee data for an Apollo Company, specified by it's ID. */
+  resetAndReloadApolloEmployees(apolloCompanyId: ObjectId): Observable<ApolloDataInfo> {
+    return this.http.post<ApolloDataInfo>(this.constructUrl(`apollo/companies/update-employees/${apolloCompanyId}/reset`), undefined, this.optionsBuilder.withAuthorization());
+  }
+
   /** Returns the status of the data pull operation that is made against Apollo.io, for an Apollo company, specified by it's Apollo ID. */
   getApolloEmployeeStatusForApolloCompany(apolloCompanyId: string): Observable<ApolloDataInfo> {
     return this.http.get<ApolloDataInfo>(this.constructUrl(`apollo/companies/employee-data-status/${apolloCompanyId}`), this.optionsBuilder.withAuthorization());
   }
 
   /** Returns all loaded employees for an Apollo company, specified by its apollo company ID. */
-  getApolloEmployeesForApolloCompany(apolloCompanyId: string): Observable<LApolloPerson[]> {
-    return this.http.get<LApolloPerson[]>(this.constructUrl(`apollo/companies/${apolloCompanyId}/employees`), this.optionsBuilder.withAuthorization());
+  getApolloEmployeesForApolloCompany(apolloCompanyId: string): Observable<ApolloPerson[]> {
+    return this.http.get<ApolloPerson[]>(this.constructUrl(`apollo/companies/${apolloCompanyId}/employees`), this.optionsBuilder.withAuthorization());
   }
 }

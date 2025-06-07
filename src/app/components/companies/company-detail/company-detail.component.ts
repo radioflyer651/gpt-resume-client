@@ -28,6 +28,7 @@ import { ApolloDataInfo, ApolloDataStateTypes } from '../../../../model/shared-m
 import { CompanyService } from '../../../services/company.service';
 import { EmployeeListComponent } from "../../apollo/employee-list/employee-list.component";
 import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
 
@@ -50,6 +51,7 @@ type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
     SplitButtonModule,
     EmployeeListComponent,
     DialogModule,
+    ProgressSpinnerModule,
   ],
   providers: [
     CompanyService
@@ -149,14 +151,6 @@ export class CompanyDetailComponent extends ComponentBase {
   /** Returns a boolean value indicating whether or not we're editing a new company. */
   get isNewCompany(): boolean {
     return !this.editTarget?._id;
-  }
-
-  private createNewCompany(): NewDbItem<Company> {
-    return {
-      name: '',
-      website: '',
-      comments: []
-    };
   }
 
   /** Controls the visibility of the new contact dialog. */
@@ -280,17 +274,41 @@ export class CompanyDetailComponent extends ComponentBase {
 
   apolloEmployeeLoadState$!: Observable<ApolloEmployeeLoadedStateTypes>;
 
-  apolloEmployeeLoadStateChanged$ = new Subject<void>();
-
   loadApolloEmployees(): void {
-    if (!this.editTarget?.apolloId) {
-      return;
-    }
+    this.isLoadingEmployees = true;
+    this.companyService.loadApolloEmployees().subscribe((status) => {
+      if (status && status.state === 'complete') {
+        this.isApolloEmployeeListVisible = true;
+      }
 
-    this.clientApi.loadApolloEmployees(this.editTarget.apolloId).subscribe((result) => {
-      // I know - inefficient, but reload the employ information.
-      this.apolloEmployeeLoadStateChanged$.next();
+      this.isLoadingEmployees = false;
     });
+  }
+
+  resetAndReloadApolloEmployees(): void {
+    this.isLoadingEmployees = true;
+    this.companyService.resetAndReloadApolloEmployees().subscribe((status) => {
+      if (status && status.state === 'complete') {
+        this.isApolloEmployeeListVisible = true;
+      }
+
+      this.isLoadingEmployees = false;
+    });
+  }
+
+  isLoadingEmployees: boolean = false;
+
+  isApolloEmployeeListVisible: boolean = false;
+
+  /** Contains the status of whether or not Apollo employee data has been loaded from apollo. */
+  apolloEmployeeDataState: ApolloDataInfo | undefined;
+
+  showApolloEmployeeList() {
+    this.isApolloEmployeeListVisible = true;
+  }
+
+  hideApolloEmployeeList() {
+    this.isApolloEmployeeListVisible = false;
   }
 
   // #endregion
@@ -307,19 +325,6 @@ export class CompanyDetailComponent extends ComponentBase {
     }
 
     return `https://www.glassdoor.com/Search/results.htm?keyword=${encodeURI(domain[0])}`;
-  }
-
-  isApolloEmployeeListVisible: boolean = false;
-
-  /** Contains the status of whether or not Apollo employee data has been loaded from apollo. */
-  apolloEmployeeDataState: ApolloDataInfo | undefined;
-
-  showApolloEmployeeList() {
-    this.isApolloEmployeeListVisible = true;
-  }
-
-  hideApolloEmployeeList() {
-    this.isApolloEmployeeListVisible = false;
   }
 
 }

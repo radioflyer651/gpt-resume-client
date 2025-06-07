@@ -10,6 +10,8 @@ import { CompanyContact } from '../../model/shared-models/job-tracking/company-c
 import { StateObservable } from '../../utils/state-observable.utils';
 import { ApolloDataInfo } from '../../model/shared-models/apollo/apollo-data-info.model';
 import { ReadonlySubject } from '../../utils/readonly-subject';
+import { ApolloPerson } from '../../model/shared-models/apollo/apollo-api-response.model';
+import { NewDbItem, UpsertDbItem } from '../../model/shared-models/db-operation-types.model';
 
 export type CompanyLoadingTypes = 'init' | 'loading' | 'loaded' | 'error' | 'not-available' | 'linking';
 
@@ -70,7 +72,7 @@ export class CompanyService {
         // We only want a persistent company that can be
         //  represented by an ID.  Even 'new' should not return anything.
         if (!companyId || companyId === 'new') {
-          return of(undefined);
+          return of(createNewCompany());
         }
 
         const result = this.apiService.getCompanyById(companyId);
@@ -113,7 +115,7 @@ export class CompanyService {
     this.apolloCompanyId$ = this.company$.pipe(
       map(company => {
         // If there's no company, then there's no apolloCompany!
-        if (!company) {
+        if (!company || !company._id) {
           return undefined;
         }
 
@@ -162,19 +164,7 @@ export class CompanyService {
           return of(undefined);
         }
 
-        const result = this.apiService.getApolloEmployeesForApolloCompany(aCompanyId).pipe(
-          map(value => {
-            value.sort((v1, v2) => {
-              if (!v1.title || !v2.title) {
-                return 0;
-              }
-
-              return v1.title!.localeCompare(v2.title!);
-            });
-
-            return value;
-          })
-        );
+        const result = this.apiService.getApolloEmployeesForApolloCompany(aCompanyId);
         return this.stateObservable.wrapState(result, 'apollo-employee-list', 'loading', 'loaded', 'error');
       }),
       takeUntil(this.ngDestroy$)
@@ -193,13 +183,13 @@ export class CompanyService {
   // companyId$!: Observable<ObjectId | 'new' | undefined>;
 
   // #region company
-  private _company!: ReadonlySubject<Company | undefined>;
+  private _company!: ReadonlySubject<UpsertDbItem<Company> | undefined>;
 
   get company$() {
     return this._company.observable$;
   }
 
-  get company(): Company | undefined {
+  get company(): UpsertDbItem<Company> | undefined {
     return this._company.value;
   }
   // #endregion
@@ -214,20 +204,20 @@ export class CompanyService {
 
   apolloCompany$!: Observable<LApolloOrganization | undefined>;
 
-  apolloEmployeeList$!: Observable<LApolloPerson[] | undefined>;
+  apolloEmployeeList$!: Observable<ApolloPerson[] | undefined>;
 
   apolloEmployeeDataState$!: Observable<ApolloDataInfo | undefined>;
 
   /** Updates the apollo company on the current company, if one is attached. */
   findApolloCompany() {
     // We musth ave a company to do this.
-    if (!this.company) {
+    if (!this.company || !this.company._id) {
       this.stateObservable.setValue('apollo-company', 'not-available');
       return;
     }
 
     // Trigger the update.
-    const result = this.apiService.updateApolloCompanyForCompany(this.company._id);
+    const result = this.apiService.updateApolloCompanyForCompany(this.company._id!);
     const wrappedResult = this.stateObservable.wrapState(result, 'apollo-company', 'linking', 'loaded', 'error').pipe(
       tap(value => {
         // This should be set for us to proceed, but stranger things have happened!
@@ -258,6 +248,35 @@ export class CompanyService {
     this.reloader$.next(propertyName);
   }
 
+  /** Loads up the employee data from the Apollo. */
+  loadApolloEmployees(): Observable<ApolloDataInfo | undefined> {
+    if (!this.company?.apolloId) {
+      return of(undefined);
+    }
+
+    return this.apiService.loadApolloEmployees(this.company.apolloId).pipe(
+      tap(() => {
+        // I know - inefficient, but reload the employ information.
+        this.reloadProperty('apollo-employee-list-data');
+      })
+    );
+  }
+
+  /** Reloads the employee data from the Apollo. */
+  resetAndReloadApolloEmployees(): Observable<ApolloDataInfo | undefined> {
+    if (!this.company?.apolloId) {
+      return of(undefined);
+    }
+
+    return this.apiService.resetAndReloadApolloEmployees(this.company.apolloId).pipe(
+      tap(() => {
+        // I know - inefficient, but reload the employ information.
+        this.reloadProperty('apollo-employee-list-data');
+      })
+    );
+  }
+
+
   /** Provides boiler-plate automate for triggering state reloads. */
   private getReloadObserver<T>(name: CompanyServiceStateNames, observable: Observable<T>): Observable<T> {
     return this.reloader$.pipe(
@@ -265,4 +284,12 @@ export class CompanyService {
       startWith(undefined)
     ).pipe(switchMap(() => observable));
   }
+}
+
+function createNewCompany(): NewDbItem<Company> {
+  return {
+    name: '',
+    website: '',
+    comments: []
+  };
 }

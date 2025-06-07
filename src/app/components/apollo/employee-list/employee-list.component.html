@@ -1,5 +1,14 @@
-<ng-container *ngIf="(companyService.apolloEmployeeList$ | async); else notVisible">
-    <p-table [value]="(companyService.apolloEmployeeList$ | async)!" size="small">
+<ng-container *ngIf="(employeeSearchList$ | async); else notVisible">
+    <p-panel [showHeader]="false">
+        <div class="d-flex search-area">
+            <p-floatlabel>
+                <input id="search-text" pInputText [(ngModel)]="searchText" />
+                <label for="search-text">Search</label>
+            </p-floatlabel>
+            <p-button label="Clear" (click)="clearSearch()"></p-button>
+        </div>
+    </p-panel>
+    <p-table [value]="(employeeSearchList$ | async)!" size="small">
         <ng-template #header>
             <tr>
                 <th>
@@ -7,6 +16,9 @@
                 </th>
                 <th>
                     Title
+                </th>
+                <th>
+                    Location
                 </th>
                 <th>
                     Email
@@ -17,7 +29,27 @@
         <ng-template #body let-person>
             <tr>
                 <td>
-                    {{ person.name }}
+                    <div class="d-flex">
+                        <div class="d-flex align-base">
+                            <a *ngIf="person.linkedin_url" [href]="person.linkedin_url" target="_blank">
+                                <p-button icon="pi pi-linkedin" size="small"></p-button>
+                            </a>
+                            <a *ngIf="person.github_url" [href]="person.github_url" target="_blank">
+                                <p-button icon="pi pi-github" size="small"></p-button>
+                            </a>
+                            <a *ngIf="person.facebook_url" [href]="person.facebook_url" target="_blank">
+                                <p-button icon="pi pi-facebook" size="small"></p-button>
+                            </a>
+                        </div>
+                        <div class="flex-fill m-2">
+                            <div class="contact-name">
+                                {{ person.name }}
+                            </div>
+                            <div class="contact-seniority">
+                                ({{ person.seniority }})
+                            </div>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     {{ person.title }}

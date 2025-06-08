@@ -107,6 +107,30 @@ export class CompanyDetailComponent extends ComponentBase {
     this.editTarget!.website = value.replace(/^https?:\/\//i, '');
   }
 
+  get jobsSite(): string | undefined {
+    return this.editTarget!.jobsSite;
+  }
+  set jobsSite(value: string) {
+    this.editTarget!.jobsSite = value.replace(/^https?:\/\//i, '');
+  }
+
+  get jobSiteUrl(): string | undefined {
+    if (!this.jobsSite?.trim()) {
+      return undefined;
+    }
+
+    // Ensure there's no prefix.
+    const url = this.jobsSite.replace(/^https?:\/\//i, '');
+
+    // Confirm the format.
+    if (!/([\w\d_-]{2,}\.)+([\w\d_-]{2,})/.test(url)) {
+      return undefined;
+    }
+
+    // Return the URL for the link.
+    return `https://${url}`;
+  }
+
   /** Gets or sts the contacts for the company. */
   contacts?: CompanyContact[] = undefined;
 

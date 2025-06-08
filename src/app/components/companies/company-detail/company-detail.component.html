@@ -21,6 +21,18 @@
                 <input id="company-name" pInputText [(ngModel)]="editTarget.name" />
                 <label for="company-name">Company name</label>
             </p-floatlabel>
+            <div class="p-flex">
+                <div class="flex-fill">
+                    <p-floatlabel>
+                        <input id="jobs-site" pInputText [(ngModel)]="jobsSite" />
+                        <label for="jobs-site">Jobs Site</label>
+                    </p-floatlabel>
+                </div>
+
+                <a *ngIf="jobSiteUrl" [href]="jobSiteUrl" target="_blank">
+                    <p-button label="Job Site"></p-button>
+                </a>
+            </div>
             <p-floatlabel>
                 <input id="website" pInputText [(ngModel)]="websiteField" />
                 <label for="website">Website</label>
@@ -33,6 +45,19 @@
             </div>
         </div>
     </p-panel>
+
+    <div class="page-toolbar">
+        <p-toolbar>
+            <ng-template #center>
+
+            </ng-template>
+            <ng-template #end>
+                <p-button label="Back" routerLink="../../list"></p-button>
+                <p-button label="Save" (onClick)="saveCompanyInfo()"></p-button>
+                <p-button label="Save And Back" (onClick)="saveCompanyInfoAndReturn()"></p-button>
+            </ng-template>
+        </p-toolbar>
+    </div>
 
     <p-panel>
         <ng-template #header>
@@ -174,7 +199,7 @@
 
                 <p-progress-spinner *ngIf="isLoadingEmployees"
                     [style]="{width: '50px', height: '50px'}"></p-progress-spinner>
-                    
+
                 <div
                     *ngIf="!isNewCompany && editTarget && (!apolloEmployeeDataState || apolloEmployeeDataState.state !== 'in-progress')">
                     <p-button

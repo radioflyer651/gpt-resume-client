@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { BehaviorSubject, combineLatestWith, filter, map, Observable, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, debounceTime, filter, map, Observable, withLatestFrom } from 'rxjs';
 import { PanelModule } from 'primeng/panel';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
@@ -44,6 +44,7 @@ export class EmployeeListComponent extends ComponentBase {
   ngOnInit(): void {
     this.employeeSearchList$ = this.companyService.apolloEmployeeList$.pipe(
       combineLatestWith(this.searchText$),
+      debounceTime(500),
       map(([value, searchText]) => {
         searchText = searchText.trim().toLocaleLowerCase();
 
@@ -56,7 +57,14 @@ export class EmployeeListComponent extends ComponentBase {
             return false;
           }
 
-          return value.toLocaleLowerCase().includes(searchText);
+
+          try {
+            const regex = new RegExp(searchText, 'i');
+            return regex.test(value);
+          } catch (err) {
+            console.error(`Search Error: ${err}`);
+            return false;
+          }
         };
 
         return value.filter(v => {

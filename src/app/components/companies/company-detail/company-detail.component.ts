@@ -29,6 +29,7 @@ import { CompanyService } from '../../../services/company.service';
 import { EmployeeListComponent } from "../../apollo/employee-list/employee-list.component";
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { QuickJobServiceService } from '../../../quick-job-service.service';
 
 type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
 
@@ -54,7 +55,8 @@ type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
     ProgressSpinnerModule,
   ],
   providers: [
-    CompanyService
+    CompanyService,
+    QuickJobServiceService,
   ],
   templateUrl: './company-detail.component.html',
   styleUrls: [
@@ -70,6 +72,7 @@ export class CompanyDetailComponent extends ComponentBase {
     readonly confirmationService: ConfirmationService,
     readonly companyService: CompanyService,
     readonly apolloService: ApolloService,
+    readonly quickCreateJobService: QuickJobServiceService,
   ) {
     super();
     this.companyService.destroyerObservable = this.ngDestroy$;
@@ -97,6 +100,16 @@ export class CompanyDetailComponent extends ComponentBase {
 
     this.companyService.apolloEmployeeDataState$.subscribe(value => {
       this.apolloEmployeeDataState = value;
+    });
+
+    // Handle if the path has a job listing ID in it, and open the
+    //  dialog if it does.
+    this.route.paramMap.pipe(
+      takeUntil(this.ngDestroy$)
+    ).subscribe(params => {
+      if (params.has('jobListingId')) {
+        this.editJobListing(params.get('jobListingId')!);
+      }
     });
   }
 
@@ -212,12 +225,32 @@ export class CompanyDetailComponent extends ComponentBase {
     });
   }
 
+  // #region Job Listing Dialog
+
   /** Gets or sets the ID (or new) of the job listing to be edited in the editor. */
   editJobListingTargetId: ObjectId | 'new' = 'new';
 
+  private _isEditJobListingVisible: boolean = false;
   /** Controls whether or not the dialog to edit a job listing is open. */
-  isEditJobListingVisible: boolean = false;
+  get isEditJobListingVisible(): boolean {
+    return this._isEditJobListingVisible;
+  }
+  set isEditJobListingVisible(value: boolean) {
+    this._isEditJobListingVisible = value;
 
+    // If the dialog is closed, and we're at the path to show the listing, then
+    //  we want to navigate back, so we don't have the "listing" path in the URL.
+    if (!value && this.route.snapshot.paramMap.has('jobListingId')) {
+      // We need to navigate back.
+      this.router.navigate(['../../'], { relativeTo: this.route });
+    }
+  }
+
+  quickCreateJob(): void {
+    this.quickCreateJobService.createQuickJob(this.editTarget!._id, true);
+  }
+
+  // #endregion
   /** Sets the ID of the job listing to edit, and opens the editor dialog. */
   editJobListing(id: ObjectId | 'new') {
     this.editJobListingTargetId = id;

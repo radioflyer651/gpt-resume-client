@@ -1,0 +1,34 @@
+<div>
+    <div *ngIf="companyInfo">
+        <p-floatlabel>
+            <input id="new-company-name" pInputText [(ngModel)]="companyInfo.companyName" />
+            <label for="new-company-name">Company Name</label>
+        </p-floatlabel>
+
+        <p-floatlabel>
+            <input id="new-company-website" pInputText [(ngModel)]="companyInfo.companyWebsite" />
+            <label for="new-company-website">Website</label>
+        </p-floatlabel>
+
+        <p-floatlabel>
+            <input id="new-company-job-site" pInputText [(ngModel)]="companyInfo.companyJobsSite" />
+            <label for="new-company-job-site">Job Openings Link</label>
+        </p-floatlabel>
+    </div>
+
+    <p-floatlabel>
+        <input id="new-job-url" pInputText [(ngModel)]="requestData.jobLink" />
+        <label for="new-job-url">Job URL</label>
+    </p-floatlabel>
+
+    <p-floatlabel>
+        <textarea pTextArea id="new-job-desc" [rows]="10" [cols]="60"
+            [(ngModel)]="requestData.jobDescription"></textarea>
+        <label for="new-job-desc">Job Description</label>
+    </p-floatlabel>
+</div>
+
+<div>
+    <p-button label="Cancel" (click)="cancel()"></p-button>
+    <p-button label="OK" (click)="close()"></p-button>
+</div>

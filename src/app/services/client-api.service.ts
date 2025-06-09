@@ -20,6 +20,7 @@ import { JobAnalysis } from '../../model/shared-models/job-tracking/job-analysis
 import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/apollo/apollo-local.model';
 import { ApolloDataInfo } from '../../model/shared-models/apollo/apollo-data-info.model';
 import { ApolloPerson } from '../../model/shared-models/apollo/apollo-api-response.model';
+import { QuickJobSetupRequest, QuickJobSetupResult } from '../../model/shared-models/quick-job-setup-request.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -289,5 +290,10 @@ export class ClientApiService {
   /** Returns all loaded employees for an Apollo company, specified by its apollo company ID. */
   getApolloEmployeesForApolloCompany(apolloCompanyId: string): Observable<ApolloPerson[]> {
     return this.http.get<ApolloPerson[]>(this.constructUrl(`apollo/companies/${apolloCompanyId}/employees`), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Creates a new job through the quick-job function on the server, and returns the company ID */
+  createAutomatedJobListing(quickJobRequest: QuickJobSetupRequest): Observable<QuickJobSetupResult> {
+    return this.http.post<QuickJobSetupResult>(this.constructUrl('job-listings/create-from-description'), quickJobRequest, this.optionsBuilder.withAuthorization());
   }
 }

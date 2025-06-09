@@ -21,6 +21,10 @@ export const adminRoutes: Routes = [
                         component: CompaniesListComponent
                     },
                     {
+                        path: 'edit/:companyId/job-listing/:jobListingId',
+                        component: CompanyDetailComponent
+                    },
+                    {
                         path: 'edit/:companyId',
                         component: CompanyDetailComponent
                     }

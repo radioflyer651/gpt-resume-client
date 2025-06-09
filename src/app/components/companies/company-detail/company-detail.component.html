@@ -66,6 +66,8 @@
                     Job Listings
                 </h5>
                 <div *ngIf="!isNewCompany && jobListings">
+                    <p-button icon="fa-solid fa-wand-magic-sparkles" (click)="quickCreateJob()">
+                    </p-button>
                     <p-button icon="pi pi-plus" (click)="editJobListing('new')"></p-button>
                 </div>
             </div>

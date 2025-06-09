@@ -47,6 +47,9 @@
 <ng-template #emptyTemplate></ng-template>
 
 
-<p-dialog header="Edit Profile" [modal]="true" [(visible)]="loginService.isLoginDialogOpen" [style]="{ width: '25rem' }">
+<p-dialog header="Edit Profile" [modal]="true" [(visible)]="loginService.isLoginDialogOpen"
+  [style]="{ width: '25rem' }">
   <app-login></app-login>
 </p-dialog>
+
+<app-loading></app-loading>

@@ -21,6 +21,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DockModule } from 'primeng/dock';
 import { DialogModule } from 'primeng/dialog';
 import { LoginService } from './services/login.service';
+import { LoadingComponent } from "./components/loading/loading.component";
 
 @Component({
   selector: 'app-root',
@@ -38,7 +39,8 @@ import { LoginService } from './services/login.service';
     ConfirmDialogModule,
     DockModule,
     DialogModule,
-  ],
+    LoadingComponent
+],
   providers: [
     MessageService,
     ConfirmationService,

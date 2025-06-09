@@ -2,13 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { BehaviorSubject, combineLatestWith, lastValueFrom, map, Observable, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, lastValueFrom, map, takeUntil } from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { Company } from '../../../../model/shared-models/company.model';
 import { ClientApiService } from '../../../services/client-api.service';
 import { ComponentBase } from '../../component-base/component-base.component';
 import { ToolbarModule } from 'primeng/toolbar';
-import { ObjectId } from 'mongodb';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -16,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { PanelModule } from 'primeng/panel';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
+import { QuickJobServiceService } from '../../../quick-job-service.service';
 
 @Component({
   selector: 'app-companies-list',
@@ -39,6 +39,7 @@ export class CompaniesListComponent extends ComponentBase {
   constructor(
     readonly apiClient: ClientApiService,
     readonly confirmationService: ConfirmationService,
+    readonly quickJobCreateService: QuickJobServiceService,
   ) {
     super();
   }
@@ -129,5 +130,9 @@ export class CompaniesListComponent extends ComponentBase {
         await this.deleteCompany(company);
       }
     });
+  }
+
+  createQuickJob(): void {
+    this.quickJobCreateService.createQuickJob(undefined, true);
   }
 }

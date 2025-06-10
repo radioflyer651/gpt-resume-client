@@ -216,6 +216,7 @@ export class JobListingDialogComponent extends ComponentBase {
       // Update the original value.
       this.editStatus.status = newValue.status;
       this.editStatus.statusDate = newValue.statusDate;
+      this.editStatus.isClosed = newValue.isClosed;
     } else {
       // Add the status to the list.
       this.targetListing.jobStatuses.push(newValue);

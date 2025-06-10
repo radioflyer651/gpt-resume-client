@@ -19,7 +19,10 @@
       <ng-container *ngIf="isNavigationVisible">
         <a routerLink="/">Home</a>
         <a routerLink="/tarot-game">Tarot Games</a>
-        <a routerLink="/admin/companies/list">Company List</a>
+        <ng-container *ngIf="isAdminUser">
+          <a routerLink="/admin/companies/list">Company List</a>
+          <a routerLink="/admin/jobs/list">Jobs List</a>
+        </ng-container>
         <a (click)="logout()">Log Out</a>
       </ng-container>
 

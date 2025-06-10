@@ -6,7 +6,6 @@ import { PageSizeService } from '../../services/page-size.service';
 import { MenuService } from '../../services/menu.service';
 import { RouterModule } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
-import { LoginComponent } from "../login/login.component";
 import { TokenService } from '../../services/token.service';
 import { LoginService } from '../../services/login.service';
 
@@ -42,6 +41,11 @@ export class SiteHeaderComponent {
   /** Shows the login dialog. */
   login(): void {
     this.loginService.login();
+  }
+
+  /** Returns a boolean value indicating whether or not hte current user is an admin user. */
+  get isAdminUser(): boolean {
+    return !!this.userService.user?.isAdmin;
   }
 
   /** Returns a boolean value indicating whether or not the navigation

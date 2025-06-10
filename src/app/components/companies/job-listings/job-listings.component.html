@@ -1,0 +1,85 @@
+<ng-container *ngIf="!!(jobListings$ | async)">
+    <p-panel>
+        <ng-template #header>
+            <h5>
+                Job Listings
+            </h5>
+        </ng-template>
+        <div>
+            <div class="d-flex v-align-base">
+                <p-floatlabel>
+                    <input id="search-text" pInputText [(ngModel)]="searchText" />
+                    <label for="search-text">Search</label>
+                </p-floatlabel>
+
+                <p-button icon="fa-solid fa-arrows-rotate" (click)="clearSearch()"></p-button>
+            </div>
+
+            <div class="v-align-base d-flex checkbox-container">
+                <p-checkbox [binary]="true" [(ngModel)]="includeClosed"></p-checkbox>
+                <label class="checkbox-label" for="include-closed">Include Closed</label>
+            </div>
+        </div>
+    </p-panel>
+
+    <p-table [value]="(jobListings$ | async)!" [scrollable]="true" [scrollHeight]="'700px'" dataKey="_id">
+        <ng-template #header>
+            <tr>
+                <th pSortableColumn="company.name">
+                    Company <p-sortIcon field="company.name" />
+                </th>
+                <th pSortableColumn="jobTitle">
+                    Job Title <p-sortIcon field="jobTitle" />
+                </th>
+                <th pSortableColumn="postingDate">
+                    Posting Date <p-sortIcon field="postingDate" />
+                </th>
+                <th pSortableColumn="currentStatus.status">
+                    Current Status <p-sortIcon field="currentStatus.status" />
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-job>
+            <tr>
+                <td>
+                    <a [routerLink]="`/admin/companies/edit/${job.companyId}`">
+                        {{ job.company?.name }}
+                    </a>
+                </td>
+                <td>
+                    {{ job.jobTitle }}
+                </td>
+                <td>
+                    {{ job.postingDate | date: 'MM/dd/yy' }}
+                </td>
+                <td>
+                    <ng-container *ngIf="job.currentStatus">
+                        <div class="flex-col">
+                            <div class="d-flex v-align-base">
+                                <i *ngIf="job.currentStatus.isClosed"
+                                    class="fa-light fa-octagon-xmark closed-button"></i>
+                                <div class="flex-fill"> {{job.currentStatus.status}} </div>
+                            </div>
+                            <div> {{job.currentStatus.statusDate | date: 'MM/dd/yy'}} </div>
+                        </div>
+                    </ng-container>
+                </td>
+                <td class="d-flex">
+                    <a [href]="job.urlLink" target="_blank">
+                        <p-button size="small" icon="fa fa-light fa-link"></p-button>
+                    </a>
+                    <p-button size="small" icon="fa fa-light fa-pencil"
+                        (click)="editJob(job._id, job.companyId)"></p-button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</ng-container>
+
+<ng-container *ngIf="editJobId && isEditDialogVisible">
+    <app-job-listing-dialog [companyId]="editJobId" [jobListingId]="editJobId"
+        [(visible)]="isEditDialogVisible" (onClosed)="editComplete($event)"></app-job-listing-dialog>
+</ng-container>

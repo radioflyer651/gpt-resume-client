@@ -14,7 +14,7 @@ import { TarotCard, TarotCardDetails } from '../../model/shared-models/tarot-gam
 import { Company } from '../../model/shared-models/company.model';
 import { CompanyListingInfo } from '../../model/shared-models/company-listing.model';
 import { CompanyContact } from '../../model/shared-models/job-tracking/company-contact.data';
-import { JobListing, JobListingLine } from '../../model/shared-models/job-tracking/job-listing.model';
+import { JobListing, JobListingLine, JobListingLineWithCompany } from '../../model/shared-models/job-tracking/job-listing.model';
 import { UpsertDbItem } from '../../model/shared-models/db-operation-types.model';
 import { JobAnalysis } from '../../model/shared-models/job-tracking/job-analysis.model';
 import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/apollo/apollo-local.model';
@@ -212,8 +212,8 @@ export class ClientApiService {
   }
 
   /** Returns all job listings in a shortened format. */
-  getAllJobListings(): Observable<JobListingLine[]> {
-    return this.http.get<JobListingLine[]>(this.constructUrl('job-listings'), this.optionsBuilder.withAuthorization());
+  getAllJobListings(): Observable<JobListingLineWithCompany[]> {
+    return this.http.get<JobListingLineWithCompany[]>(this.constructUrl('job-listings'), this.optionsBuilder.withAuthorization());
   }
 
   getCompanyContactById(contactId: ObjectId): Observable<CompanyContact | undefined> {

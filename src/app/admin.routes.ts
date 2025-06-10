@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { AdminHomeComponent } from "./components/admin-home/admin-home.component";
 import { CompanyDetailComponent } from "./components/companies/company-detail/company-detail.component";
 import { CompaniesListComponent } from "./components/companies/companies-list/companies-list.component";
+import { JobListingsComponent } from "./components/companies/job-listings/job-listings.component";
 
 export const adminRoutes: Routes = [
     {
@@ -30,6 +31,20 @@ export const adminRoutes: Routes = [
                     }
                 ]
             },
+            {
+                path: 'jobs',
+                children: [
+                    {
+                        path: '',
+                        redirectTo: 'list',
+                        pathMatch: 'full'
+                    },
+                    {
+                        path: 'list',
+                        component: JobListingsComponent,
+                    }
+                ]
+            }
         ]
     }
 ];

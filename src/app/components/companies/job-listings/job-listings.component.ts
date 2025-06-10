@@ -15,6 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ObjectId } from 'mongodb';
 import { JobListingDialogComponent } from "../job-listing-dialog/job-listing-dialog.component";
 import { CheckboxModule } from 'primeng/checkbox';
+import { QuickJobServiceService } from '../../../quick-job-service.service';
 
 @Component({
   selector: 'app-job-listings',
@@ -39,6 +40,7 @@ export class JobListingsComponent extends ComponentBase {
     readonly apiClient: ClientApiService,
     readonly route: ActivatedRoute,
     readonly router: Router,
+    readonly quickJobCreateService: QuickJobServiceService,
   ) {
     super();
   }
@@ -151,5 +153,9 @@ export class JobListingsComponent extends ComponentBase {
     if (!cancelled) {
       this.reloadJobListings$.next();
     }
+  }
+
+  createQuickJob(): void {
+    this.quickJobCreateService.createQuickJob(undefined, true);
   }
 }

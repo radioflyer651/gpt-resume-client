@@ -37,29 +37,33 @@
         </ng-template>
     </p-toolbar>
 
-    <p-table *ngIf="companyList" [value]="companyList" size="small">
+    <!-- Table -->
+    <p-table *ngIf="companyList" [value]="companyList" size="small" [scrollable]="true" [scrollHeight]="'400px'">
         <ng-template #header>
             <tr>
-                <th class="header-cell">
-                    Name
+                <th class="header-cell" pSortableColumn="name">
+                    Name <p-sortIcon field="name" />
                 </th>
-                <th class="header-cell">
-                    Website
+                <th class="header-cell" pSortableColumn="website">
+                    Website <p-sortIcon field="website" />
                 </th>
-                <th class="number-cell">
-                    Contacts
+                <th class="number-cell" pSortableColumn="companyContacts">
+                    Contacts <p-sortIcon field="companyContacts" />
                 </th>
-                <th class="number-cell">
-                    Job Listings
+                <th class="number-cell" pSortableColumn="jobListings">
+                    Job Listings <p-sortIcon field="jobListings" />
+                </th>
+                <th class="number-cell" pSortableColumn="openJobListings">
+                    Open Job Listings <p-sortIcon field="openJobListings" />
                 </th>
             </tr>
         </ng-template>
 
         <ng-template #body let-company>
-            <tr>
+            <tr [style]="{height: itemHeight + 'px', maxHeight: itemHeight + 'px'}">
                 <td>
-                    <p-button [rounded]="true" size="small" [text]="true" severity="danger" icon="pi pi-times"
-                        (click)="deleteCompanyConfirmation(company)"></p-button>
+                    <p-button [style]="{maxHeight: '25px'}" [rounded]="true" size="small" [text]="true"
+                        severity="danger" icon="pi pi-times" (click)="deleteCompanyConfirmation(company)"></p-button>
                     <a routerLink="../edit/{{company._id}}"> {{company.name}} </a>
                 </td>
                 <td>
@@ -70,6 +74,9 @@
                 </td>
                 <td class="number-cell">
                     {{ company.jobListings }}
+                </td>
+                <td class="number-cell">
+                    {{ company.openJobListings }}
                 </td>
             </tr>
         </ng-template>

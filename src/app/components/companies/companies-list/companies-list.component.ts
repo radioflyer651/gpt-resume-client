@@ -9,13 +9,14 @@ import { ClientApiService } from '../../../services/client-api.service';
 import { ComponentBase } from '../../component-base/component-base.component';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, LazyLoadMeta } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
 import { PanelModule } from 'primeng/panel';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { QuickJobServiceService } from '../../../quick-job-service.service';
+import { PaginationHelper } from '../../../../utils/pagination-helper.utils';
 
 @Component({
   selector: 'app-companies-list',
@@ -135,4 +136,25 @@ export class CompaniesListComponent extends ComponentBase {
   createQuickJob(): void {
     this.quickJobCreateService.createQuickJob(undefined, true);
   }
+
+  // #region Data Loading
+
+  itemHeight = 38;
+
+  pageSize = 30;
+
+  loadingData: boolean = false;
+
+  scrollOptions = {
+    delay: 250,
+  };
+
+  loadDataInternal = async (lazyLoadMeta: LazyLoadMeta) => {
+    return await lastValueFrom(this.apiClient.getAllCompaniesPaginated(lazyLoadMeta));
+  };
+
+  dataLoader = new PaginationHelper<Company>(this.loadDataInternal);
+
+
+  // #endregion
 }

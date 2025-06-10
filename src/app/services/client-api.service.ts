@@ -21,6 +21,9 @@ import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/ap
 import { ApolloDataInfo } from '../../model/shared-models/apollo/apollo-data-info.model';
 import { ApolloPerson } from '../../model/shared-models/apollo/apollo-api-response.model';
 import { QuickJobSetupRequest, QuickJobSetupResult } from '../../model/shared-models/quick-job-setup-request.model';
+import { TableLazyLoadEvent } from 'primeng/table';
+import { LazyLoadMeta } from 'primeng/api';
+import { PaginatedResult } from '../../model/shared-models/paginated-result.model';
 
 // Extract the type of the `post` method from `HttpClient`
 type HttpClientPostMethod = HttpClient['post'];
@@ -188,6 +191,11 @@ export class ClientApiService {
   /** Returns all company listings in the system. */
   getAllCompanies(): Observable<CompanyListingInfo[]> {
     return this.http.get<CompanyListingInfo[]>(this.constructUrl('companies'), this.optionsBuilder.withAuthorization());
+  }
+
+  /** Returns all company listings in the system. */
+  getAllCompaniesPaginated(lazyLoadMeta: LazyLoadMeta): Observable<PaginatedResult<CompanyListingInfo>> {
+    return this.http.post<PaginatedResult<CompanyListingInfo>>(this.constructUrl('companies'), lazyLoadMeta, this.optionsBuilder.withAuthorization());
   }
 
   /** Returns a specified company from the server. */

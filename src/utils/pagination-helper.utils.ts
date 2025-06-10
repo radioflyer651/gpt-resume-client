@@ -20,9 +20,13 @@ export class PaginationHelper<T> {
     }
 
     /** The sort properties of the last call. */
-    _lastSortSpecification!: SortSpecification;
+    lastLoadEvent!: LazyLoadMeta;
 
-    _lastSortDirection!: number;
+    protected compareObjects(v1: any, v2: any): boolean {
+        const s1 = JSON.stringify(v1);
+        const s2 = JSON.stringify(v2);
+        return s1 === s2;
+    }
 
     /** Given a skip/limit value set, returns a boolean value indicating whether or not
      *   data has to be loaded from the server for these.  (It might already be loaded). */
@@ -31,17 +35,24 @@ export class PaginationHelper<T> {
             return true;
         }
 
-        // Compare the sort options.
-        if (!compareSortValue(this._lastSortSpecification, lazyLoadMeta.sortField ?? undefined)) {
-            return true;
-        }
-
-
         // If any data is missing, then we need to load it.
         for (let i = skip; i < skip + limit; i++) {
             if (!this._virtualData[i]) {
                 return true;
             }
+        }
+
+        // Compare sorts criteria.
+        if (!this.lastLoadEvent) {
+            return true;
+        }
+
+        if (!this.compareObjects(this.lastLoadEvent.sortField, lazyLoadMeta.sortField) || this.lastLoadEvent.sortOrder !== lazyLoadMeta.sortField) {
+            return true;
+        }
+
+        if (!this.compareObjects(this.lastLoadEvent.multiSortMeta, lazyLoadMeta.multiSortMeta)) {
+            return true;
         }
 
         // All data looks like it's loaded!
@@ -52,18 +63,26 @@ export class PaginationHelper<T> {
         this._virtualData = [];
     }
 
-    async loadData(event: TableLazyLoadEvent): Promise<void> {
-        if (typeof event.first !== 'number' || typeof event.last !== 'number') {
+    loadData = async (event: TableLazyLoadEvent): Promise<void> => {
+        // Combine the last event and this one.  When sorting happens,
+        //  It doesn't send the full event, but we need it to process our results.
+        if (this.lastLoadEvent) {
+            event = { ...this.lastLoadEvent, ...event } as any;
+        }
+
+        if (typeof event.first !== 'number' || typeof event.rows !== 'number') {
             throw new Error(`first and last must be provided.`);
         }
 
         let skip = event.first!;
-        let limit = event.last! - event.first! + 1;
+        let limit = event.rows!;
 
         // Exit if we already have the required data loaded.
         if (!this.requiresLoad(skip, limit, event)) {
             return;
         }
+
+        this.lastLoadEvent = event;
 
         // Indicate that we're loading data.
         this._isLoading.next(true);
@@ -88,7 +107,7 @@ export class PaginationHelper<T> {
 
         // Indicate that we're done loading the data.
         this._isLoading.next(false);
-    }
+    };
 
     // #region isLoading
     private readonly _isLoading = new BehaviorSubject<boolean>(false);

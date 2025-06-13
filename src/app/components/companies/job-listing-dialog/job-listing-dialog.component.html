@@ -104,9 +104,9 @@
                         </div>
                     </div>
 
-                    <ng-template #analysisField let-label="label" let-value="value">
-                        <div class="analysis-field">
-                            <label> {{label}} </label>
+                    <ng-template #analysisField let-label="label" let-value="value" let-newline="newline">
+                        <div [ngClass]="{'d-flex': newline !== true}" class="analysis-field">
+                            <label [ngClass]="{'full-width': newline === true}"> {{label}} </label>
                             <div class="value"> {{value}} </div>
                         </div>
                     </ng-template>
@@ -169,6 +169,11 @@
                                         {{ skill }}
                                     </p-chip>
                                 </div>
+                                <!-- <ul>
+                                    <li *ngFor="let skill of targetListing.analysis.requiredTechnologies">
+                                        {{ skill }}
+                                    </li>
+                                </ul> -->
                             </div>
 
                             <div class="chip-area">
@@ -178,52 +183,72 @@
                                         {{ skill }}
                                     </p-chip>
                                 </div>
+                                <!-- <ul>
+                                        <li *ngFor="let skill of targetListing.analysis.bonusTechnologies">
+                                            {{ skill }}
+                                        </li>
+                                    </ul> -->
                             </div>
 
                             <div class="chip-area">
                                 <label>Required Skills</label>
-                                <div>
+                                <ul>
+                                    <li *ngFor="let skill of targetListing.analysis.requiredSkillList">
+                                        {{ skill }}
+                                    </li>
+                                </ul>
+                                <!-- <div>
                                     <p-chip *ngFor="let skill of targetListing.analysis.requiredSkillList">
                                         {{ skill }}
                                     </p-chip>
-                                </div>
+                                </div> -->
                             </div>
 
                             <div class="chip-area">
                                 <label>Bonus Skills</label>
-                                <div>
+                                <ul>
+                                    <li *ngFor="let skill of targetListing.analysis.optionalSkillList">
+                                        {{ skill }}
+                                    </li>
+                                </ul>
+                                <!-- <div>
                                     <p-chip *ngFor="let skill of targetListing.analysis.optionalSkillList">
                                         {{ skill }}
                                     </p-chip>
-                                </div>
+                                </div> -->
                             </div>
 
                             <div class="chip-area">
                                 <label>Other Qualifiers</label>
-                                <div>
+                                <ul>
+                                    <li *ngFor="let skill of targetListing.analysis.otherQualifyingInfo">
+                                        {{ skill }}
+                                    </li>
+                                </ul>
+                                <!-- <div>
                                     <p-chip *ngFor="let skill of targetListing.analysis.otherQualifyingInfo">
                                         {{ skill }}
                                     </p-chip>
-                                </div>
+                                </div> -->
                             </div>
 
                             <ng-content *ngTemplateOutlet="analysisField; context: 
-                                {label: 'Hiring Manager Clues', 
+                                {label: 'HM Clues', newline: true,
                                 value: targetListing.analysis.hiringManagerClues}">
                             </ng-content>
 
                             <ng-content *ngTemplateOutlet="analysisField; context: 
-                                {label: 'Other Information', 
+                                {label: 'Other Information',  newline: true,
                                 value: targetListing.analysis.otherInformation}">
                             </ng-content>
 
                             <ng-content *ngTemplateOutlet="analysisField; context: 
-                            {label: 'Education', 
+                            {label: 'Education',  newline: true,
                             value: targetListing.analysis.educationRequirements}">
                             </ng-content>
 
                             <ng-content *ngTemplateOutlet="analysisField; context: 
-                                {label: 'Company Description', 
+                                {label: 'Company Description',  newline: true,
                                 value: targetListing.analysis.companyDescription}">
                             </ng-content>
                         </div>

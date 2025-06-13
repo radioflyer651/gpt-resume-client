@@ -60,7 +60,7 @@
         </ng-template>
 
         <ng-template #body let-company>
-            <tr [style]="{height: itemHeight + 'px', maxHeight: itemHeight + 'px'}">
+            <tr [style]="{height: itemHeight + 'px', maxHeight: itemHeight + 'px'}" class="job-listing">
                 <td>
                     <p-button [style]="{maxHeight: '25px'}" [rounded]="true" size="small" [text]="true"
                         severity="danger" icon="pi pi-times" (click)="deleteCompanyConfirmation(company)"></p-button>
@@ -68,6 +68,10 @@
                 </td>
                 <td>
                     <a href="https://{{company.website}}" target="_blank">{{company.website}}</a>
+
+                    <a [href]="getJobSiteUrl(company.jobsSite)" *ngIf="company.jobsSite" target="_blank" size="small">
+                        <p-button icon="fa-solid fa-sign-post"></p-button>
+                    </a>
                 </td>
                 <td class="number-cell">
                     {{ company.companyContacts }}

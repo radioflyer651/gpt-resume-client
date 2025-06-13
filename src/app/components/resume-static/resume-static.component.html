@@ -1,8 +1,12 @@
 <div appHilightContent class="printable">
     <header class="printable">
         <h1 class="printable">Richard Olson</h1>
-        <p>259 141st Ave, Andover, MN 55304 | 720-384-3388 | <a
-                href="mailto:richard@richardolson.org">richard&#64;richardolson.org</a></p>
+        <ng-container *ngIf="!user; else contactInfo">
+            <p> Minnesota | <a href="mailto:richard@richardolson.org">rolson&#64;richardolson.org</a></p>
+        </ng-container>
+        <ng-template #contactInfo>
+            <p> Andover | <a href="mailto:richard@richardolson.org">rolson&#64;richardolson.org</a> | 720-384-3388</p>
+        </ng-template>
     </header>
 
     <section>

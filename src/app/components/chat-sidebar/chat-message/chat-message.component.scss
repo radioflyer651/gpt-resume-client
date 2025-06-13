@@ -36,10 +36,6 @@
         padding: 5px;
     }
 
-    &:hover {
-        opacity: 1;
-    }
-
     .user-name {
         font-weight: bold;
         font-size: 1.2em;
@@ -58,8 +54,20 @@
         right: 0;
         margin: 5px;
     }
-}
 
-.last-image {
-    opacity: 0.85;
+    &.last-chat {
+        opacity: 0.85;
+        transition: opacity 2s;
+        transform-origin: bottom;
+
+        @starting-style {
+            opacity: 0;
+        }
+    }
+
+    transition: opacity 0.75s;
+
+    &:hover {
+        opacity: 1;
+    }
 }

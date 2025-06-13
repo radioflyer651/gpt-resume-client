@@ -9,7 +9,7 @@ import { TableModule } from 'primeng/table';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ComponentBase } from '../../component-base/component-base.component';
 import { ObjectId } from 'mongodb';
-import { CompanyContact } from '../../../../model/shared-models/job-tracking/company-contact.data';
+import { CompanyContact } from '../../../../model/shared-models/job-tracking/company-contact.model';
 import { BehaviorSubject, combineLatestWith, EMPTY, lastValueFrom, of, switchMap, takeUntil } from 'rxjs';
 import { ClientApiService } from '../../../services/client-api.service';
 import { NewDbItem, UpsertDbItem } from '../../../../model/shared-models/db-operation-types.model';

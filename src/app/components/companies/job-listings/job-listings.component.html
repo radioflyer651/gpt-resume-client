@@ -25,7 +25,8 @@
         </div>
     </p-panel>
 
-    <p-table [value]="(jobListings$ | async)!" [scrollable]="true" [scrollHeight]="'700px'" dataKey="_id">
+    <p-table [value]="(jobListings$ | async)!" sortMode="multiple" [scrollable]="true" [scrollHeight]="'700px'"
+        dataKey="_id">
         <ng-template #header>
             <tr>
                 <th pSortableColumn="company.name">
@@ -35,10 +36,18 @@
                     Job Title <p-sortIcon field="jobTitle" />
                 </th>
                 <th pSortableColumn="postingDate">
-                    Posting Date <p-sortIcon field="postingDate" />
+                    <div>
+                        <div>Posting Date</div>
+                        <p-sortIcon field="postingDate" />
+                    </div>
                 </th>
-                <th pSortableColumn="currentStatus.status">
-                    Current Status <p-sortIcon field="currentStatus.status" />
+                <th>
+                    <div pSortableColumn="currentStatus.status">
+                        Status <p-sortIcon field="currentStatus.status" />
+                    </div>
+                    <div pSortableColumn="currentStatus.statusDate">
+                        Date <p-sortIcon field="currentStatus.statusDate" />
+                    </div>
                 </th>
                 <th>
                     Actions
@@ -61,7 +70,7 @@
                 <td>
                     <ng-container *ngIf="job.currentStatus">
                         <div class="flex-col">
-                            <div class="d-flex v-align-base">
+                            <div class="d-flex v-align-base nowrap">
                                 <i *ngIf="job.currentStatus.isClosed"
                                     class="fa-light fa-octagon-xmark closed-button"></i>
                                 <div class="flex-fill"> {{job.currentStatus.status}} </div>

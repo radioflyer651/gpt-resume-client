@@ -28,3 +28,15 @@ p-button {
 .search-container {
     margin-right: 1em;
 }
+
+th {
+    text-wrap: nowrap;
+    > div {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.nowrap {
+    text-wrap: nowrap;
+}

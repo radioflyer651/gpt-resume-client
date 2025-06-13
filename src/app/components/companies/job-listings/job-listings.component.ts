@@ -92,6 +92,25 @@ export class JobListingsComponent extends ComponentBase {
 
         // Return the filtered results.
         return filtered;
+      }),
+      map(listing => {
+        listing.forEach(l => {
+          if (l.currentStatus?.statusDate instanceof Date) {
+            l.currentStatus.statusDate = new Date(l.currentStatus.statusDate.toLocaleDateString());
+          } else if (typeof l.currentStatus?.statusDate === 'string') {
+            try {
+              l.currentStatus.statusDate = new Date(l.currentStatus.statusDate);
+            } catch (err) {
+              // We don't care if it fails here... I guess...
+              console.error(`Error parsing status date: ${err}`);
+            }
+          } else if (!!l.currentStatus?.statusDate) {
+            // If the status date is not set, we will set it to the current date.
+            console.warn(`Status date is not a Date or string, setting to current date.`);
+          }
+        });
+
+        return listing;
       })
     );
   }
@@ -153,7 +172,7 @@ export class JobListingsComponent extends ComponentBase {
     if (!cancelled) {
       this.reloadJobListings$.next();
     }
-  }
+  };
 
   createQuickJob(): void {
     this.quickJobCreateService.createQuickJob(undefined, true);

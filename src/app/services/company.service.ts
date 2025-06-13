@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClientApiService } from './client-api.service';
-import { BehaviorSubject, combineLatestWith, distinct, EMPTY, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { combineLatestWith, EMPTY, filter, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ObjectId } from 'mongodb';
 import { Company } from '../../model/shared-models/company.model';
-import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/apollo/apollo-local.model';
-import { JobListing, JobListingLine } from '../../model/shared-models/job-tracking/job-listing.model';
-import { CompanyContact } from '../../model/shared-models/job-tracking/company-contact.data';
+import { LApolloOrganization } from '../../model/shared-models/apollo/apollo-local.model';
+import { JobListingLine } from '../../model/shared-models/job-tracking/job-listing.model';
+import { CompanyContact } from '../../model/shared-models/job-tracking/company-contact.model';
 import { StateObservable } from '../../utils/state-observable.utils';
 import { ApolloDataInfo } from '../../model/shared-models/apollo/apollo-data-info.model';
 import { ReadonlySubject } from '../../utils/readonly-subject';
@@ -55,7 +55,18 @@ export class CompanyService {
 
 
   initialize(): void {
-    this.companyId$ = this.route.paramMap.pipe(
+    // this.companyId$ = this.route.paramMap.pipe(
+    //   map(params => {
+    //     if (params.has('companyId')) {
+    //       return params.get('companyId') ?? undefined;
+    //     }
+
+    //     return undefined;
+    //   }),
+    //   takeUntil(this.ngDestroy$)
+    // );
+
+    this._companyId = new ReadonlySubject(this.ngDestroy$, this.route.paramMap.pipe(
       map(params => {
         if (params.has('companyId')) {
           return params.get('companyId') ?? undefined;
@@ -64,7 +75,7 @@ export class CompanyService {
         return undefined;
       }),
       takeUntil(this.ngDestroy$)
-    );
+    ));
 
 
     this._company = new ReadonlySubject(EMPTY, this.getReloadObserver('company', this.companyId$.pipe(
@@ -194,7 +205,19 @@ export class CompanyService {
   }
   // #endregion
 
-  companyId$!: Observable<ObjectId | 'new' | undefined>;
+  // companyId$!: Observable<ObjectId | 'new' | undefined>;
+
+  // #region companyIdd
+  private _companyId!: ReadonlySubject<ObjectId | 'new' | undefined>;
+
+  get companyId$() {
+    return this._companyId.observable$;
+  }
+
+  get companyId(): ObjectId | 'new' | undefined {
+    return this._companyId.value;
+  }
+  // #endregion
 
   jobsListings$!: Observable<JobListingLine[] | undefined>;
 

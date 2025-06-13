@@ -157,4 +157,16 @@ export class CompaniesListComponent extends ComponentBase {
 
 
   // #endregion
+
+  getJobSiteUrl(siteName: string) {
+    if (!siteName) {
+      return '';
+    }
+
+    if (!siteName.startsWith('http://') && !siteName.startsWith('https://')) {
+      return `https://${siteName}`;
+    }
+
+    return siteName;
+  }
 }

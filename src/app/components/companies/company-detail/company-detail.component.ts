@@ -6,7 +6,7 @@ import { NewDbItem, UpsertDbItem } from '../../../../model/shared-models/db-oper
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, distinct, lastValueFrom, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { CompanyContact } from '../../../../model/shared-models/job-tracking/company-contact.data';
+import { CompanyContact } from '../../../../model/shared-models/job-tracking/company-contact.model';
 import { JobListingLine } from '../../../../model/shared-models/job-tracking/job-listing.model';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { FormsModule } from '@angular/forms';

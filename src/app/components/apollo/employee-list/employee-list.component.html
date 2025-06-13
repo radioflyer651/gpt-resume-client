@@ -8,6 +8,7 @@
             <p-button label="Clear" (click)="clearSearch()"></p-button>
         </div>
     </p-panel>
+
     <p-table [value]="(employeeSearchList$ | async)!" size="small">
         <ng-template #header>
             <tr>
@@ -29,8 +30,11 @@
         <ng-template #body let-person>
             <tr>
                 <td>
-                    <div class="d-flex">
+                    <div class="d-flex action-list">
                         <div class="d-flex align-base">
+                            <p-button (click)="createContactFromEmployee(person)" icon="fa-regular fa-address-book"
+                                severity="secondary" size="small"></p-button>
+
                             <a *ngIf="person.linkedin_url" [href]="person.linkedin_url" target="_blank">
                                 <p-button icon="pi pi-linkedin" size="small"></p-button>
                             </a>
@@ -71,7 +75,13 @@
 </ng-container>
 
 <ng-template #notVisible>
-    <div>
-        No Employees
+    <div *ngIf="isLoading; else noEmployees" class="d-flex justify-content-center align-items-center">
+        <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" />
     </div>
+
+    <ng-template #noEmployees>
+        <div>
+            No Employees
+        </div>
+    </ng-template>
 </ng-template>

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TokenPayload } from '../../model/shared-models/token-payload.model';
 import { LoginRequest } from '../../model/shared-models/login-request.model';
@@ -10,18 +10,17 @@ import { ObjectId } from 'mongodb';
 import { TarotGame } from '../../model/shared-models/tarot-game/tarot-game.model';
 import { ChatTypes } from '../../model/shared-models/chat-types.model';
 import { SiteSettings } from '../../model/shared-models/site-settings.model';
-import { TarotCard, TarotCardDetails } from '../../model/shared-models/tarot-game/tarot-card.model';
+import { TarotCard } from '../../model/shared-models/tarot-game/tarot-card.model';
 import { Company } from '../../model/shared-models/company.model';
 import { CompanyListingInfo } from '../../model/shared-models/company-listing.model';
-import { CompanyContact } from '../../model/shared-models/job-tracking/company-contact.data';
+import { CompanyContact } from '../../model/shared-models/job-tracking/company-contact.model';
 import { JobListing, JobListingLine, JobListingLineWithCompany } from '../../model/shared-models/job-tracking/job-listing.model';
 import { UpsertDbItem } from '../../model/shared-models/db-operation-types.model';
 import { JobAnalysis } from '../../model/shared-models/job-tracking/job-analysis.model';
-import { LApolloOrganization, LApolloPerson } from '../../model/shared-models/apollo/apollo-local.model';
+import { LApolloOrganization } from '../../model/shared-models/apollo/apollo-local.model';
 import { ApolloDataInfo } from '../../model/shared-models/apollo/apollo-data-info.model';
 import { ApolloPerson } from '../../model/shared-models/apollo/apollo-api-response.model';
 import { QuickJobSetupRequest, QuickJobSetupResult } from '../../model/shared-models/quick-job-setup-request.model';
-import { TableLazyLoadEvent } from 'primeng/table';
 import { LazyLoadMeta } from 'primeng/api';
 import { PaginatedResult } from '../../model/shared-models/paginated-result.model';
 
@@ -303,5 +302,9 @@ export class ClientApiService {
   /** Creates a new job through the quick-job function on the server, and returns the company ID */
   createAutomatedJobListing(quickJobRequest: QuickJobSetupRequest): Observable<QuickJobSetupResult> {
     return this.http.post<QuickJobSetupResult>(this.constructUrl('job-listings/create-from-description'), quickJobRequest, this.optionsBuilder.withAuthorization());
+  }
+
+  createContactFromApolloId(companyId: ObjectId, apolloPersonId: string): Observable<CompanyContact> {
+    return this.http.post<CompanyContact>(this.constructUrl(`companies/${companyId}/contacts/from-apollo/${apolloPersonId}`), undefined, this.optionsBuilder.withAuthorization());
   }
 }

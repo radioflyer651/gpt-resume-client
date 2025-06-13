@@ -55,7 +55,6 @@ p-float-label {
 
 .job-analysis {
     .analysis-field {
-        display: flex;
         margin-bottom: 2em;
 
         label {
@@ -63,9 +62,18 @@ p-float-label {
             flex-shrink: 0;
         }
 
+        label.full-width {
+            width: 100%;
+            flex-shrink: initial;
+        }
+
         .value {
             flex: 1 1 auto;
         }
+    }
+
+    label {
+        font-weight: bold;
     }
 
     p-floatlabel {

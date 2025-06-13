@@ -8,11 +8,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { BehaviorSubject, combineLatestWith, debounceTime, filter, map, Observable, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, debounceTime, filter, map, Observable, startWith, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { PanelModule } from 'primeng/panel';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
-import { ApolloPerson } from '../../../../model/shared-models/apollo/apollo-api-response.model';
+import { ApolloEmployee, ApolloPerson } from '../../../../model/shared-models/apollo/apollo-api-response.model';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ObjectId } from 'mongodb';
 
 @Component({
   selector: 'app-employee-list',
@@ -25,6 +27,7 @@ import { ApolloPerson } from '../../../../model/shared-models/apollo/apollo-api-
     PanelModule,
     FloatLabelModule,
     InputTextModule,
+    ProgressSpinnerModule,
   ],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.scss'
@@ -43,8 +46,11 @@ export class EmployeeListComponent extends ComponentBase {
 
   ngOnInit(): void {
     this.employeeSearchList$ = this.companyService.apolloEmployeeList$.pipe(
+      tap(() => {
+        this.isLoading = false;
+      }),
       combineLatestWith(this.searchText$),
-      debounceTime(500),
+      debounceTime(250),
       map(([value, searchText]) => {
         searchText = searchText.trim().toLocaleLowerCase();
 
@@ -70,9 +76,12 @@ export class EmployeeListComponent extends ComponentBase {
         return value.filter(v => {
           return filterOn(v.name) || filterOn(v.title) || filterOn(v.seniority);
         });
-      })
+      }),
+      takeUntil(this.ngDestroy$),
     );
   }
+
+  isLoading = true;
 
   // #region searchText
   clearSearch() {
@@ -92,4 +101,11 @@ export class EmployeeListComponent extends ComponentBase {
   // #endregion
 
   employeeSearchList$!: Observable<ApolloPerson[] | undefined>;
+
+  createContactFromEmployee(apolloContact: ApolloEmployee) {
+    const apolloId = apolloContact.person_id ?? apolloContact.id;
+    this.apiClient.createContactFromApolloId(this.companyService.companyId as ObjectId, apolloId).subscribe(result => {
+      this.companyService.reloadProperty('contact-list');
+    });
+  }
 }

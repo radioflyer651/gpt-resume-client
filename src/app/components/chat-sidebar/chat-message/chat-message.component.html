@@ -1,4 +1,4 @@
-<div [class]="sideClass + ' chat-message'" [ngClass]="{'last-image':isLatest}">
+<div [class]="sideClass + ' chat-message'" [ngClass]="{'last-chat':isLatest}">
     <div class="sound-button-bottom" *ngIf="user === 'assistant' && !disableAudio">
 
         <div class="justify-center" *ngIf="chatService.isAudioRequestInProgress">

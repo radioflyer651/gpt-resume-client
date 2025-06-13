@@ -16,6 +16,7 @@ import { ObjectId } from 'mongodb';
 import { JobListingDialogComponent } from "../job-listing-dialog/job-listing-dialog.component";
 import { CheckboxModule } from 'primeng/checkbox';
 import { QuickJobServiceService } from '../../../quick-job-service.service';
+import { RemainingSizeHelper } from '../../../../utils/remaining-size-helper';
 
 @Component({
   selector: 'app-job-listings',
@@ -54,6 +55,8 @@ export class JobListingsComponent extends ComponentBase {
         if (!searchText && includeClosed) {
           return listings;
         }
+
+        this.tableSizeHelper.updateSize();
 
         const filterOn = (value: string | undefined) => {
           if (!value) {
@@ -114,6 +117,8 @@ export class JobListingsComponent extends ComponentBase {
       })
     );
   }
+
+  tableSizeHelper = new RemainingSizeHelper('#table-top-position-helper', this.ngDestroy$);
 
   // #region includeClosed
   private readonly _includeClosed = new BehaviorSubject<boolean>(false);

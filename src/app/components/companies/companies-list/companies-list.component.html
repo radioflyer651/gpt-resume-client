@@ -15,6 +15,7 @@
             </p-floatlabel>
 
             <p-button label="Clear" (click)="clearSearch()"></p-button>
+            <p-button icon="fa-regular fa-refresh" (click)="reloadCompanies()"></p-button>
         </div>
         <div>
             <p-button label="Quick Job Create" (click)="createQuickJob()"></p-button>
@@ -37,12 +38,19 @@
         </ng-template>
     </p-toolbar>
 
+    <!-- This helps identify the top of the table for resizing purposes. -->
+    <div id="table-top-position-helper"></div>
+
     <!-- Table -->
-    <p-table *ngIf="companyList" [value]="companyList" size="small" [scrollable]="true" [scrollHeight]="'400px'">
+    <p-table *ngIf="companyList" [value]="companyList" size="small" [scrollable]="true"
+        [scrollHeight]="tableSizeHelper.remainingHeight + 'px'">
         <ng-template #header>
             <tr>
                 <th class="header-cell" pSortableColumn="name">
                     Name <p-sortIcon field="name" />
+                </th>
+                <th>
+
                 </th>
                 <th class="header-cell" pSortableColumn="website">
                     Website <p-sortIcon field="website" />
@@ -67,11 +75,12 @@
                     <a routerLink="../edit/{{company._id}}"> {{company.name}} </a>
                 </td>
                 <td>
-                    <a href="https://{{company.website}}" target="_blank">{{company.website}}</a>
-
                     <a [href]="getJobSiteUrl(company.jobsSite)" *ngIf="company.jobsSite" target="_blank" size="small">
-                        <p-button icon="fa-solid fa-sign-post"></p-button>
+                        <p-button icon="fa-solid fa-briefcase"></p-button>
                     </a>
+                </td>
+                <td>
+                    <a href="https://{{company.website}}" target="_blank">{{company.website}}</a>
                 </td>
                 <td class="number-cell">
                     {{ company.companyContacts }}

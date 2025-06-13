@@ -21,27 +21,32 @@
                 <input id="company-name" pInputText [(ngModel)]="editTarget.name" />
                 <label for="company-name">Company name</label>
             </p-floatlabel>
-            <div class="p-flex">
+            <div class="d-flex v-align-base">
+                <a *ngIf="jobSiteUrl" [href]="jobSiteUrl" target="_blank">
+                    <p-button icon="fa-solid fa-briefcase"></p-button>
+                </a>
                 <div class="flex-fill">
                     <p-floatlabel>
                         <input id="jobs-site" pInputText [(ngModel)]="jobsSite" />
                         <label for="jobs-site">Jobs Site</label>
                     </p-floatlabel>
                 </div>
-
-                <a *ngIf="jobSiteUrl" [href]="jobSiteUrl" target="_blank">
-                    <p-button label="Job Site"></p-button>
-                </a>
             </div>
-            <p-floatlabel>
-                <input id="website" pInputText [(ngModel)]="websiteField" />
-                <label for="website">Website</label>
-            </p-floatlabel>
-            <div *ngIf="canNavigateWebsite">
-                <a [href]="navigationWebsite" target="_blank">{{navigationWebsite}}</a>
+            <div class="d-flex v-align-base">
+                <a *ngIf="navigationWebsite" [href]="navigationWebsite" target="_blank">
+                    <p-button icon="fa-sharp fa-regular fa-globe-pointer"></p-button>
+                </a>
+                <div class="flex-fill">
+                    <p-floatlabel>
+                        <input id="website" pInputText [(ngModel)]="websiteField" />
+                        <label for="website">Website</label>
+                    </p-floatlabel>
+                </div>
             </div>
             <div *ngIf="glassDoorLink">
-                <a [href]="glassDoorLink" target="_blank">Glass Door Search</a>
+                <a [href]="glassDoorLink" target="_blank">
+                    <p-button icon="fa-regular fa-window-frame"></p-button>
+                </a>
             </div>
         </div>
     </p-panel>

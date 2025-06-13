@@ -17,6 +17,10 @@ body {
     margin-top: 2em;
 }
 
+.v-align-base {
+    align-items: baseline;
+}
+
 @media print {
     .site-content-container * {
         visibility: collapse;

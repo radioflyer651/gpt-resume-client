@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { BehaviorSubject, combineLatestWith, lastValueFrom, map, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, lastValueFrom, map, startWith, Subject, switchMap, takeUntil } from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { Company } from '../../../../model/shared-models/company.model';
 import { ClientApiService } from '../../../services/client-api.service';
@@ -17,6 +17,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { QuickJobServiceService } from '../../../quick-job-service.service';
 import { PaginationHelper } from '../../../../utils/pagination-helper.utils';
+import { RemainingSizeHelper } from '../../../../utils/remaining-size-helper';
 
 @Component({
   selector: 'app-companies-list',
@@ -45,42 +46,56 @@ export class CompaniesListComponent extends ComponentBase {
     super();
   }
 
+  reloadCompanies$ = new Subject<void>();
+
   ngOnInit() {
-    const companies = this.apiClient
-      .getAllCompanies().pipe(
-        combineLatestWith(this.hideArchived$, this.nameFilter$),
-        map(([companies, hideArchived, nameFilter]) => {
-          // Remove any leading/trailing whitespace from the filter.
-          nameFilter = nameFilter?.trim();
+    const companies = this.reloadCompanies$.pipe(
+      startWith(undefined),
+      switchMap(() => {
+        return this.apiClient.getAllCompanies().pipe(
+          combineLatestWith(this.hideArchived$, this.nameFilter$),
+          map(([companies, hideArchived, nameFilter]) => {
+            this.tableSizeHelper.updateSize();
 
-          // Hide the archives, if needed.
-          if (hideArchived) {
-            companies = companies.filter(c => !c.archive);
-          }
+            // Remove any leading/trailing whitespace from the filter.
+            nameFilter = nameFilter?.trim();
 
-          companies.sort((c1, c2) => {
-            return c1.name.localeCompare(c2.name);
-          });
+            // Hide the archives, if needed.
+            if (hideArchived) {
+              companies = companies.filter(c => !c.archive);
+            }
 
-          nameFilter = (nameFilter?.trim() ?? '').toLocaleLowerCase();
-
-          // Apply the filter, if needed.
-          if (nameFilter) {
-            companies = companies.filter(c => {
-              return c.name.toLocaleLowerCase().includes(nameFilter) || c.website.toLocaleLowerCase().includes(nameFilter);
+            companies.sort((c1, c2) => {
+              return c1.name.localeCompare(c2.name);
             });
-          }
 
-          return companies;
-        }),
-        takeUntil(this.ngDestroy$));
+            nameFilter = (nameFilter?.trim() ?? '').toLocaleLowerCase();
+
+            // Apply the filter, if needed.
+            if (nameFilter) {
+              companies = companies.filter(c => {
+                return c.name.toLocaleLowerCase().includes(nameFilter) || c.website.toLocaleLowerCase().includes(nameFilter);
+              });
+            }
+
+            return companies;
+          }),
+        );
+      }),
+      takeUntil(this.ngDestroy$));
 
     companies.subscribe(companies => {
       this.companyList = companies;
     });
   }
 
+  tableSizeHelper = new RemainingSizeHelper('#table-top-position-helper', this.ngDestroy$);
+
   companyList: Company[] = [];
+
+  reloadCompanies(): void {
+    this.reloadCompanies$.next();
+  }
 
   // #region hideArchived
   private readonly _hideArchived = new BehaviorSubject<boolean>(true);

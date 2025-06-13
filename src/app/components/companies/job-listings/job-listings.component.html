@@ -25,8 +25,11 @@
         </div>
     </p-panel>
 
-    <p-table [value]="(jobListings$ | async)!" sortMode="multiple" [scrollable]="true" [scrollHeight]="'700px'"
-        dataKey="_id">
+    <!-- This helps identify the top of the table for resizing purposes. -->
+    <div id="table-top-position-helper"></div>
+
+    <p-table [value]="(jobListings$ | async)!" sortMode="multiple" [scrollable]="true"
+        [scrollHeight]="this.tableSizeHelper.remainingHeight + 'px'" dataKey="_id">
         <ng-template #header>
             <tr>
                 <th pSortableColumn="company.name">

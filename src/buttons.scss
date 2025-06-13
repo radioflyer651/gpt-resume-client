@@ -1,5 +1,6 @@
-p-button,
-p-splitbutton {
+p-button:not(:first-child),
+p-splitbutton:not(:first-child),
+button:not(:first-child) {
     margin-left: 1em;
 }
 
@@ -7,9 +8,9 @@ p-splitbutton {
     display: flex;
     justify-content: end;
 
-    button,
-    p-button,
-    p-splitbutton {
+    p-button:not(:first-child),
+    p-splitbutton:not(:first-child),
+    button:not(:first-child) {
         margin: 0 0.5em;
     }
 }

@@ -30,6 +30,7 @@ import { EmployeeListComponent } from "../../apollo/employee-list/employee-list.
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { QuickJobServiceService } from '../../../quick-job-service.service';
+import { TabsModule } from 'primeng/tabs';
 
 type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
 
@@ -53,6 +54,7 @@ type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
     EmployeeListComponent,
     DialogModule,
     ProgressSpinnerModule,
+    TabsModule,
   ],
   providers: [
     CompanyService,

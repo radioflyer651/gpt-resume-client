@@ -131,152 +131,167 @@
         </ng-container>
     </p-panel>
 
-    <p-panel>
-        <ng-template #header>
-            <div class="header-container">
-                <h5>
-                    Contacts
-                </h5>
+    <p-tabs [value]="0">
+        <p-tablist>
+            <p-tab [value]="0">
+                Contacts
+            </p-tab>
+            <p-tab [value]="1">
+                Comments
+            </p-tab>
+            <p-tab [value]="2">
+                Apollo Company
+            </p-tab>
+        </p-tablist>
+
+        <p-tabpanels>
+
+            <p-tabpanel [value]="0">
                 <div *ngIf="(!isNewCompany && contacts)">
                     <p-button icon="pi pi-plus" (click)="editContact('new')"></p-button>
                 </div>
-            </div>
-        </ng-template>
 
-        <ng-container *ngIf="(!isNewCompany && contacts); else saveCompanyFirst">
-            <p-table [value]="contacts" size="small">
-                <ng-template #header>
-                    <tr>
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            Title
-                        </th>
-                        <th>
-                            Email
-                        </th>
-                        <th>
-                            Actions
-                        </th>
-                    </tr>
-                </ng-template>
+                <div class="contacts-container">
+                    <ng-container *ngIf="(!isNewCompany && contacts); else saveCompanyFirst">
+                        <p-table [value]="contacts" size="small">
+                            <ng-template #header>
+                                <tr>
+                                    <th>
+                                        Name
+                                    </th>
+                                    <th>
+                                        Title
+                                    </th>
+                                    <th>
+                                        Email
+                                    </th>
+                                    <th>
+                                        Actions
+                                    </th>
+                                </tr>
+                            </ng-template>
 
-                <ng-template #body let-contact>
-                    <tr>
-                        <td>
-                            {{contact.firstName}} {{contact.lastName}}
-                        </td>
-                        <td>
-                            {{contact.title}}
-                        </td>
-                        <td>
-                            <a href="mailto:{{contact.email}}">{{contact.email}}</a>
-                        </td>
-                        <td class="control-cell">
-                            <p-button icon="pi pi-cog" (click)="editContact(contact._id)"></p-button>
-                            <p-button icon="pi pi-times" (click)="deleteContactClicked(contact._id)"></p-button>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </ng-container>
-
-    </p-panel>
-
-    <p-panel>
-        <ng-template #header>
-            <h5>
-                Comments
-            </h5>
-        </ng-template>
-
-        <ng-container *ngIf="!isNewCompany && editTarget; else saveCompanyFirst">
-            <app-comments-editor [commentOwner]="editTarget!"></app-comments-editor>
-        </ng-container>
-    </p-panel>
-
-    <p-panel>
-        <ng-template #header>
-            <div class="d-flex w-100">
-                <h5 class="flex-fill">
-                    Apollo Company Link
-                </h5>
-
-
-                <p-progress-spinner *ngIf="isLoadingEmployees"
-                    [style]="{width: '50px', height: '50px'}"></p-progress-spinner>
-
-                <div
-                    *ngIf="!isNewCompany && editTarget && (!apolloEmployeeDataState || apolloEmployeeDataState.state !== 'in-progress')">
-                    <p-button
-                        *ngIf="!apolloEmployeeDataState || (apolloEmployeeDataState.state !== 'in-progress' && apolloEmployeeDataState.state !== 'complete')"
-                        (click)="loadApolloEmployees()" label="Load Employees"></p-button>
-                    <p-button *ngIf="apolloEmployeeDataState?.state === 'complete'" (click)="showApolloEmployeeList()"
-                        label="Show Employees"></p-button>
-                    <p-button *ngIf="apolloEmployeeDataState?.state === 'complete'"
-                        (click)="resetAndReloadApolloEmployees()" label="Reset & Reload Employees"></p-button>
+                            <ng-template #body let-contact>
+                                <tr>
+                                    <td>
+                                        {{contact.firstName}} {{contact.lastName}}
+                                    </td>
+                                    <td>
+                                        {{contact.title}}
+                                    </td>
+                                    <td>
+                                        <a href="mailto:{{contact.email}}">{{contact.email}}</a>
+                                    </td>
+                                    <td class="control-cell">
+                                        <p-button icon="pi pi-cog" (click)="editContact(contact._id)"></p-button>
+                                        <p-button icon="pi pi-times"
+                                            (click)="deleteContactClicked(contact._id)"></p-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </ng-container>
                 </div>
-            </div>
-        </ng-template>
-        <ng-container *ngIf="!isNewCompany && editTarget; else saveCompanyFirst">
-            <div>
-                <ng-container *ngIf="companyService.apolloCompany$ | async as apolloCompany; else noApolloCompany">
-                    <ng-template #apolloField let-label="label" let-value="value">
-                        <div class="apollo-field">
-                            <label> {{label}} </label>
-                            <div class="value"> {{value}} </div>
-                        </div>
-                    </ng-template>
+            </p-tabpanel>
 
-                    <div>
-                        <ng-container *ngTemplateOutlet="apolloField; 
-                        context: {label: 'Company Name', value: apolloCompany.name }"></ng-container>
-
-                        <ng-container
-                            *ngTemplateOutlet="apolloField; 
-                        context: {label: 'Domain', value: apolloCompany.domain || apolloCompany.primaryDomain }"></ng-container>
-
-                        <ng-container *ngIf="apolloCompany.primaryPhone">
-                            <ng-container *ngTemplateOutlet="apolloField; 
-                        context: {label: 'Company Phone Number', value: apolloCompany.primaryPhone }"></ng-container>
-                        </ng-container>
-
-                        <div class="apollo-field" *ngIf="apolloCompany.linkedInUrl">
-                            <label> LinkedIn URL: </label>
-                            <a [href]="apolloCompany.linkedInUrl" target="_blank"> {{apolloCompany.linkedInUrl}} </a>
-                        </div>
-
-                        <div class="apollo-field" *ngIf="apolloCompany.websiteUrl">
-                            <label> Website URL: </label>
-                            <a [href]="apolloCompany.websiteUrl" target="_blank"> {{apolloCompany.websiteUrl}} </a>
-                        </div>
-
-                        <div class="apollo-field" *ngIf="apolloCompany.twitterUrl">
-                            <label> Twitter URL: </label>
-                            <a [href]="apolloCompany.twitterUrl" target="_blank"> {{apolloCompany.twitterUrl}} </a>
-                        </div>
-
-                    </div>
-                    <div>
-                        <p-button label="Find Apollo Co." (click)="findApolloCompany()"></p-button>
-                    </div>
+            <p-tabpanel [value]="1">
+                <ng-container *ngIf="!isNewCompany && editTarget; else saveCompanyFirst">
+                    <app-comments-editor [commentOwner]="editTarget!"></app-comments-editor>
                 </ng-container>
-            </div>
+            </p-tabpanel>
 
-            <ng-template #noApolloCompany>
-                <div *ngIf="(companyService.subscribeToState('apollo-company') | async) === 'not-available'">
-                    No Apollo company linked with this company.
-                </div>
+            <p-tabpanel [value]="2">
                 <div>
-                    <p-button label="Find Apollo Co." (click)="findApolloCompany()"></p-button>
+                    <div class="d-flex w-100">
+                        <h5 class="flex-fill">
+                            Apollo Company Link
+                        </h5>
+
+
+                        <p-progress-spinner *ngIf="isLoadingEmployees"
+                            [style]="{width: '50px', height: '50px'}"></p-progress-spinner>
+
+                        <div
+                            *ngIf="!isNewCompany && editTarget && (!apolloEmployeeDataState || apolloEmployeeDataState.state !== 'in-progress')">
+                            <p-button
+                                *ngIf="!apolloEmployeeDataState || (apolloEmployeeDataState.state !== 'in-progress' && apolloEmployeeDataState.state !== 'complete')"
+                                (click)="loadApolloEmployees()" label="Load Employees"></p-button>
+                            <p-button *ngIf="apolloEmployeeDataState?.state === 'complete'"
+                                (click)="showApolloEmployeeList()" label="Show Employees"></p-button>
+                            <p-button *ngIf="apolloEmployeeDataState?.state === 'complete'"
+                                (click)="resetAndReloadApolloEmployees()" label="Reset & Reload Employees"></p-button>
+                        </div>
+                    </div>
+
+                    <ng-container *ngIf="!isNewCompany && editTarget; else saveCompanyFirst">
+                        <div>
+                            <ng-container
+                                *ngIf="companyService.apolloCompany$ | async as apolloCompany; else noApolloCompany">
+                                <ng-template #apolloField let-label="label" let-value="value">
+                                    <div class="apollo-field">
+                                        <label> {{label}} </label>
+                                        <div class="value"> {{value}} </div>
+                                    </div>
+                                </ng-template>
+
+                                <div>
+                                    <ng-container
+                                        *ngTemplateOutlet="apolloField; 
+                                            context: {label: 'Company Name', value: apolloCompany.name }"></ng-container>
+
+                                    <ng-container
+                                        *ngTemplateOutlet="apolloField; 
+                                            context: {label: 'Domain', value: apolloCompany.domain || apolloCompany.primaryDomain }"></ng-container>
+
+                                    <ng-container *ngIf="apolloCompany.primaryPhone">
+                                        <ng-container
+                                            *ngTemplateOutlet="apolloField; 
+                                            context: {label: 'Company Phone Number', value: apolloCompany.primaryPhone }"></ng-container>
+                                    </ng-container>
+
+                                    <div class="apollo-field" *ngIf="apolloCompany.linkedInUrl">
+                                        <label> LinkedIn URL: </label>
+                                        <a [href]="apolloCompany.linkedInUrl" target="_blank">
+                                            {{apolloCompany.linkedInUrl}} </a>
+                                    </div>
+
+                                    <div class="apollo-field" *ngIf="apolloCompany.websiteUrl">
+                                        <label> Website URL: </label>
+                                        <a [href]="apolloCompany.websiteUrl" target="_blank">
+                                            {{apolloCompany.websiteUrl}} </a>
+                                    </div>
+
+                                    <div class="apollo-field" *ngIf="apolloCompany.twitterUrl">
+                                        <label> Twitter URL: </label>
+                                        <a [href]="apolloCompany.twitterUrl" target="_blank">
+                                            {{apolloCompany.twitterUrl}} </a>
+                                    </div>
+
+                                </div>
+                                <div>
+                                    <p-button label="Find Apollo Co." (click)="findApolloCompany()"></p-button>
+                                </div>
+                            </ng-container>
+                        </div>
+
+                        <ng-template #noApolloCompany>
+                            <div
+                                *ngIf="(companyService.subscribeToState('apollo-company') | async) === 'not-available'">
+                                No Apollo company linked with this company.
+                            </div>
+                            <div>
+                                <p-button label="Find Apollo Co." (click)="findApolloCompany()"></p-button>
+                            </div>
+                            <div *ngIf="(companyService.subscribeToState('apollo-company') | async) === 'loading'">
+                                Loading...
+                            </div>
+                        </ng-template>
+                    </ng-container>
                 </div>
-                <div *ngIf="(companyService.subscribeToState('apollo-company') | async) === 'loading'">
-                    Loading...
-                </div>
-            </ng-template>
-        </ng-container>
-    </p-panel>
+
+            </p-tabpanel>
+        </p-tabpanels>
+    </p-tabs>
 
     <ng-template #saveCompanyFirst>
         <div>

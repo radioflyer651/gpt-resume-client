@@ -43,11 +43,6 @@
                     </p-floatlabel>
                 </div>
             </div>
-            <div *ngIf="glassDoorLink">
-                <a [href]="glassDoorLink" target="_blank">
-                    <p-button icon="fa-regular fa-window-frame"></p-button>
-                </a>
-            </div>
         </div>
     </p-panel>
 
@@ -142,6 +137,9 @@
             <p-tab [value]="2">
                 Apollo Company
             </p-tab>
+            <p-tab [value]="3">
+                Glassdoor
+            </p-tab>
         </p-tablist>
 
         <p-tabpanels>
@@ -189,8 +187,7 @@
                                     </td>
                                     <td class="control-cell">
                                         <p-button icon="pi pi-cog" (click)="editContact(contact._id)"></p-button>
-                                        <p-button icon="pi pi-times"
-                                            (click)="deleteContactClicked(contact)"></p-button>
+                                        <p-button icon="pi pi-times" (click)="deleteContactClicked(contact)"></p-button>
                                     </td>
                                 </tr>
                             </ng-template>
@@ -288,6 +285,43 @@
                     </ng-container>
                 </div>
 
+            </p-tabpanel>
+
+            <p-tabpanel [value]="3">
+                <div *ngIf="editTarget">
+                    <div *ngIf="glassDoorLink">
+                        <a [href]="glassDoorLink" target="_blank">
+                            <p-button icon="fa-regular fa-window-frame"></p-button>
+                        </a>
+                    </div>
+                    <div>
+                        <p-floatlabel>
+                            <input id="glass-door-review-count" pInputText
+                                [(ngModel)]="glassDoorCalculator.reviewCount" />
+                            <label for="glass-door-review-count">Total Reviews</label>
+                        </p-floatlabel>
+
+                        <p-floatlabel>
+                            <input id="glass-door-average-review" pInputText
+                                [(ngModel)]="glassDoorCalculator.averageScore" />
+                            <label for="glass-door-average-review">Average Review</label>
+                        </p-floatlabel>
+                    </div>
+
+                    <div>
+                        <p-floatlabel>
+                            <input id="glass-door-review-count" pInputText
+                                [value]="glassDoorCalculator.fiveStartCount" />
+                            <label for="glass-door-review-count">5 Stars</label>
+                        </p-floatlabel>
+
+                        <p-floatlabel>
+                            <input id="glass-door-average-review" pInputText
+                                [value]="glassDoorCalculator.oneStarCount" />
+                            <label for="glass-door-average-review">1 Stars</label>
+                        </p-floatlabel>
+                    </div>
+                </div>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>

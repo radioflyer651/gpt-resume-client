@@ -5,7 +5,7 @@ import { ClientApiService } from '../../../services/client-api.service';
 import { NewDbItem, UpsertDbItem } from '../../../../model/shared-models/db-operation-types.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { catchError, distinct, lastValueFrom, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, distinct, filter, lastValueFrom, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { CompanyContact } from '../../../../model/shared-models/job-tracking/company-contact.model';
 import { JobListingLine } from '../../../../model/shared-models/job-tracking/job-listing.model';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -31,6 +31,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { QuickJobServiceService } from '../../../quick-job-service.service';
 import { TabsModule } from 'primeng/tabs';
+import { ReadonlySubject } from '../../../../utils/readonly-subject';
 
 type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
 
@@ -113,7 +114,12 @@ export class CompanyDetailComponent extends ComponentBase {
         this.editJobListing(params.get('jobListingId')!);
       }
     });
+
+    this.glassDoorCalculator = new GlassDoorCalculator();
+    this.glassDoorCalculator.company = this.editTarget;
   }
+
+  glassDoorCalculator!: GlassDoorCalculator;
 
   get websiteField(): string {
     return this.editTarget!.website;
@@ -152,8 +158,16 @@ export class CompanyDetailComponent extends ComponentBase {
   /** Gets or sets the job listings for the company. */
   jobListings?: JobListingLine[] = undefined;
 
+
   /** Gets or sets the company that's being edited. */
-  editTarget: UpsertDbItem<Company> | undefined;
+  private _editTarget: UpsertDbItem<Company> | undefined = undefined;
+  get editTarget(): UpsertDbItem<Company> | undefined {
+    return this._editTarget;
+  }
+  set editTarget(value: UpsertDbItem<Company> | undefined) {
+    this._editTarget = value;
+    this.glassDoorCalculator.company = value;
+  }
 
   get canNavigateWebsite(): boolean {
     return this.navigationWebsite !== '';
@@ -384,6 +398,49 @@ export class CompanyDetailComponent extends ComponentBase {
     }
 
     return `https://www.glassdoor.com/Search/results.htm?keyword=${encodeURI(domain[0])}`;
+  }
+
+}
+
+/** Given a glassdoor average score, and total review count, if the scores were only 1 and 5 star,
+ *   this class calculates the number of 5 stars and 1 stars required to produce the inputs.  */
+export class GlassDoorCalculator {
+  /** Gets or sets the company being worked with. */
+  company?: UpsertDbItem<Company>;
+
+  /** Gets or sets the total number of reviews in Glassdoor, for the company. */
+  get reviewCount(): number {
+    return this.company?.glassDoorNumberOfReviews ?? 0;
+  }
+  set reviewCount(value: number) {
+    if (this.company) {
+      this.company.glassDoorNumberOfReviews = value;
+    }
+  }
+
+  /** Gets or sets the average score in Glassdoor for the company. */
+  get averageScore(): number {
+    return this.company?.glassDoorAverageScore ?? 0;
+  }
+  set averageScore(value: number) {
+    if (this.company) {
+      this.company.glassDoorAverageScore = value;
+    }
+  }
+
+  /** Internal, returns the total number of stars received. */
+  protected get totalScore(): number {
+    return this.averageScore * this.reviewCount;
+  }
+
+  /** Returns the total number of 5 star reviews required for the company. */
+  get fiveStartCount(): number {
+    return Math.floor((this.totalScore - this.reviewCount) / 4);
+  }
+
+  /** Returns the total number of 1 star reviews required for the company. */
+  get oneStarCount(): number {
+    return this.reviewCount - this.fiveStartCount;
   }
 
 }

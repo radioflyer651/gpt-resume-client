@@ -16,4 +16,7 @@ export interface Company {
 
     /** Optional: The ID of the ApolloCompany, if one exists, in the database. */
     apolloId?: ObjectId;
+
+    glassDoorAverageScore?: number;
+    glassDoorNumberOfReviews?: number;
 }

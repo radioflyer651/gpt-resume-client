@@ -15,24 +15,24 @@
 
             <p-tabpanel [value]="0">
                 <p-floatlabel>
-                    <input id="new-contact-first-name" pInputText [(ngModel)]="targetContact.firstName"
+                    <input autocomplete="off" id="new-contact-first-name" pInputText [(ngModel)]="targetContact.firstName"
                         [autocomplete]="false" />
                     <label for="new-contact-first-name">First Name</label>
                 </p-floatlabel>
 
                 <p-floatlabel>
-                    <input id="new-contact-last-name" pInputText [(ngModel)]="targetContact.lastName"
+                    <input autocomplete="off" id="new-contact-last-name" pInputText [(ngModel)]="targetContact.lastName"
                         [autocomplete]="false" />
                     <label for="new-contact-last-name">Last Name</label>
                 </p-floatlabel>
 
                 <p-floatlabel>
-                    <input id="new-contact-title" pInputText [(ngModel)]="targetContact.title" [autocomplete]="false" />
+                    <input autocomplete="off" id="new-contact-title" pInputText [(ngModel)]="targetContact.title" [autocomplete]="false" />
                     <label for="new-contact-title">Title</label>
                 </p-floatlabel>
 
                 <p-floatlabel>
-                    <input id="new-contact-email" pInputText [(ngModel)]="targetContact.email" [autocomplete]="false" />
+                    <input autocomplete="off" id="new-contact-email" pInputText [(ngModel)]="targetContact.email" [autocomplete]="false" />
                     <label for="new-contact-email">Email</label>
                 </p-floatlabel>
             </p-tabpanel>

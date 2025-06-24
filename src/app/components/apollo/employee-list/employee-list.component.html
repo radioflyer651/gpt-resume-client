@@ -2,7 +2,7 @@
     <p-panel [showHeader]="false">
         <div class="d-flex search-area">
             <p-floatlabel>
-                <input id="search-text" pInputText [(ngModel)]="searchText" />
+                <input autocomplete="off" id="search-text" pInputText [(ngModel)]="searchText" />
                 <label for="search-text">Search</label>
             </p-floatlabel>
             <p-button label="Clear" (click)="clearSearch()"></p-button>

@@ -1,6 +1,6 @@
 <p-dialog [(visible)]="visible" *ngIf="!!editTarget">
     <p-floatlabel>
-        <input id="new-status" pInputText [(ngModel)]="editTarget.status" />
+        <input autocomplete="off" id="new-status" pInputText [(ngModel)]="editTarget.status" />
         <label for="new-status">New Status</label>
     </p-floatlabel>
 

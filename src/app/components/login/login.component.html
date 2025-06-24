@@ -2,11 +2,11 @@
     <p-panel header="User Login">
         <div [formGroup]="loginForm">
             <p-iftalabel>
-                <input pSize="large" pInputText id="user-name" formControlName="userName">
+                <input autocomplete="off" pSize="large" pInputText id="user-name" formControlName="userName">
                 <label for="user-name">Your Name</label>
             </p-iftalabel>
             <p-iftalabel>
-                <input pSize="large" pInputText id="website" formControlName="website">
+                <input autocomplete="off" pSize="large" pInputText id="website" formControlName="website">
                 <label for="website">Company Website</label>
             </p-iftalabel>
         </div>

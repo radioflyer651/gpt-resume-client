@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { ComponentBase } from '../../component-base/component-base.component';
 import { Company } from '../../../../model/shared-models/company.model';
 import { ClientApiService } from '../../../services/client-api.service';
-import { NewDbItem, UpsertDbItem } from '../../../../model/shared-models/db-operation-types.model';
+import { UpsertDbItem } from '../../../../model/shared-models/db-operation-types.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { catchError, distinct, filter, lastValueFrom, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { lastValueFrom, Observable, takeUntil } from 'rxjs';
 import { CompanyContact } from '../../../../model/shared-models/job-tracking/company-contact.model';
 import { JobListingLine } from '../../../../model/shared-models/job-tracking/job-listing.model';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -23,7 +23,6 @@ import { PanelModule } from 'primeng/panel';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ApolloService } from '../../../services/apollo.service';
-import { LApolloOrganization } from '../../../../model/shared-models/apollo/apollo-local.model';
 import { ApolloDataInfo, ApolloDataStateTypes } from '../../../../model/shared-models/apollo/apollo-data-info.model';
 import { CompanyService } from '../../../services/company.service';
 import { EmployeeListComponent } from "../../apollo/employee-list/employee-list.component";
@@ -31,7 +30,6 @@ import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { QuickJobServiceService } from '../../../quick-job-service.service';
 import { TabsModule } from 'primeng/tabs';
-import { ReadonlySubject } from '../../../../utils/readonly-subject';
 
 type ApolloEmployeeLoadedStateTypes = ApolloDataStateTypes | 'not-ready';
 

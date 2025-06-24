@@ -18,7 +18,7 @@
                 <label>Archive This Company</label>
             </div>
             <p-floatlabel>
-                <input id="company-name" pInputText [(ngModel)]="editTarget.name" />
+                <input autocomplete="off" id="company-name" pInputText [(ngModel)]="editTarget.name" />
                 <label for="company-name">Company name</label>
             </p-floatlabel>
             <div class="d-flex v-align-base">
@@ -27,7 +27,7 @@
                 </a>
                 <div class="flex-fill">
                     <p-floatlabel>
-                        <input id="jobs-site" pInputText [(ngModel)]="jobsSite" />
+                        <input autocomplete="off" id="jobs-site" pInputText [(ngModel)]="jobsSite" />
                         <label for="jobs-site">Jobs Site</label>
                     </p-floatlabel>
                 </div>
@@ -38,7 +38,7 @@
                 </a>
                 <div class="flex-fill">
                     <p-floatlabel>
-                        <input id="website" pInputText [(ngModel)]="websiteField" />
+                        <input autocomplete="off" id="website" pInputText [(ngModel)]="websiteField" />
                         <label for="website">Website</label>
                     </p-floatlabel>
                 </div>
@@ -296,13 +296,13 @@
                     </div>
                     <div>
                         <p-floatlabel>
-                            <input id="glass-door-review-count" pInputText
+                            <input autocomplete="off" id="glass-door-review-count" pInputText
                                 [(ngModel)]="glassDoorCalculator.reviewCount" />
                             <label for="glass-door-review-count">Total Reviews</label>
                         </p-floatlabel>
 
                         <p-floatlabel>
-                            <input id="glass-door-average-review" pInputText
+                            <input autocomplete="off" id="glass-door-average-review" pInputText
                                 [(ngModel)]="glassDoorCalculator.averageScore" />
                             <label for="glass-door-average-review">Average Review</label>
                         </p-floatlabel>
@@ -310,13 +310,13 @@
 
                     <div>
                         <p-floatlabel>
-                            <input id="glass-door-review-count" pInputText
+                            <input autocomplete="off" id="glass-door-review-count" pInputText
                                 [value]="glassDoorCalculator.fiveStartCount" />
                             <label for="glass-door-review-count">5 Stars</label>
                         </p-floatlabel>
 
                         <p-floatlabel>
-                            <input id="glass-door-average-review" pInputText
+                            <input autocomplete="off" id="glass-door-average-review" pInputText
                                 [value]="glassDoorCalculator.oneStarCount" />
                             <label for="glass-door-average-review">1 Stars</label>
                         </p-floatlabel>

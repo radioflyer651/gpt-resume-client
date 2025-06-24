@@ -1,23 +1,23 @@
 <div>
     <div *ngIf="companyInfo">
         <p-floatlabel>
-            <input id="new-company-name" pInputText [(ngModel)]="companyInfo.companyName" />
+            <input autocomplete="off" id="new-company-name" pInputText [(ngModel)]="companyInfo.companyName" />
             <label for="new-company-name">Company Name</label>
         </p-floatlabel>
 
         <p-floatlabel>
-            <input id="new-company-website" pInputText [(ngModel)]="companyInfo.companyWebsite" />
+            <input autocomplete="off" id="new-company-website" pInputText [(ngModel)]="companyInfo.companyWebsite" />
             <label for="new-company-website">Website</label>
         </p-floatlabel>
 
         <p-floatlabel>
-            <input id="new-company-job-site" pInputText [(ngModel)]="companyInfo.companyJobsSite" />
+            <input autocomplete="off" id="new-company-job-site" pInputText [(ngModel)]="companyInfo.companyJobsSite" />
             <label for="new-company-job-site">Job Openings Link</label>
         </p-floatlabel>
     </div>
 
     <p-floatlabel>
-        <input id="new-job-url" pInputText [(ngModel)]="requestData.jobLink" />
+        <input autocomplete="off" id="new-job-url" pInputText [(ngModel)]="requestData.jobLink" />
         <label for="new-job-url">Job URL</label>
     </p-floatlabel>
 
